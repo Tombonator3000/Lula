@@ -47,3 +47,10 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
 - Verifiseringsagenten fant og rettet en feil i flaggfusjonen: flagg som leses ved hoppmål inne i en sammensmeltet `cmp`/`jcc`-kjede ble ikke alltid materialisert. `rt_fprem` gir nå også kvotientbitene i C0/C3/C1.
 - Testet i et eget git-worktree (dialogagentens halvferdige `user32.c` lenket ikke i hovedtreet): alle 5 ende-til-ende-tester grønne.
 - Rekompilatoren gir nå en tydelig melding hvis `analysis/decompiled/functions.tsv` bare er en Git LFS-peker.
+
+## 2026-10-05 17:40 UTC: lifteren verifisert mot unicorn
+
+- Verifiseringsagenten er ferdig: 65 446 instruksjoner i 245 grupper (185 fullt testet, 60 med 60 utvalgte forekomster inkludert alle kodinger), alle 6 709 sammensmeltede flaggkjeder og 43 x87-sekvenser. 247 380 tilstander sammenlignet med unicorn, 0 feil. 49 bevisst innførte feil ble alle fanget.
+- Rettet: `aam` og `les` var feilfeller (finnes i Watcoms tall-til-tekst og printf), `fprem` ga ikke kvotientbitene, og to latente feil i flaggfusjonen. Rekompilatoren melder nå 0 ikke-støttede instruksjonstyper.
+- Kjent avvik: x87 holdes i `double`, men Watcom setter 64-bits presisjon. Agenten har fått i oppgave å gjøre x87 80-bit-eksakt med `long double` og sammenligne eksakt mot unicorn.
+- Kjør på nytt: `python3 tests/recomp/unicorn_diff.py` (ca. 3 min) eller `--quick`.
