@@ -89,12 +89,15 @@ Testen `tests/test_recompiled_game.py` gjør det samme automatisk med en grønn 
 - Automatiske ende-til-ende-tester: `python3 -m unittest tests.test_recompiled_game -v`.
 - Originalfilene er uendret (`python3 tools/project.py verify`).
 
+- Rekompilatoren: hver instruksjonsform i WET.EXE er sammenlignet med emulatoren unicorn, til sammen 247 380 tilstander uten avvik (`docs/recomp/lifter-verification.md`, `python3 tests/recomp/unicorn_diff.py`).
+- Dialogbokser fra ressursene (13 maler, 18 dialogprosedyrer), popupmenyen "Set Digital Output" og MessageBox. Lagring fra F2-menyen og lasting fra hovedmenyen er dekket av en ende-til-ende-test.
+- Utforskende kjøring med tilfeldige klikk og taster i 2 x 4 minutter uten feilfeller eller advarsler.
+
 ## Ikke verifisert ennå
 
-- Spillflyt etter hovedmenyen, lagring og lasting.
-- Lyd på en ekte lydenhet. DirectSound-kallene følger originalen, men lyden er ikke lyttet på.
+- Store deler av spillflyten (mange rom og hendelser er ikke besøkt i testene).
+- Lyd på en ekte lydenhet. Miksen er sammenlignet med originalens samples, men ikke lyttet på.
 - Video (`.CUT`-filer) og MCI er bevisst satt til side. Med `-novideo` hopper spillet over videoene.
-- Dialogbokser og menyer fra ressursene.
 - Windows-bygg av den samme koden.
 
 ## Videre rekonstruksjon
