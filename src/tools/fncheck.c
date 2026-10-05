@@ -207,6 +207,10 @@ int main(int argc, char **argv)
     uint32_t tid;
     Cpu *c = rt_cpu_new_thread(&tid);
     rt_cpu_bind(c);
+    /* Watcom __CHK reads the thread data before every game function. */
+    uint32_t watcom_thread = rt_low_alloc(256);
+    W32(watcom_thread, c->stack_limit);
+    W32(0x0048a694u, watcom_thread);
     rt_gil_acquire();
     add_region(SCRATCH_A, SCRATCH_SIZE);
     add_region(SCRATCH_B, SCRATCH_SIZE);
