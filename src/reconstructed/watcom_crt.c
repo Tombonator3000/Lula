@@ -31,3 +31,17 @@ uint32_t f_00442be4(Cpu *c)
     c->eax = dst;
     return rt_return(c);
 }
+
+/* Get-PC stub used by the float-to-decimal conversion (called from 0x44c2b6
+ * for every %f, %e and %g in printf). The original is 'call 0x44c478'
+ * followed by a 176-byte table of 64-bit powers of ten at 0x44c3c8; the
+ * target does 'pop edi; ret', so the net effect is EDI = 0x44c3c8 and a
+ * return to the caller. Flags and other registers are unchanged. Hand-written
+ * because the bytes after the call are data, not code to decode. */
+RT_RECONSTRUCTED(0x0044c3c3)
+RT_CHECK(0x0044c3c3, "")
+uint32_t f_0044c3c3(Cpu *c)
+{
+    c->edi = 0x0044c3c8u;
+    return rt_return(c);
+}

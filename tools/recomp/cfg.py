@@ -153,18 +153,33 @@ class Program:
             self.table_slots.add(table + 4 * i)
         return table, targets
 
+    _FAMILY = {n: f for f, names in {
+        'a': ('eax', 'ax', 'al', 'ah'), 'b': ('ebx', 'bx', 'bl', 'bh'), 'c': ('ecx', 'cx', 'cl', 'ch'),
+        'd': ('edx', 'dx', 'dl', 'dh'), 'si': ('esi', 'si'), 'di': ('edi', 'di'), 'bp': ('ebp', 'bp'),
+        'sp': ('esp', 'sp')}.items() for n in names}
+
+    def _family(self, reg):
+        return self._FAMILY.get(self.md.reg_name(reg))
+
     def _switch_bound(self, func, ins, op):
-        """Find 'cmp idx, imm; ja/jbe' guarding a scaled jump table."""
+        """Find 'cmp idx, imm; ja/jbe' guarding a scaled jump table.
+
+        The compare may be on a 16- or 8-bit part of the index register
+        ('cmp cx, 7; ja ...; movzx ecx, cx'); zero or sign extension of that
+        part between the compare and the jump keeps the bound valid.
+        """
         idx = op.mem.index if op.mem.index else op.mem.base
         scale = op.mem.scale if op.mem.index else 1
         if scale != 4:
             return None
+        fam = self._family(idx)
+        extends = ('movzx', 'movsx', 'and', 'cwde')
         # Walk backwards over straight-line predecessors in this function.
         addr_list = sorted(a for a in func.insns if a < ins.addr)[-12:]
         for a in reversed(addr_list):
             p = func.insns[a]
             if p.mnem == 'cmp' and len(p.ops) == 2 and p.ops[0].type == X.X86_OP_REG \
-                    and p.ops[0].reg == idx and p.ops[1].type == X.X86_OP_IMM:
+                    and self._family(p.ops[0].reg) == fam and p.ops[1].type == X.X86_OP_IMM:
                 after = func.insns.get(p.next)
                 if after and after.mnem in ('ja', 'jbe'):
                     return (p.ops[1].imm & 0xffffffff) + 1
@@ -173,9 +188,15 @@ class Program:
                 return None
             if p.flow != 'seq' and p.flow != 'jcc':
                 return None
-            # The index register must not be redefined between cmp and jmp.
-            if p.ops and p.ops[0].type == X.X86_OP_REG and p.ops[0].reg == idx \
-                    and p.mnem not in ('cmp', 'test'):
+            # A plain register copy into the index ('mov ax, cx') moves the
+            # bound check to the source register.
+            if p.mnem == 'mov' and len(p.ops) == 2 and p.ops[0].type == X.X86_OP_REG \
+                    and p.ops[1].type == X.X86_OP_REG and self._family(p.ops[0].reg) == fam:
+                fam = self._family(p.ops[1].reg)
+                continue
+            # The index register must not get a new value between cmp and jmp.
+            if p.ops and p.ops[0].type == X.X86_OP_REG and self._family(p.ops[0].reg) == fam \
+                    and p.mnem not in ('cmp', 'test') + extends:
                 return None
         return None
 
