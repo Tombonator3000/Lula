@@ -2,8 +2,9 @@
 """Verified Lula container and RGB565 tools; no third-party dependencies.
 
 NGS payloads can be replaced and packed with recalculated sizes and offsets.
-TAF splitting/packing preserves every byte, but deliberately rejects edits.
-PPM is a lossless, editable interchange for TBF's existing RGB565 pixels.
+TAF splitting/packing preserves every byte; frame import rebuilds linked
+headers and the optional file-position index after same-dimension edits.
+PPM is a lossless, editable interchange for TBF/TAF RGB565 pixels.
 """
 from __future__ import annotations
 
@@ -87,7 +88,7 @@ def pixel_size(width: int, height: int, *, empty: bool = False) -> int:
 
 
 def decode_rle(data: bytes, expected_size: int) -> bytes:
-    """Observed 16-bit codec: 0..0xefff repeat, 0xf000..0xffff literal."""
+    """Guest signed-word codec: nonnegative repeat, negative literal count."""
     out = bytearray()
     cursor = 0
     while cursor < len(data):
@@ -95,10 +96,13 @@ def decode_rle(data: bytes, expected_size: int) -> bytes:
             raise FormatError("Truncated RLE command")
         code = struct.unpack_from("<H", data, cursor)[0]
         cursor += 2
-        count = 65536 - code if code >= 0xF000 else code
+        if code == 0x8000:
+            raise FormatError("RLE command INT16_MIN cannot be negated safely by the game")
+        literal = code > 0x8000
+        count = 65536 - code if literal else code
         if len(out) + count * 2 > expected_size:
             raise FormatError("RLE command expands beyond image dimensions")
-        if code >= 0xF000:
+        if literal:
             size = count * 2
             if cursor + size > len(data):
                 raise FormatError("Truncated RLE literal")
@@ -122,7 +126,9 @@ def encode_rle(pixels: bytes) -> bytes:
     cursor = 0
     while cursor < len(words):
         end = cursor + 1
-        while end < len(words) and words[end] == words[cursor] and end - cursor < 0xEFFF:
+        # The game's decoder sign-extends command words (0x43fa48), so
+        # 0x8000..0xefff are not usable positive repeat counts at runtime.
+        while end < len(words) and words[end] == words[cursor] and end - cursor < 0x7FFF:
             end += 1
         if end - cursor >= 2:
             result.extend(struct.pack("<HH", end - cursor, words[cursor]))
@@ -167,14 +173,18 @@ def parse_tbf(data: bytes) -> TBF:
     return TBF(version, mode, width, height, pixels)
 
 
-def tbf_to_ppm(data: bytes) -> bytes:
-    image = parse_tbf(data)
+def _rgb565_to_ppm(width: int, height: int, pixels: bytes) -> bytes:
     rgb = bytearray()
-    for (word,) in struct.iter_unpack("<H", image.pixels):
+    for (word,) in struct.iter_unpack("<H", pixels):
         # Bit replication provides the full display range and roundtrips exactly.
         r, g, b = (word >> 11) & 31, (word >> 5) & 63, word & 31
         rgb.extend(((r << 3) | (r >> 2), (g << 2) | (g >> 4), (b << 3) | (b >> 2)))
-    return f"P6\n{image.width} {image.height}\n255\n".encode("ascii") + rgb
+    return f"P6\n{width} {height}\n255\n".encode("ascii") + rgb
+
+
+def tbf_to_ppm(data: bytes) -> bytes:
+    image = parse_tbf(data)
+    return _rgb565_to_ppm(image.width, image.height, image.pixels)
 
 
 def parse_ppm(data: bytes) -> tuple[int, int, bytes]:
@@ -214,15 +224,20 @@ def parse_ppm(data: bytes) -> tuple[int, int, bytes]:
     return width, height, rgb
 
 
+def _rgb_to_rgb565(rgb: bytes) -> bytes:
+    pixels = bytearray()
+    for i in range(0, len(rgb), 3):
+        r, g, b = rgb[i:i + 3]
+        pixels.extend(struct.pack("<H", ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3)))
+    return bytes(pixels)
+
+
 def ppm_to_tbf(ppm: bytes, template: bytes) -> bytes:
     image = parse_tbf(template)
     width, height, rgb = parse_ppm(ppm)
     if (width, height) != (image.width, image.height):
         raise FormatError("Dimension changes require engine/layout analysis; keep template dimensions")
-    pixels = bytearray()
-    for i in range(0, len(rgb), 3):
-        r, g, b = rgb[i:i + 3]
-        pixels.extend(struct.pack("<H", ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3)))
+    pixels = _rgb_to_rgb565(rgb)
     if pixels == image.pixels:
         return template  # Preserve original, potentially noncanonical RLE commands.
     payload = bytes(pixels) if image.mode == 0 else encode_rle(bytes(pixels))
@@ -236,6 +251,11 @@ class TAF:
     footer: bytes
     offsets: tuple[int, ...]
 
+    @property
+    def table_count(self) -> int:
+        """Trailer table count at 0x310 (read by guest 0x43f477)."""
+        return struct.unpack_from("<H", self.prefix, 784)[0]
+
 
 def parse_taf(data: bytes) -> TAF:
     if len(data) < 787 or data[:4] != b"TAF\0":
@@ -244,19 +264,28 @@ def parse_taf(data: bytes) -> TAF:
     if version != 16 or not count:
         raise FormatError("Unverified TAF version or empty animation")
     first = struct.unpack_from("<I", data, 780)[0]
-    if not 784 <= first <= len(data):
+    table_count = struct.unpack_from("<H", data, 784)[0]
+    if table_count not in (1, 2):
+        raise FormatError("TAF trailer table count must be one or two")
+    if not 786 <= first <= len(data):
         raise FormatError("Invalid TAF first-frame offset")
     cursor, total, frames, offsets = first, 0, [], []
     for i in range(count):
         if cursor + 14 > len(data):
             raise FormatError(f"TAF frame {i}: truncated header")
         mode, width, height, end, payload_start = struct.unpack_from("<HHHII", data, cursor)
+        if (width == 0) != (height == 0):
+            raise FormatError(f"TAF frame {i}: only the 0x0 sentinel may be empty")
         expected = pixel_size(width, height, empty=True)
         total += expected
         # BUTCH.TAF ends with a verified 14-byte, 0x0 sentinel frame.
         empty_sentinel = width == height == 0 and end == payload_start == cursor + 15
         if empty_sentinel:
+            if i != count - 1:
+                raise FormatError("TAF empty sentinel must be terminal")
             end -= 1
+        elif not expected:
+            raise FormatError(f"TAF frame {i}: invalid empty sentinel")
         if mode != 2 or payload_start != cursor + 15 or end > len(data) or end < cursor + 14:
             raise FormatError(f"TAF frame {i}: unverified structure")
         if not empty_sentinel:
@@ -269,12 +298,86 @@ def parse_taf(data: bytes) -> TAF:
     if total != raw_size:
         raise FormatError("TAF total decoded size does not match header")
     footer = data[cursor:]
-    if len(footer) not in (count * 4, count * 8):
+    if len(footer) != count * 4 * table_count:
         raise FormatError("Unverified TAF trailer structure")
     if len(footer) == count * 8:
         if struct.unpack_from(f"<{count}I", footer, count * 4) != tuple(offsets):
             raise FormatError("TAF optional index does not match frame offsets")
     return TAF(data[:first], tuple(frames), footer, tuple(offsets))
+
+
+def _taf_frame(animation: TAF, index: int) -> tuple[bytes, int, int, bytes]:
+    if not isinstance(index, int) or not 0 <= index < len(animation.frames):
+        raise FormatError("TAF frame index is outside the animation")
+    frame = animation.frames[index]
+    width, height = struct.unpack_from("<HH", frame, 2)
+    expected = pixel_size(width, height, empty=True)
+    pixels = decode_rle(frame[15:], expected) if expected else b""
+    return frame, width, height, pixels
+
+
+def taf_frame_to_ppm(data: bytes, index: int) -> bytes:
+    """Export a nonempty TAF frame; the 0x0 sentinel stays raw metadata."""
+    _, width, height, pixels = _taf_frame(parse_taf(data), index)
+    if width == 0 or height == 0:
+        raise FormatError("Empty TAF sentinel frames have no image; preserve their raw bytes")
+    return _rgb565_to_ppm(width, height, pixels)
+
+
+def replace_taf_frame(template: bytes, index: int, pixels: bytes) -> bytes:
+    """Replace RGB565 pixels, preserving dimensions and all opaque metadata.
+
+    An unchanged decoded frame returns the original file, including its
+    noncanonical compression. Changed stream sizes relocate every absolute
+    link/payload offset and the optional final frame index. Trailer table 1
+    (read by guest 0x43f477) is retained verbatim.
+    """
+    animation = parse_taf(template)
+    frame, width, height, original_pixels = _taf_frame(animation, index)
+    if len(pixels) != len(original_pixels):
+        raise FormatError("TAF replacement pixel count differs from template dimensions")
+    if pixels == original_pixels:
+        return template
+    if width == 0 or height == 0:
+        raise FormatError("Empty TAF sentinel frames cannot be edited")
+
+    count = len(animation.frames)
+    actual_tables = len(animation.footer) // (count * 4)
+    if animation.table_count not in (1, 2) or animation.table_count != actual_tables:
+        raise FormatError("TAF trailer table count does not match its header; edits are unverified")
+    replacement = frame[:15] + encode_rle(pixels)
+    result, offsets = bytearray(animation.prefix), []
+    for i, source in enumerate(animation.frames):
+        moved = bytearray(replacement if i == index else source)
+        start = len(result)
+        offsets.append(start)
+        # The shipped BUTCH.TAF sentinel has only 14 bytes, but its two
+        # offsets point to start+15; do not create the absent padding byte.
+        empty = struct.unpack_from("<HH", moved, 2) == (0, 0)
+        end = start + 15 if empty else start + len(moved)
+        if end > 0xFFFFFFFF or start + 15 > 0xFFFFFFFF:
+            raise FormatError("TAF frame offsets exceed their 32-bit fields")
+        struct.pack_into("<II", moved, 6, end, start + 15)
+        result.extend(moved)
+    result.extend(animation.footer[:count * 4])
+    if actual_tables == 2:
+        result.extend(struct.pack(f"<{count}I", *offsets))
+    if len(result) > 0xFFFFFFFF:
+        raise FormatError("TAF exceeds its 32-bit file-position capacity")
+    packed = bytes(result)
+    parse_taf(packed)
+    return packed
+
+
+def ppm_to_taf(ppm: bytes, template: bytes, index: int) -> bytes:
+    """Import a same-dimension nonempty frame into a complete TAF template."""
+    _, frame_width, frame_height, _ = _taf_frame(parse_taf(template), index)
+    if frame_width == 0 or frame_height == 0:
+        raise FormatError("Empty TAF sentinel frames have no image; preserve their raw bytes")
+    width, height, rgb = parse_ppm(ppm)
+    if (width, height) != (frame_width, frame_height):
+        raise FormatError("Dimension changes require engine/layout analysis; keep template dimensions")
+    return replace_taf_frame(template, index, _rgb_to_rgb565(rgb))
 
 
 def inspect(data: bytes) -> dict:
@@ -291,7 +394,7 @@ def inspect(data: bytes) -> dict:
                       rgb565_sha256=digest(image.pixels))
     elif data[:4] == b"TAF\0":
         animation = parse_taf(data)
-        result.update(format="TAF", count=len(animation.frames),
+        result.update(format="TAF", count=len(animation.frames), table_count=animation.table_count,
                       entries=[{"index": i, "offset": o, "bytes": len(f),
                                 "width": struct.unpack_from("<H", f, 2)[0],
                                 "height": struct.unpack_from("<H", f, 4)[0]}
@@ -394,6 +497,15 @@ def main() -> int:
     command.add_argument("source", type=Path)
     command.add_argument("template", type=Path)
     command.add_argument("destination", type=Path)
+    command = sub.add_parser("export-taf", help="Export one nonempty TAF frame to binary PPM")
+    command.add_argument("source", type=Path)
+    command.add_argument("index", type=int, help="Zero-based frame index")
+    command.add_argument("destination", type=Path)
+    command = sub.add_parser("import-taf", help="Import same-sized PPM into a complete TAF template")
+    command.add_argument("source", type=Path)
+    command.add_argument("template", type=Path)
+    command.add_argument("index", type=int, help="Zero-based frame index")
+    command.add_argument("destination", type=Path)
     args = parser.parse_args()
     try:
         if args.command == "list":
@@ -409,6 +521,10 @@ def main() -> int:
             write_new(args.destination, tbf_to_ppm(args.source.read_bytes()))
         elif args.command == "import-tbf":
             write_new(args.destination, ppm_to_tbf(args.source.read_bytes(), args.template.read_bytes()))
+        elif args.command == "export-taf":
+            write_new(args.destination, taf_frame_to_ppm(args.source.read_bytes(), args.index))
+        elif args.command == "import-taf":
+            write_new(args.destination, ppm_to_taf(args.source.read_bytes(), args.template.read_bytes(), args.index))
         return 0
     except (FormatError, OSError, ValueError, KeyError, TypeError, struct.error) as error:
         print(f"Asset error: {error}", file=sys.stderr)
