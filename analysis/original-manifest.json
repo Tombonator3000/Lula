@@ -1,0 +1,746 @@
+{
+  "schema": 1,
+  "root": "original/app",
+  "files": [
+    {
+      "path": "ADDGPX.TGP",
+      "size": 2708594,
+      "sha256": "3dae18bcdd43a662b230ff27252c6b3ae54f17a7a1453c346ae77b6884da31df"
+    },
+    {
+      "path": "CDROM.LOC",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "DATA/ANI/ABTL_ICO.TAF",
+      "size": 51729,
+      "sha256": "d20247436a9214fb1e2e9e3393c153ea060a6d13ccd36e8093b8152a1e2b94ea"
+    },
+    {
+      "path": "DATA/ANI/BARLEUTE.TAF",
+      "size": 186565,
+      "sha256": "f23269943e17fe98626c237614e427b5510875ea706cdb58a616a01216b4bb58"
+    },
+    {
+      "path": "DATA/ANI/BAUTEN.TAF",
+      "size": 141875,
+      "sha256": "cd483b5848e518be9936f9e077d1c290ef48c8c851aee86fbba0da7ebb824bb4"
+    },
+    {
+      "path": "DATA/ANI/BIRD1.TAF",
+      "size": 22461,
+      "sha256": "37ffc1a2ff176e0c826b347d7d0817a46f2fa227c6ff7cc5c41483c8cadb7be8"
+    },
+    {
+      "path": "DATA/ANI/BLASE.TAF",
+      "size": 3846,
+      "sha256": "8992076b9ce92955b6c0b97adb273d567bc94095942107d4fb14a781a1811e65"
+    },
+    {
+      "path": "DATA/ANI/BUTCH.TAF",
+      "size": 269130,
+      "sha256": "119d5ec91cf106c69d498cbe913241255cc49c499adf56c32f31247d9117a7b5"
+    },
+    {
+      "path": "DATA/ANI/CAST_MCA.TAF",
+      "size": 177121,
+      "sha256": "5a034205c9284f75eaa2f69b9dbebf5da8833792b76e837bd33c846251f1bb50"
+    },
+    {
+      "path": "DATA/ANI/CAST_VIB.TAF",
+      "size": 404473,
+      "sha256": "3dd0d4a57e603f0f74031d65708e985e6c6938f56dadc551a2b7ce3d60faf8b7"
+    },
+    {
+      "path": "DATA/ANI/CAST_WCA.TAF",
+      "size": 185727,
+      "sha256": "d0602ed91929c542b4fe9dba0a6ff74618c2c1134abe69cca53cd4387c6c67e5"
+    },
+    {
+      "path": "DATA/ANI/CA_THERM.TAF",
+      "size": 107509,
+      "sha256": "6d3a183353639abdce3d40957bb43f5a68fa00cde8f74196c14e1e53d8aa0047"
+    },
+    {
+      "path": "DATA/ANI/CHICKEN.TAF",
+      "size": 61645,
+      "sha256": "44711acb922f02cc6498d3f187184716221cfb14546c38a7b1c88d1a66071d86"
+    },
+    {
+      "path": "DATA/ANI/CITIES.TAF",
+      "size": 1701390,
+      "sha256": "76943f9a854b8a691f45b2477e013b8657fd894c6b5fd61a473af5c2ca9b16fe"
+    },
+    {
+      "path": "DATA/ANI/COPY_FLM.TAF",
+      "size": 612320,
+      "sha256": "b100f14851c42b6c41aa23de63cf1d8782f08ae5960a2f2f0ba187da9475b340"
+    },
+    {
+      "path": "DATA/ANI/COPY_RAT.TAF",
+      "size": 174307,
+      "sha256": "aa5e7f40dea513c378ec691ca5c225e3bc2ff5a8c06c48b246c7a51dd32e1db2"
+    },
+    {
+      "path": "DATA/ANI/CUT_FLM1.TAF",
+      "size": 131883,
+      "sha256": "46ff31655d37f4e70a3b7a8f4ec167e3bf470ba8883cb20523e637f080cac35f"
+    },
+    {
+      "path": "DATA/ANI/CUT_FLM2.TAF",
+      "size": 186235,
+      "sha256": "6fa36dd033b2c18ce2ca13103d90d2896b197b869761e99ca6eb693b3b8d9d87"
+    },
+    {
+      "path": "DATA/ANI/CUT_FLM3.TAF",
+      "size": 270641,
+      "sha256": "44b9a6321c24810a97fa4ef6faf3b15d3651deaa972d4221fbefd04ee3a20163"
+    },
+    {
+      "path": "DATA/ANI/CUT_FLM4.TAF",
+      "size": 281269,
+      "sha256": "ef2d2204d1cd17ef96a2fc546ae9947689a35d47bd50dedddd0fe6092a1b61b9"
+    },
+    {
+      "path": "DATA/ANI/DET_ANI.TAF",
+      "size": 170449,
+      "sha256": "d9a5b44d2a82f387ea63799e16efb37deb46d77ced7592b9df597ccfbc9d1b6c"
+    },
+    {
+      "path": "DATA/ANI/DOWN_ICO.TAF",
+      "size": 141770,
+      "sha256": "56527293cb9af10dec1b5024f415890317d7640eaa785edc6bdee852447d82a5"
+    },
+    {
+      "path": "DATA/ANI/FADKREUZ.TAF",
+      "size": 2334,
+      "sha256": "596967ebf2c4380bbbdd29a2b01b8d13086469fd89ad7f989dfbf7279cc0ef10"
+    },
+    {
+      "path": "DATA/ANI/FBI_CAR.TAF",
+      "size": 11364,
+      "sha256": "76dbec7629b3ca53c4b783a45bf6e24bc33170a2278c0edeb7fe7679410ebac8"
+    },
+    {
+      "path": "DATA/ANI/FILMPLAN.TAF",
+      "size": 352708,
+      "sha256": "68df67efce6af1b064a161f576f905ce12a678cb091d71a77f60963fe1824204"
+    },
+    {
+      "path": "DATA/ANI/FOTOS1.TAF",
+      "size": 15386,
+      "sha256": "8742955bedd255550b5239d0c9a4d252340e64d953aff49cfc110ec81cccf629"
+    },
+    {
+      "path": "DATA/ANI/FREIZEIT.TAF",
+      "size": 1579993,
+      "sha256": "263902438d0375595a0e0103e6a994c91f8f305d04c7fb8e00b72426084d60f3"
+    },
+    {
+      "path": "DATA/ANI/GIRL_FLM.TAF",
+      "size": 63122,
+      "sha256": "2df74ca39f1914c604430668aa2d0cbeb12c0a3ef009e6dc99802d75b784518c"
+    },
+    {
+      "path": "DATA/ANI/HAND_ANI.TAF",
+      "size": 41611,
+      "sha256": "fdfaf3118ad6212501bd9149a90782ed5a89c80751c8085d3b70fb9b73bf4b23"
+    },
+    {
+      "path": "DATA/ANI/ICONS.TAF",
+      "size": 44886,
+      "sha256": "e635920c9b3cd230c102e4d0cace0b52304461c7022da877c927c97c57acf8ab"
+    },
+    {
+      "path": "DATA/ANI/KLOSPRIT.TAF",
+      "size": 28466,
+      "sha256": "2348ab17060b36351146a49145c2e46de773cd5c3ff7edf50a5246ea16f143c8"
+    },
+    {
+      "path": "DATA/ANI/LAG_FLM.TAF",
+      "size": 164453,
+      "sha256": "9c674423b805d11c59ae9bab9123ec9ca5364d096e87fb6c8a57482f91584343"
+    },
+    {
+      "path": "DATA/ANI/LULA1.TAF",
+      "size": 78700,
+      "sha256": "b6dfe6e334a904650c56c667e64fd9cc445a76ab5e746b6e7472447cc0217f61"
+    },
+    {
+      "path": "DATA/ANI/LULA_BAR.TAF",
+      "size": 71718,
+      "sha256": "9b488018cb5ffd35dd469e954b9edd4a27880c2b5c6ca76689f2062ba531e35b"
+    },
+    {
+      "path": "DATA/ANI/LULA_SCH.TAF",
+      "size": 436893,
+      "sha256": "3ff7e6e54fce6b068b6833b67ad4b9955c572b10180869eccd316cadbadbc762"
+    },
+    {
+      "path": "DATA/ANI/LULA_ZIM.TAF",
+      "size": 275853,
+      "sha256": "5f8db2e02a00e6d940bc4bf79bcd88e07515d3089f1355d754994a52f72ac867"
+    },
+    {
+      "path": "DATA/ANI/Lula_ani.TAF",
+      "size": 639090,
+      "sha256": "a3491055635ab31c2361258058ee664d3968c36524e4937a5c8df12429837bcd"
+    },
+    {
+      "path": "DATA/ANI/MAKL_ANI.TAF",
+      "size": 65966,
+      "sha256": "008582e138fb554ecbb541112d98f5db79c8fa2f2a5c0fba946b473c9d52e51c"
+    },
+    {
+      "path": "DATA/ANI/MAKL_ROO.TAF",
+      "size": 184892,
+      "sha256": "1defadeb0cfd15b7cf9bd7f6a88c4c2080cf373a090d1745c1672f15c2a4a323"
+    },
+    {
+      "path": "DATA/ANI/MAN_ANI.TAF",
+      "size": 169467,
+      "sha256": "7af72d98de1b385a7afbe7fe8c0bb34fe753cd207206e936544e1a90837da767"
+    },
+    {
+      "path": "DATA/ANI/MEN_TIME.TAF",
+      "size": 34339,
+      "sha256": "08790ff5f442444505c0de32334f66aa42654941c8e942b62146da8b1557dfdb"
+    },
+    {
+      "path": "DATA/ANI/MKL3_MEN.TAF",
+      "size": 105591,
+      "sha256": "1b4ba3b3e9dd72c01b8de74447790052ba842bcee2d5499916be33e00771914a"
+    },
+    {
+      "path": "DATA/ANI/MOT_ANI.TAF",
+      "size": 171099,
+      "sha256": "fc19c84a3bff705ff74b87f383743a17fa3d0548b24b17c54c535c9644ab4c8e"
+    },
+    {
+      "path": "DATA/ANI/OFFICE3.TAF",
+      "size": 203480,
+      "sha256": "a87213bf74f576f35a8120bf5d17131b342ed67c9d0ad043ce860a37160f9025"
+    },
+    {
+      "path": "DATA/ANI/PERSKART.TAF",
+      "size": 222013,
+      "sha256": "aaca8b4d4d5fccd340a5b4a69529013163b0a6d773e4930b02b1d1fd3c437857"
+    },
+    {
+      "path": "DATA/ANI/PFND_ITM.TAF",
+      "size": 20124,
+      "sha256": "ef7d385a8c07bb3945a83580a77e6cb2e13e3e79712a3de81cadbdb4e08ac9c2"
+    },
+    {
+      "path": "DATA/ANI/PISSED.TAF",
+      "size": 456612,
+      "sha256": "6f57fc77bd32f2db6a98005de956ad02c7abdeebc29c3fe07c0d770054fdb32a"
+    },
+    {
+      "path": "DATA/ANI/REQUISIT.TAF",
+      "size": 922183,
+      "sha256": "17217ea42028d14fed79411d76970ad9f63f1b287f1ad2d245bbd18602e971d4"
+    },
+    {
+      "path": "DATA/ANI/REZ_ANI.TAF",
+      "size": 264263,
+      "sha256": "36890881a753e5ecbb10366b1a50a853c0130586454f90d7158aa56857a9da3c"
+    },
+    {
+      "path": "DATA/ANI/REZ_DET.TAF",
+      "size": 284055,
+      "sha256": "6a3f8c522b132243aa680981041cdae5d4aee88485549108c2f0684564e78787"
+    },
+    {
+      "path": "DATA/ANI/SAD_EYE.TAF",
+      "size": 11645,
+      "sha256": "fc622778a0e15f31fd48c8f4363ee8ec8b9471575557bcd5ce6a713a4640cc9e"
+    },
+    {
+      "path": "DATA/ANI/SEX_ST2.TAF",
+      "size": 202657,
+      "sha256": "374c4beeb3b6d5300da22b5829b777de47a759478f0b87a424b768ed40d7d6bc"
+    },
+    {
+      "path": "DATA/ANI/SHOP1_~1.TAF",
+      "size": 274811,
+      "sha256": "beadb9e9bd651328b3884016e076d4484157690c54174d714ddbb7c2f61116d9"
+    },
+    {
+      "path": "DATA/ANI/SHP_PICS.TAF",
+      "size": 47353,
+      "sha256": "c1f012df537bffcf146480e13d7e3445a61276571a486b0c588318ce95a9e3bb"
+    },
+    {
+      "path": "DATA/ANI/ST3_SHOP.TAF",
+      "size": 47353,
+      "sha256": "8a35110135ac8e1218bfbd1f12a5320c22cef8f211c47473e749735bd0e80bac"
+    },
+    {
+      "path": "DATA/ANI/STORYFUC.TAF",
+      "size": 277919,
+      "sha256": "0796ccdb1d7253c8c47889f9972b866d4d3d0a5b144169d31ea14cee28321c6e"
+    },
+    {
+      "path": "DATA/ANI/STUD_ANI.TAF",
+      "size": 625616,
+      "sha256": "f4d2ca2bdbc26a990139a5e2852f403e0810f1e359d87b7b31bbc8d0abbe0e17"
+    },
+    {
+      "path": "DATA/ANI/Sekr_ani.TAF",
+      "size": 336396,
+      "sha256": "eefd3fd0c6d1b70bda883fb1dabd761b380888258cd8f9e51d954b530de6c484"
+    },
+    {
+      "path": "DATA/ANI/TON_FLM.TAF",
+      "size": 379039,
+      "sha256": "77c184362647c515fe22c128442ee31b20d3f0c93f77fbceaafe5a5a86bd9af9"
+    },
+    {
+      "path": "DATA/ANI/TON_MUS.TAF",
+      "size": 848856,
+      "sha256": "d9802d207d26d13fb9ce106a06ed1c0cb06802cbe2090a307c1abefd26983a5a"
+    },
+    {
+      "path": "DATA/ANI/TON_SPK.TAF",
+      "size": 151802,
+      "sha256": "cc31ddd6ec1e865877027e19a83de2396dcb773164f6c9e9ab84c6d1a77b43a1"
+    },
+    {
+      "path": "DATA/ANI/VERL_ANI.TAF",
+      "size": 342807,
+      "sha256": "2f44889044e0c3b70ef49f068e4210d378ca5c72a33d7d8659d330c748c213b7"
+    },
+    {
+      "path": "DATA/ANI/VER_ANI1.TAF",
+      "size": 563101,
+      "sha256": "1d5612956fc1708e9fd6602d4dabc94f423ee0e5e95d3a26c8fe9664501e2973"
+    },
+    {
+      "path": "DATA/ANI/VER_ANI2.TAF",
+      "size": 799125,
+      "sha256": "2027008868eb4294e9a3f25bb8237f40de29e226804d40c347cceceb7488cd4c"
+    },
+    {
+      "path": "DATA/ANI/VER_ICON.TAF",
+      "size": 14732,
+      "sha256": "da92fb7f982ba75fd1109e2212040985bd0d2ff684cf8767c0c5ea8a3b2a287d"
+    },
+    {
+      "path": "DATA/ANI/VIDEO.TAF",
+      "size": 349415,
+      "sha256": "48970437d611be86b9a04fad536045dce35c87a1a001bca8f65fd83a4ed9baa7"
+    },
+    {
+      "path": "DATA/ANI/WERBUNG.TAF",
+      "size": 473002,
+      "sha256": "46b84422c598769a11212d2ff2ebadebfb85f8830950d6e00208520e0f2cbffa"
+    },
+    {
+      "path": "DATA/ANI/WRF_ANI.TAF",
+      "size": 473300,
+      "sha256": "e3c50819a47c0eb7796fa500d2feb51f0232d52e72c1ddde92c206bb8724554c"
+    },
+    {
+      "path": "DATA/ANI/WUERFEL.TAF",
+      "size": 21091,
+      "sha256": "eea796c245f5d09083b8be00c4cf128338134cdc4bdc72171850f680f338b9c4"
+    },
+    {
+      "path": "DATA/ANI/ZIM_ANI1.TAF",
+      "size": 163470,
+      "sha256": "c97c64819d3c1be9e282a21cbdd539079baf48452d06e0e0565c257998a2543f"
+    },
+    {
+      "path": "DATA/ANI/ZIM_DET.TAF",
+      "size": 43390,
+      "sha256": "4fb677b23c3a819b1584d9bf4597d8a358650c5458080a77bbc7491add8d3296"
+    },
+    {
+      "path": "DATA/ANI/cast_det.TAF",
+      "size": 96956,
+      "sha256": "3b6071eca203086850b28d372694420b5b777aec3dc3a93e63e55cc74842803f"
+    },
+    {
+      "path": "DATA/ANI/cty_men.TAF",
+      "size": 136280,
+      "sha256": "2fd70c2ae74efe278478fa21c936369c73f2ff6c34e0f7db0b698731727a08c1"
+    },
+    {
+      "path": "DATA/ANI/lage_st3.TAF",
+      "size": 197822,
+      "sha256": "fc91be34c1a2cb227bacf47995a4a0fff5eae489ce913bd8b1430ec2829089ca"
+    },
+    {
+      "path": "DATA/ANI/map3_ico.TAF",
+      "size": 187808,
+      "sha256": "ac20b783c21b2dbd4eba7b9f8545d662de066ac5af2ea45c67f0cd189e1b93ca"
+    },
+    {
+      "path": "DATA/BACK/DOWN1.TBF",
+      "size": 98864,
+      "sha256": "f8971d0afb378027db5f7500804fff76bfd912371f0016909c6454b4bc9b4b06"
+    },
+    {
+      "path": "DATA/BACK/NASA02.TBF",
+      "size": 82862,
+      "sha256": "73ac21b365e75f9f357f47ce0d942b0833338a92cc401f0bb4ac6209f989882c"
+    },
+    {
+      "path": "DATA/BACK/PFOERTNE.TBF",
+      "size": 69546,
+      "sha256": "db5049fad30ded74d0163c5106211cdab57c75933db0900e97a468470f551586"
+    },
+    {
+      "path": "DATA/BACK/START.TBF",
+      "size": 2364,
+      "sha256": "fea045ec70f3ada6f3a6285edcc134761fae41c830cd86470a3d72511a745bb4"
+    },
+    {
+      "path": "DATA/BACK/S_PARCEL.TBF",
+      "size": 41194,
+      "sha256": "b4d2fadf347d36eb840f4573d3d2cfc9c6969002809ef4b40c03bfe3b58cdb96"
+    },
+    {
+      "path": "DATA/BACK/back.tgp",
+      "size": 25581278,
+      "sha256": "f325ad382fceddfb80baaeef67586fb127b7693ee5df24567f7fb3a27e1b86cc"
+    },
+    {
+      "path": "DATA/CURSOR/CURSOR.TAF",
+      "size": 11271,
+      "sha256": "2eaab365e916acd3f111419ac81f8dfe3103ff7f7cbbad89f9939befd244d54b"
+    },
+    {
+      "path": "DATA/DIALOG/DIA_BACK.TGP",
+      "size": 5882100,
+      "sha256": "14e446ac9644132ce41ed60fac2ec5de449df03c88dde43a37c0e766fcb10e65"
+    },
+    {
+      "path": "DATA/DIALOG/GEG_MAXI.TAF",
+      "size": 77383,
+      "sha256": "542cf980f79af0e6c86ed3a03639c53800dc8c581849cf316ddb526d08efb95e"
+    },
+    {
+      "path": "DATA/DIALOG/GEG_MINI.TAF",
+      "size": 26313,
+      "sha256": "171fa1f7a32f6f368bf692dbb1c34b95a59be6a5d7872ce297a9fa4d5dce9c66"
+    },
+    {
+      "path": "DATA/DIALOG/STD_BUT.TAF",
+      "size": 193045,
+      "sha256": "c243f18983668e4752aa55951082768e7243fd6666a54ad52a44d8762a7f1a9c"
+    },
+    {
+      "path": "DATA/DIALOG/STUD_DIA.TAF",
+      "size": 129736,
+      "sha256": "3e2c9b48d3a95d7763f2d8d1633fefda996bb3857a2904c11380ccf118168e5a"
+    },
+    {
+      "path": "DATA/PERSO/EQUIP.TAP",
+      "size": 37058,
+      "sha256": "408ce2dbcb5538bb1fad37bb71a269408fefe9812f4a2a5f02345742474582ce"
+    },
+    {
+      "path": "DATA/PERSO/HLP.DAT",
+      "size": 19902,
+      "sha256": "47fb4be7a72c67f3638b3698cf90045a47e2e7986b894dffa4582f45129b0992"
+    },
+    {
+      "path": "DATA/PERSO/PERSO.TAP",
+      "size": 216784,
+      "sha256": "d194a654fd620ff4cc5921e75bc80dcd77970c2385d0f59f7bedbff25468b12d"
+    },
+    {
+      "path": "DATA/PERSO/PORTRAIT.TGP",
+      "size": 4622734,
+      "sha256": "749500c92d6358b204993d7591643435af27f14bdb386dbd0e32f201e72236ce"
+    },
+    {
+      "path": "DATA/SOUND/ADDSND.TAP",
+      "size": 7109526,
+      "sha256": "a5d2b110df0eada26cdeb2fb9a00f6ab3e70257a876d26791cc7a3d93c9d9f0f"
+    },
+    {
+      "path": "DATA/SOUND/MUSIC.TAP",
+      "size": 200432490,
+      "sha256": "fa04c6225df1dbb5770bf9ef82bd0f6f5d07ff6dc716036e629c5ecca793f0ab"
+    },
+    {
+      "path": "DATA/SOUND/sound.tap",
+      "size": 8190354,
+      "sha256": "9526f73978f3edffa039447926e4e005f916e9b63cbc9f8c4a2266e2ccf0e046"
+    },
+    {
+      "path": "DATA/VIDEO/EMANZEN.CUT",
+      "size": 1645538,
+      "sha256": "beab79959bbc031e713858f6209221a72469c2047a8caf4b1523d4af88617eda"
+    },
+    {
+      "path": "DATA/VIDEO/ERPRES1.CUT",
+      "size": 2551550,
+      "sha256": "172cb650c8344123d16a9514d71c1b4f7336ceebf7827f9d456f9d6d5fbeb7ce"
+    },
+    {
+      "path": "DATA/VIDEO/Extro.cut",
+      "size": 30358644,
+      "sha256": "908519b888eeeeac2141a128b514100b5e60467a481bfca394a02376eff2c6ff"
+    },
+    {
+      "path": "DATA/VIDEO/FBI.CUT",
+      "size": 2087638,
+      "sha256": "e11faee1d5cdde49cb3d9f5dfa9af4239f56f4fd3a6913e7ee67d8101932d9d2"
+    },
+    {
+      "path": "DATA/VIDEO/FOTO02.CUT",
+      "size": 3385276,
+      "sha256": "c9b40956fa05ac7173c0c1af438bdcf0e4ac2b2e3b39e09b43c97eb2ee6cde40"
+    },
+    {
+      "path": "DATA/VIDEO/FOTO1.CUT",
+      "size": 4953658,
+      "sha256": "829b5ad92deead324e4df06ff0c5bee6d079fb8c52e4a38a8f9ea382e3190b1b"
+    },
+    {
+      "path": "DATA/VIDEO/HOTEL.CUT",
+      "size": 1255574,
+      "sha256": "b79dbccce0791ccd9f4e566995293c3d445111509a3b9d8c9c9512786e2ef3b0"
+    },
+    {
+      "path": "DATA/VIDEO/INT01.cut",
+      "size": 22332002,
+      "sha256": "f1570f4fededdfa06a3519c88680a78b5e0eeb08428d677dd84080f5c8963ac3"
+    },
+    {
+      "path": "DATA/VIDEO/INTRO.CUT",
+      "size": 68151826,
+      "sha256": "b5855441e884a01f520e36acf822d6ab89f5c3505bf5474bf75c65ff660853b7"
+    },
+    {
+      "path": "DATA/VIDEO/KLO1.CUT",
+      "size": 528952,
+      "sha256": "b42908939847d0df57bab25441951ea745352f2773b6f0aa57d62d982521b927"
+    },
+    {
+      "path": "DATA/VIDEO/SABOTAG1.CUT",
+      "size": 1146448,
+      "sha256": "08b8ae298b4904ad382b5d2c5012be83fc926cf3413ebb217ac0d8479ebec689"
+    },
+    {
+      "path": "DATA/VIDEO/SABOTAG2.CUT",
+      "size": 2667344,
+      "sha256": "5e01dc5bdb33076fb89e95fea5b7433c6b74693d9079f3dfbc6ef6314d1af442"
+    },
+    {
+      "path": "DATA/VIDEO/SADO1.CUT",
+      "size": 2896588,
+      "sha256": "0683da4296095a388ede32c0460c0c729234459f7e9188c8dcb9d7721d697375"
+    },
+    {
+      "path": "DATA/VIDEO/SCANDAL.CUT",
+      "size": 434210,
+      "sha256": "9864a95b51f6ccac47ba76a5f8be0adf67898b9829cf966b30bf71e617211791"
+    },
+    {
+      "path": "DATA/VIDEO/SCHMUTZ.CUT",
+      "size": 2275180,
+      "sha256": "8399c4001b911423bc2d897d4fd8288bd1edc226a610d7c5f2f02cd4a930c4de"
+    },
+    {
+      "path": "DATA/VIDEO/SMNEWS1.CUT",
+      "size": 10027314,
+      "sha256": "eb01aa9466efdb25eaea32d9131404489d518bd254c8da21cb89dd35ce77024c"
+    },
+    {
+      "path": "DATA/VIDEO/SMNEWS2.CUT",
+      "size": 11696888,
+      "sha256": "40b53afc83f9d76664612a041e0d6a94af6bf10bd5f3072edbf1a5ddbd35ce14"
+    },
+    {
+      "path": "DATA/VIDEO/SMNEWS3.CUT",
+      "size": 8703708,
+      "sha256": "9a07ff8b1db8ec2e4ac8b1a0c6c70dfc0019c958524b82bd97ca040a3949875f"
+    },
+    {
+      "path": "DATA/VIDEO/SMNEWS4.CUT",
+      "size": 11285588,
+      "sha256": "f7ae9b835854c19d098f8b24638a662b128ea2a810988d67439920e67d63ed58"
+    },
+    {
+      "path": "DATA/VIDEO/SMNEWS5.CUT",
+      "size": 10817726,
+      "sha256": "777abbfc44f913f8fe92f5f5b0f2ec8b3574ea43c275f9a3bb8ba21b920dccb0"
+    },
+    {
+      "path": "DATA/VIDEO/SMNEWS6.CUT",
+      "size": 6676774,
+      "sha256": "f5d7a791aed1ee527c85473086687e9feec658a92b97e73ee87dd28ffb98baf9"
+    },
+    {
+      "path": "DATA/VIDEO/SMNEWS7.CUT",
+      "size": 5740270,
+      "sha256": "ac3306579f6f2263fce7f355ab4b645eab757f82daaa1d3f5dfe2420aed89ca4"
+    },
+    {
+      "path": "DATA/VIDEO/SMNEWS8A.CUT",
+      "size": 5769968,
+      "sha256": "db38ca72d5974c259c83fc24ffc9469cbbab866af9f506047962811337a51161"
+    },
+    {
+      "path": "DATA/VIDEO/SMNEWS8B.CUT",
+      "size": 11990048,
+      "sha256": "581ae0e40398d6377e62d9952d9ebe1f47834945ee5f101a3cf681bdb100e119"
+    },
+    {
+      "path": "DATA/VIDEO/ST2_HELP.CUT",
+      "size": 8676516,
+      "sha256": "fbc88de32af98a6dfa7f2e215eaa718dd739f42ecd1d2ee9a59f30ccdfbb5fa6"
+    },
+    {
+      "path": "DATA/VIDEO/ST2_INIT.cut",
+      "size": 27391178,
+      "sha256": "57b1712d955558bac1c433557c2eb391ab6db0d227c71af3df85582b0514d11c"
+    },
+    {
+      "path": "DATA/VIDEO/St3_01.cut",
+      "size": 24523356,
+      "sha256": "ce5e152c89554a214d74f05624bf53f54d5499cb8c3d8a303886f413bae28cb4"
+    },
+    {
+      "path": "DATA/VIDEO/VIDEO1.CUT",
+      "size": 3796974,
+      "sha256": "c11001db557a6dffcb031f8020dddd5663ee1b9cc1d7793a66421bc6220a8664"
+    },
+    {
+      "path": "DATA/VIDEO/WR_AGHLP.CUT",
+      "size": 12858062,
+      "sha256": "15c3cbb006dfb26208714d8ea546aff70c1412e7f33ae8b96055ef08b67e7640"
+    },
+    {
+      "path": "DATA/VIDEO/WR_BAHLP.cut",
+      "size": 19629694,
+      "sha256": "db64a3b497fd9580b2c625c36a8cfc64e8bf6f7d47a7f6c7fc57edda016e0fbf"
+    },
+    {
+      "path": "DATA/VIDEO/WR_CHHLP.CUT",
+      "size": 7040690,
+      "sha256": "35fdbcb875b85203c6ec2e113a602c5bf48ee08073bb4162298c1076abc80e20"
+    },
+    {
+      "path": "DATA/VIDEO/WR_CTHLP.CUT",
+      "size": 8571122,
+      "sha256": "62847cf84cb6c13aec682d029b6120d8d2fabcfb30f0e03eefc9ce82964e6390"
+    },
+    {
+      "path": "DATA/VIDEO/WR_FHELP.CUT",
+      "size": 13485828,
+      "sha256": "fdc9011e0a3424380d534b514e42cfbef2926e214e8dc71de531fbc9251929fe"
+    },
+    {
+      "path": "DATA/VIDEO/WR_HDHLP.CUT",
+      "size": 11246300,
+      "sha256": "d36e8ed029b4709c9db0247df3d584a3a1b84f262592022ca4d0725136191c68"
+    },
+    {
+      "path": "DATA/VIDEO/WR_INTRO.CUT",
+      "size": 11938920,
+      "sha256": "de8479dc032b1b1c36eb411e7083ec1a039e0a0be254a078286f7a717b77031b"
+    },
+    {
+      "path": "DATA/VIDEO/WR_KNAST.CUT",
+      "size": 5194444,
+      "sha256": "5a21b1b0f38e6a00a7dbbc19b9a89cb9abf300d1155526c3403daf6ebe114223"
+    },
+    {
+      "path": "DATA/VIDEO/WR_MOHLP.CUT",
+      "size": 11420600,
+      "sha256": "9ad1a4930d1f44fa09a5656ae757fb7753757c8d1dd359984ff9ca98650ca2ca"
+    },
+    {
+      "path": "DATA/VIDEO/WR_MZHLP.CUT",
+      "size": 14506544,
+      "sha256": "5d87378f6467862ce8dc991f893512ae93b8647b04a1e57bed832dbc5082deb7"
+    },
+    {
+      "path": "DATA/VIDEO/WR_PFHLP.CUT",
+      "size": 9457110,
+      "sha256": "ee0a03f9575f5994a21dad60b7c35b85021cd0fee9b3c588378a956999e18690"
+    },
+    {
+      "path": "DATA/VIDEO/WR_RZHLP.CUT",
+      "size": 10460630,
+      "sha256": "21cfe86cb0761e1762387d7dedf3a404309c6eb66e525aca63420fe541e67d6e"
+    },
+    {
+      "path": "DATA/VIDEO/WR_SXHLP.CUT",
+      "size": 7576010,
+      "sha256": "7926ee36bec419a584fba0fe97deb6a935c0076e924027fa001dbc235df2da9b"
+    },
+    {
+      "path": "DATA/VIDEO/WR_VIHLP.CUT",
+      "size": 7494116,
+      "sha256": "324acd50e3a2ae84e2514672e201997f77beff918bcc9379d610a0a15cfac5fe"
+    },
+    {
+      "path": "DATA/VIDEO/Winner.cut",
+      "size": 4600650,
+      "sha256": "16718a76a6e5016fec4deede4b77c52c001a4ba29137fceb9265a02b3f34297d"
+    },
+    {
+      "path": "INSTALL.BMP",
+      "size": 335702,
+      "sha256": "703a4cab4c67e10b177231849c03e21d63abd2fee287c1fb99d5af554f68a123"
+    },
+    {
+      "path": "README.TXT",
+      "size": 9891,
+      "sha256": "c5c1adac37ffde20a9e40c1c7380fcf7f0d8875a1d13ab66166fda6f05dbaf7c"
+    },
+    {
+      "path": "WET.DDF",
+      "size": 1364192,
+      "sha256": "81dd83bcbe2039b0a47ff7b83d6f31704c0ce1dee4d95869cd399658b6fa0771"
+    },
+    {
+      "path": "WET.EXE",
+      "size": 450048,
+      "sha256": "8c223b528b912dd141dbe8db272b96b15279dab4bb2c31115b86d3c53842cea9"
+    },
+    {
+      "path": "cnc-ddraw config.exe",
+      "size": 4915712,
+      "sha256": "e21131cca40be055b9cf728ed822474f2560793635fc323127b63ba9a838d5d6"
+    },
+    {
+      "path": "ddraw.dll",
+      "size": 415232,
+      "sha256": "a6ff7e4382244818f2f139df82e01415583f03dbebd7af60860b3343fa3dcf78"
+    },
+    {
+      "path": "ddraw.ini",
+      "size": 30577,
+      "sha256": "10e52a82ae2e1285658f2a200648d900104100d43f2fbb7009144f1ab82e584f"
+    }
+  ],
+  "directories": [
+    "DATA",
+    "DATA/ANI",
+    "DATA/BACK",
+    "DATA/CURSOR",
+    "DATA/DATA",
+    "DATA/DATA/DATABASE",
+    "DATA/DATA/SAVE",
+    "DATA/DIALOG",
+    "DATA/PERSO",
+    "DATA/SOUND",
+    "DATA/VIDEO"
+  ],
+  "file_count": 144,
+  "total_bytes": 731560960,
+  "source_archive": {
+    "name": "Lula - The Sexy Empire (Repack) v2.rar",
+    "size": 444028611,
+    "sha256": "5a15f6dbde75372c91e834add4073f100aa6c54a616809bb0e97f4c8671b4727"
+  }
+}
