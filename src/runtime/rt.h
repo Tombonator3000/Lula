@@ -42,6 +42,13 @@ const char *rt_thunk_name(uint32_t addr);
 uint32_t rt_guest_call(Cpu *c, uint32_t fn, int nargs, ...);
 uint32_t rt_guest_callv(Cpu *c, uint32_t fn, int nargs, const uint32_t *args);
 
+/* Every return from a Win32 call is a point where another guest thread
+ * waiting for the global lock may run, as a system call could cause a
+ * context switch on Windows. This keeps the 2 ms multimedia timer alive while
+ * the game polls PeekMessageA in a tight loop. */
+extern volatile int rt_gil_waiters;
+void rt_gil_yield(void);
+
 /* stdcall helpers for host implementations of imports */
 static inline uint32_t rt_arg(Cpu *c, int i) { return R32(c->esp + 4 + 4 * (uint32_t)i); }
 static inline uint32_t rt_ret_stdcall(Cpu *c, int nargs, uint32_t value)
@@ -49,6 +56,8 @@ static inline uint32_t rt_ret_stdcall(Cpu *c, int nargs, uint32_t value)
     uint32_t ra = R32(c->esp);
     c->eax = value;
     c->esp += 4 + 4 * (uint32_t)nargs;
+    if (__builtin_expect(rt_gil_waiters != 0, 0))
+        rt_gil_yield();
     return ra;
 }
 static inline uint32_t rt_ret_cdecl(Cpu *c, uint32_t value)
@@ -56,6 +65,8 @@ static inline uint32_t rt_ret_cdecl(Cpu *c, uint32_t value)
     uint32_t ra = R32(c->esp);
     c->eax = value;
     c->esp += 4;
+    if (__builtin_expect(rt_gil_waiters != 0, 0))
+        rt_gil_yield();
     return ra;
 }
 
