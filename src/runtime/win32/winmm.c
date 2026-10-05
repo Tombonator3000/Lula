@@ -30,6 +30,7 @@ static void *timer_main(void *arg)
     uint32_t tid;
     Cpu *c = rt_cpu_new_thread(&tid);
     rt_cpu_bind(c);
+    rt_gil_set_no_yield(1);
     struct timespec next;
     clock_gettime(CLOCK_MONOTONIC, &next);
     for (;;) {
@@ -143,9 +144,14 @@ WINAPI_FN(winmm, waveOutGetVolume)
     RET(2, MMSYSERR_NOERROR);
 }
 
+/* The options slider only changes the wave volume: apply it as a master
+ * gain on our own mix, never on the host mixer (winmm-timing.md 6.1). */
+void dsound_set_master_volume(uint32_t volume);
+
 WINAPI_FN(winmm, waveOutSetVolume)
 {
     wave_volume = ARG(1);
+    dsound_set_master_volume(wave_volume);
     RET(2, MMSYSERR_NOERROR);
 }
 

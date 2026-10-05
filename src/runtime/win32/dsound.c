@@ -38,6 +38,18 @@ typedef struct Buffer {
 static Buffer *buffers[MAX_BUFFERS];
 static uint32_t vt_ds, vt_buf, ds_obj, ds_refs;
 static uint32_t primary_fmt[4] = {2, 44100, 16, 4};
+static float master_l = 1.0f, master_r = 1.0f;
+
+/* waveOutSetVolume: low word left, high word right, 0..0xFFFF. Windows
+ * treats the scale as perceptually linear; a square law approximates it. */
+void dsound_set_master_volume(uint32_t volume)
+{
+    float l = (float)(volume & 0xffff) / 65535.0f, r = (float)(volume >> 16) / 65535.0f;
+    plat_audio_lock();
+    master_l = l * l;
+    master_r = r * r;
+    plat_audio_unlock();
+}
 
 static void update_gain(Buffer *b)
 {
@@ -98,7 +110,7 @@ static void mix(int16_t *out, int frames, void *user)
         }
     }
     for (int f = 0; f < frames * 2; f++) {
-        float v = acc[f];
+        float v = acc[f] * (f & 1 ? master_r : master_l);
         out[f] = (int16_t)(v > 32767.0f ? 32767 : v < -32768.0f ? -32768 : (int)v);
     }
 }

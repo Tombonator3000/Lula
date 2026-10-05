@@ -13,6 +13,12 @@ static pthread_cond_t gil_cond = PTHREAD_COND_INITIALIZER;
 static unsigned long gil_next_ticket, gil_serving;
 static __thread Cpu *cur_cpu;
 static __thread int gil_depth;
+static __thread int gil_no_yield;
+
+/* The multimedia timer thread runs each callback to completion, like the
+ * time-critical timer thread on a single-CPU Win9x machine (winmm-timing.md
+ * R2): it never hands the lock over at back-edges or API returns. */
+void rt_gil_set_no_yield(int on) { gil_no_yield = on; }
 
 void rt_gil_init(void) {}
 
@@ -42,7 +48,7 @@ void rt_gil_release(void)
 /* Called from generated code at loop back-edges when someone is waiting. */
 void rt_gil_yield(void)
 {
-    if (gil_depth != 1)
+    if (gil_depth != 1 || gil_no_yield)
         return;
     rt_gil_release();
     rt_gil_acquire();

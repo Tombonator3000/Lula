@@ -76,6 +76,7 @@ void rt_gil_init(void);
 void rt_gil_acquire(void);
 void rt_gil_release(void);
 void rt_gil_yield(void);
+void rt_gil_set_no_yield(int on);
 Cpu *rt_cpu_current(void);
 Cpu *rt_cpu_new_thread(uint32_t *thread_id);
 void rt_cpu_bind(Cpu *c);
