@@ -26,3 +26,25 @@ static inline uint32_t rt_return(Cpu *c)
     c->esp += 4;
     return ra;
 }
+
+/* 'ret n' for stdcall-style callees that also pop n bytes of arguments. */
+static inline uint32_t rt_return_pop(Cpu *c, uint32_t n)
+{
+    uint32_t ra = R32(c->esp);
+    c->esp += 4 + n;
+    return ra;
+}
+
+/* Call another guest function the way the original 'call' did: push the
+ * original return address (ret_addr, the address after the call
+ * instruction) and run the callee. Register arguments are set in c before
+ * the call; stack arguments are pushed with PUSH32 first. A callee that
+ * returns somewhere else (longjmp-style) is reported, as reconstructed code
+ * has no label to continue at. */
+static inline void rt_call_guest(Cpu *c, GuestFn fn, uint32_t ret_addr)
+{
+    PUSH32(ret_addr);
+    uint32_t ra = fn(c);
+    if (ra != ret_addr)
+        rt_trap(c, ret_addr, "reconstructed caller: callee returned to an unexpected address");
+}

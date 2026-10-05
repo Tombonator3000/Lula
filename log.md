@@ -63,3 +63,4 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
 - Rettet krasj ved `ExitProcess`: SDL ble avsluttet fra spilltråden. Nå ber spilltråden hovedtråden om å avslutte.
 - Inputskript kan nå bruke F1-F12 og `type ORD`. Ny ende-til-ende-test lagrer via F2 og laster fra hovedmenyen. Alle 6 testene grønne.
 - Ressurs- og spillkartspesifikasjonen (`docs/recomp/specs/resources-and-game-map.md`) er ferdig.
+- Brukeren ba om at ChatGPT hjelper til. Jeg kan ikke nå ChatGPT direkte, så oppgavene står i `docs/samarbeid-codex.md`: rekonstruksjon av ressursleserne (0x43f7c1, 0x442431, 0x43ebd3, 0x440041, 0x43e8eb) kontrollert med `lula-fncheck`, TAF-redigering og et valgfritt Windows-bygg. `reconstructed.h` har fått `rt_call_guest` og `rt_return_pop` for håndskrevet kode som kaller andre spillfunksjoner.
