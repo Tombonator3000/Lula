@@ -47,8 +47,10 @@ DirectDraw-flatene er 16-bit RGB565 i gjesteminnet, så spillets egne blittere v
 ## Kommandolinje og testkroker
 
 ```sh
-build/game/lula [--data DIR] [--save DIR] [--trace] [--verbose] -- [spillets argumenter]
+build/game/lula [--data DIR] [--save DIR] [--mods DIR] [--trace] [--verbose] -- [spillets argumenter]
 ```
+
+`--mods DIR` (eller `LULA_MODS`) peker på en katalog med samme oppbygning som spillmappen. Filer der leses før `original/app`.
 
 | Miljøvariabel | Virkning |
 |---|---|
@@ -60,11 +62,31 @@ build/game/lula [--data DIR] [--save DIR] [--trace] [--verbose] -- [spillets arg
 | `LULA_TEXT_AA=0` | Tekst uten kantutjevning, slik Windows 95 tegnet den. |
 | `LULA_LOG=0..3` | Loggnivå. |
 
+## Grafikkutskifting
+
+Endrede ressursfiler legges i en mod-katalog og brukes uten å røre originalen. Eksempel med hovedmenyens bilde, som er post 71 (640x480) i `DATA/DIALOG/DIA_BACK.TGP`:
+
+```sh
+mkdir -p build/mod-work local/mods/DATA/DIALOG
+python3 tools/assets.py unpack original/app/DATA/DIALOG/DIA_BACK.TGP build/mod-work/dia_back
+python3 tools/assets.py export-tbf build/mod-work/dia_back/0071.tbf build/mod-work/menu.ppm
+# rediger menu.ppm i et bildeprogram (behold 640x480), lagre som menu-ny.ppm
+python3 tools/assets.py import-tbf build/mod-work/menu-ny.ppm build/mod-work/dia_back/0071.tbf build/mod-work/0071-ny.tbf
+cp build/mod-work/0071-ny.tbf build/mod-work/dia_back/0071.tbf
+python3 tools/assets.py pack build/mod-work/dia_back local/mods/DATA/DIALOG/DIA_BACK.TGP
+build/game/lula --mods local/mods -- -novideo
+```
+
+Testen `tests/test_recompiled_game.py` gjør det samme automatisk med en grønn firkant og kontrollerer at nøyaktig de 4000 pikslene vises i menyen. Bildene må fortsatt ha samme størrelse som originalen; større grafikk krever endringer i spillkoden.
+
 ## Verifisert
 
 - Bygg med CMake, GCC 13 og SDL 2.30 på Ubuntu 24.04.
 - Hodeløs kjøring med `-novideo` følger samme rekkefølge av Win32- og DirectX-kall som originalen under Wine fram til hovedmenyen.
 - Hovedmenyen: alle 307 200 piksler sammenlignet i RGB565 mot Wine-referansen. Avvikene (3344 piksler) ligger bare i bokstavene på de fem knappene. Spillet ber om fonten "System Small", som ikke finnes. Runtimen bruker Liberation Sans Bold, Wine valgte en annen erstatning.
+- Første spillskjerm etter "New game": bare tekst med vertsfont og klokkeslettet avviker fra Wine-referansen. Spillklokken går like fort som i originalen (målt 4,1 mot 4,3 spillminutter per sekund over samme tidsrom, innenfor måleusikkerheten).
+- Grafikkutskifting via `--mods` (se over).
+- Automatiske ende-til-ende-tester: `python3 -m unittest tests.test_recompiled_game -v`.
 - Originalfilene er uendret (`python3 tools/project.py verify`).
 
 ## Ikke verifisert ennå

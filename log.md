@@ -25,3 +25,17 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
 - Første kjøring: spillet når hovedmenyen, men med forskjøvet bilde, svarte prikker og uten knapper. Årsak: capstone dropper F2-prefikset på `f2 a5` (`repnz movsd` i Watcoms memcpy ved 0x442be4). Rettet i `cfg.py` ved å lese prefiksbytene direkte. Fem steder var berørt.
 - Etter rettingen: hovedmenyen er identisk med Wine-referansen i alle piksler utenfor bokstavene på de fem knappene (3344 av 307 200 piksler avviker, alle i teksten).
 - `python3 tools/project.py verify`: PASS etter arbeidet.
+
+## 2026-10-05 17:00 UTC: første spillskjerm
+
+- Committet og pushet milepælen (`643b147`) til `claude/eager-ride-xckkd4`.
+- Skriptet klikk på "New game" (505,88) i den rekompilerte versjonen. Spillet går til byoversikten. Mot Wine-bildet `after_newgame_1.png` avviker 423 av 307 200 piksler, alle i teksten "F1-Help" (font) og i klokkeslettet på statuslinjen (spilltiden går i sanntid).
+
+## 2026-10-05 17:10 UTC: timer, tester og grafikkutskifting
+
+- Spesifikasjonene for KERNEL32 og USER32/GDI32 er ferdige (`docs/recomp/specs/`). Viktigste funn: spillogikken går på WM_TIMER (60 ms), lagring og lasting skjer i ekte Win32-dialoger, og museklikk må komme som WM_LBUTTONDBLCLK ved dobbeltklikk.
+- USER32: WM_TIMER følger nå Windows-semantikken (klar ved hver periode, forankret til SetTimer, tapte perioder slås sammen), dobbeltklikk syntetiseres, WM_ACTIVATEAPP sendes synkront, lukking av vinduet avslutter programmet. Spillklokken går nå like fort som i originalen.
+- KERNEL32: pseudohåndtak for stdout/stderr slik at Watcom-runtimens feilmeldinger kommer ut.
+- Startet en agent som lager dialogbehandleren (lagring, lasting, bank, lister, tekstfelt) og popupmenyen. Den eier `user32.c`, `gdi32.c`, `res.c` og nye `dialog.c` til den er ferdig.
+- La til `--mods DIR`: en katalog som leses før `original/app`. Testet med endret hovedmenybilde (post 71 i `DIA_BACK.TGP`): de 4000 grønne pikslene vises nøyaktig der de skal.
+- Ny test `tests/test_recompiled_game.py` (3 tester: hovedmeny mot originalens hash, New game, grafikk via mods). Alle går grønt.

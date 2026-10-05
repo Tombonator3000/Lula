@@ -1,8 +1,9 @@
 /* Guest path mapping.
  *
  * The game sees itself installed in C:\LULA. Reads look in the save overlay
- * first and then in the read-only game data (original/app); writes always go
- * to the overlay, so the original files are never modified. Lookups are
+ * first, then in the optional mod directory (replacement graphics and other
+ * assets), then in the read-only game data (original/app); writes always go
+ * to the save overlay, so neither the original files nor mods are modified. Lookups are
  * case-insensitive like on Windows. Any other drive letter (the CD-ROM) maps
  * to the same tree, because the repack keeps the CD files in the game folder.
  */
@@ -15,12 +16,22 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-static char *data_dir, *save_dir;
+static char *data_dir, *save_dir, *mods_dir;
 static const char game_dir_dos[] = "C:\\LULA";
 
 const char *rt_vfs_game_dir_dos(void) { return game_dir_dos; }
 const char *rt_vfs_data_dir(void) { return data_dir; }
 const char *rt_vfs_save_dir(void) { return save_dir; }
+
+void rt_vfs_set_mods(const char *dir)
+{
+    if (!dir || !*dir)
+        return;
+    mods_dir = realpath(dir, NULL);
+    if (!mods_dir)
+        rt_fatal("mod directory %s not found", dir);
+    RT_INFO("mods: %s (read before the game data)", mods_dir);
+}
 
 static void mkdirs(const char *path)
 {
@@ -140,6 +151,8 @@ char *rt_vfs_resolve_read(const char *guest)
     if (!*rel)
         return strdup(save_dir);
     char *p = find_ci(save_dir, rel, false);
+    if (!p && mods_dir)
+        p = find_ci(mods_dir, rel, false);
     if (!p)
         p = find_ci(data_dir, rel, false);
     return p;
@@ -202,7 +215,9 @@ char *rt_vfs_resolve_write(const char *guest, bool copy_existing)
     sprintf(path, "%s/%s", dir, leaf);
     free(dir);
     if (copy_existing) {
-        char *orig = find_ci(data_dir, rel, false);
+        char *orig = mods_dir ? find_ci(mods_dir, rel, false) : NULL;
+        if (!orig)
+            orig = find_ci(data_dir, rel, false);
         if (orig) {
             if (!copy_file(orig, path))
                 RT_WARN("copy-on-write of %s failed", orig);

@@ -79,6 +79,7 @@ void rt_set_command_line(const char *args);
 
 /* ---- file system mapping (rt_vfs.c) ---- */
 void rt_vfs_init(const char *data_dir, const char *save_dir);
+void rt_vfs_set_mods(const char *mods_dir);   /* optional replacement assets */
 /* Map a guest path for reading: returns malloc'd host path or NULL. */
 char *rt_vfs_resolve_read(const char *guest_path);
 /* Map a guest path for writing (creating parent dirs in the save overlay). */

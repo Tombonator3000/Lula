@@ -201,7 +201,17 @@ WINAPI_FN(kernel32, GetEnvironmentStrings)
 }
 
 /* ------------------------------------------------------------ console (GUI process: none) */
-WINAPI_FN(kernel32, GetStdHandle) { RET(1, 0); }
+/* Pseudo handles for the Watcom runtime's stdout/stderr, so its fatal error
+ * messages reach the host terminal. */
+#define STD_IN_HANDLE 0xf0u
+#define STD_OUT_HANDLE 0xf1u
+#define STD_ERR_HANDLE 0xf2u
+
+WINAPI_FN(kernel32, GetStdHandle)
+{
+    int32_t which = (int32_t)ARG(0);
+    RET(1, which == -10 ? STD_IN_HANDLE : which == -11 ? STD_OUT_HANDLE : which == -12 ? STD_ERR_HANDLE : 0);
+}
 WINAPI_FN(kernel32, SetStdHandle) { RET(2, WIN_TRUE); }
 WINAPI_FN(kernel32, GetConsoleMode) { win_set_error(c, ERROR_INVALID_HANDLE); RET(2, WIN_FALSE); }
 WINAPI_FN(kernel32, SetConsoleMode) { win_set_error(c, ERROR_INVALID_HANDLE); RET(2, WIN_FALSE); }
@@ -322,6 +332,7 @@ WINAPI_FN(kernel32, ReadFile)
     }
     if (pread)
         W32(pread, total);
+    RT_TRACE("ReadFile(%s, %u) -> %u", fo->path, n, total);
     RET(5, WIN_TRUE);
 }
 
@@ -329,6 +340,12 @@ WINAPI_FN(kernel32, WriteFile)
 {
     uint32_t h = ARG(0), buf = ARG(1), n = ARG(2), pwritten = ARG(3);
     FileObj *fo = file_of(h);
+    if (h == STD_OUT_HANDLE || h == STD_ERR_HANDLE) {
+        fwrite(g_mem + buf, 1, n, stderr);
+        if (pwritten)
+            W32(pwritten, n);
+        RET(5, WIN_TRUE);
+    }
     if (!fo) {
         win_set_error(c, ERROR_INVALID_HANDLE);
         RET(5, WIN_FALSE);
@@ -358,13 +375,17 @@ WINAPI_FN(kernel32, SetFilePointer)
     }
     if (phigh)
         W32(phigh, (uint32_t)((uint64_t)pos >> 32));
+    RT_TRACE("SetFilePointer(%s, %lld, %u) -> %lld", fo->path, (long long)dist, method, (long long)pos);
     win_set_error(c, 0);
     RET(4, (uint32_t)pos);
 }
 
 WINAPI_FN(kernel32, GetFileType)
 {
-    RET(1, file_of(ARG(0)) ? 1u /* FILE_TYPE_DISK */ : 0u);
+    uint32_t h = ARG(0);
+    if (h == STD_IN_HANDLE || h == STD_OUT_HANDLE || h == STD_ERR_HANDLE)
+        RET(1, 2u);   /* FILE_TYPE_CHAR */
+    RET(1, file_of(h) ? 1u /* FILE_TYPE_DISK */ : 0u);
 }
 
 /* Close any kernel object. */

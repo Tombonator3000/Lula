@@ -11,9 +11,10 @@ static void usage(const char *argv0)
 {
     fprintf(stderr,
             "Lula - The Sexy Empire, statically recompiled\n"
-            "usage: %s [--data DIR] [--save DIR] [--trace] [--verbose] [-- GAME-ARGS]\n"
+            "usage: %s [--data DIR] [--save DIR] [--mods DIR] [--trace] [--verbose] [-- GAME-ARGS]\n"
             "  --data DIR   game files (default: original/app next to the repository)\n"
             "  --save DIR   writable overlay for saves and settings (default: local/save)\n"
+            "  --mods DIR   replacement assets, same layout as the game folder (read first)\n"
             "  --trace      log every Win32 call with its first arguments\n"
             "  game arguments are passed on, for example -novideo\n", argv0);
 }
@@ -78,13 +79,15 @@ static void *guest_main(void *arg)
 
 int main(int argc, char **argv)
 {
-    const char *data = NULL, *save = NULL;
+    const char *data = NULL, *save = NULL, *mods = getenv("LULA_MODS");
     char game_args[1024] = "";
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--data") == 0 && i + 1 < argc)
             data = argv[++i];
         else if (strcmp(argv[i], "--save") == 0 && i + 1 < argc)
             save = argv[++i];
+        else if (strcmp(argv[i], "--mods") == 0 && i + 1 < argc)
+            mods = argv[++i];
         else if (strcmp(argv[i], "--trace") == 0)
             rt_trace_imports = 1, rt_log_level = RT_LOG_INFO;
         else if (strcmp(argv[i], "--verbose") == 0)
@@ -122,6 +125,7 @@ int main(int argc, char **argv)
 
     rt_mem_init();
     rt_vfs_init(data, save);
+    rt_vfs_set_mods(mods);
     char exe[4096];
     char *exe_host = rt_vfs_resolve_read("WET.EXE");
     snprintf(exe, sizeof exe, "%s", exe_host ? exe_host : "WET.EXE");
