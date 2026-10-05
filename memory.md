@@ -28,6 +28,13 @@ Hele WET.EXE (Lula - The Sexy Empire, 1997) skal rekompileres og kjøre native p
 - Teksten tegnes med Liberation Sans Bold (fontnavnet spillet ber om er "System Small", høyde -14, vekt 700).
 - Wine-referansen ligger i `build/wine-ref/` (lokal, ikke i Git): skjermbilder, API-sekvens og relay-trace.
 
+## Verktøy og arbeidsflyt
+
+- Ende-til-ende-tester: `python3 -m unittest tests.test_recompiled_game -v` (krever bygget `build/game/lula`).
+- `build/game/lula-fncheck` sammenligner håndskrevne funksjoner med de genererte.
+- Testkroker: `LULA_HEADLESS`, `LULA_INPUT`, `LULA_FRAMEDUMP`, `LULA_AUDIODUMP`, `LULA_LOG=3`.
+- Når en agent har halvferdige filer i hovedtreet, kan jeg teste i et eget worktree (`/home/user/lula-wt`, med symlenker til `original/app` og `analysis/decompiled`).
+
 ## Ting å passe på
 
 - Ikke rediger `original/app/`. Kjør `python3 tools/project.py verify` før og etter arbeid.

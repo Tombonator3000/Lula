@@ -7,14 +7,13 @@
 
 ## Neste
 
-- [ ] Kjør videre fra hovedmenyen: "New game" og sammenlign med Wine-skjermbildet `after_newgame_1.png`.
-- [ ] Legg inn overlevering av den globale låsen ved løkke-bakkanter i generert kode, slik at tråder ikke kan låse hverandre i aktiv venting.
+- [ ] Dialogbehandler (lagring, lasting, bank, lister, tekstfelt) og popupmenyen "Set Digital Output". En agent jobber med det.
+- [ ] Test lagring og lasting (`DATA\SAVE`) når dialogene virker, og at alt havner i lagringskatalogen.
+- [ ] Utforskende kjøring (mange skriptede klikk) for å finne kodeveier som treffer `rt_trap` eller manglende funksjonsinnganger.
 - [ ] Logg direkte importkall i `--trace` (i dag logges bare indirekte kall og COM-metoder).
-- [ ] Test lagring og lasting (`DATA\SAVE`), og at alt havner i overlay-katalogen.
-- [ ] Test lyd med ekte lydenhet (mikser, volum, pan, frekvens).
-- [ ] Automatisk regresjonstest: hodeløs kjøring med skriptet input og bildesammenligning mot referansebilder.
-- [ ] Dialoger (DialogBoxParamA) og menyer, når spesifikasjonen viser hvor de brukes.
-- [ ] Windows-bygg av samme kildekode (MinGW), med samme runtime.
+- [ ] Lineær interpolasjon i lydmikseren (i dag nærmeste sample; påvirker bare lydkvalitet).
+- [ ] Rekonstruksjon i større skala: Watcom-runtime og ressursdekodere først, kontrollert med `lula-fncheck`.
+- [ ] Windows-bygg av samme kildekode (MinGW 13 og SDL2 2.30.8 for MinGW finnes). Lav prioritet, originalen kjører allerede på Windows.
 
 ## Senere
 
@@ -30,3 +29,10 @@
 - [x] CMake-bygg som rekompilerer og bygger alt fra repoet.
 - [x] Referansekjøring av originalen under Wine med skjermbilder og API-sekvens.
 - [x] Rekompilert spill når hovedmenyen. Grafikken er piksel-identisk med originalen.
+- [x] "New game" og første spillskjerm, spillklokken går like fort som i originalen.
+- [x] WM_TIMER-semantikk, dobbeltklikk og aktivering etter spesifikasjonen.
+- [x] Låsoverlevering ved bakoverhopp (RT_POLL) og ved retur fra Win32-kall.
+- [x] Grafikkutskifting via `--mods`.
+- [x] Lydmikser verifisert bit-eksakt mot originalens samples i menyen.
+- [x] Mekanisme for håndskrevet rekonstruksjon (`RT_RECONSTRUCTED`) og kontrollverktøyet `lula-fncheck`.
+- [x] Ende-til-ende-tester i `tests/test_recompiled_game.py`.
