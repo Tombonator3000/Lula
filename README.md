@@ -2,7 +2,20 @@
 
 Repoet inneholder **144 utpakkede spillfiler** fra den oppgitte «Lula - The Sexy Empire (Repack) v2.rar», SHA-256-manifest, ressursverktøy, Ghidra-analyse og et testet Windows x86-byggemiljø for nye moduler.
 
-**Status:** klargjort for reverse engineering, grafikkutskifting og videre rekonstruksjon. Hele spillet er ikke rekompilert, og kjøring på Windows/Wine er foreløpig ikke verifisert.
+**Status:** WET.EXE er statisk rekompilert til C og bygges som et native Linux-program fra dette repoet. Den rekompilerte versjonen når hovedmenyen, og menybildet er identisk med originalen under Wine i alle piksler utenfor knappetekstene (som tegnes med en annen font). Spilling utover hovedmenyen, lagring/lasting, lyd og video er ennå ikke verifisert. Se [rekompileringen](docs/recompilation.md).
+
+## Bygg og kjør på Linux
+
+```sh
+git lfs pull
+sudo apt install cmake libsdl2-dev python3-pip
+pip install -r tools/recomp/requirements.txt
+cmake -S . -B build/game
+cmake --build build/game -j
+build/game/lula -- -novideo
+```
+
+Konfigureringen kjører rekompilatoren (`tools/recomp`) på `original/app/WET.EXE` og bygger den genererte C-koden sammen med runtimen i `src/runtime`. Spilldata leses fra `original/app`, som aldri skrives til. Lagring og innstillinger havner i `local/save/` (endres med `--save DIR`). `--trace` logger Win32-kall. Alt+Enter veksler fullskjerm.
 
 ## Kom i gang
 
