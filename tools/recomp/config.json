@@ -1,0 +1,8 @@
+{
+  "comment": "Manual discovery input. extra_entries: code addresses that are called indirectly but have no relocation or Ghidra function. blacklist: addresses that look like code pointers but are data or markers (0x401003 is the Watcom __begtext marker area, 0x44c3c3 is data that Ghidra made a function).",
+  "extra_entries": [],
+  "blacklist": [
+    "0x00401003",
+    "0x0044c3c3"
+  ]
+}
