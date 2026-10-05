@@ -31,3 +31,8 @@ typedef struct ReconEntry {
 } ReconEntry;
 extern const ReconEntry g_reconstructed[];
 extern const size_t g_reconstructed_count;
+
+/* Coverage counters, one per entry of g_guest_entries. */
+extern uint32_t rt_cov[];
+extern const uint32_t rt_cov_count;
+void rt_coverage_dump(void);

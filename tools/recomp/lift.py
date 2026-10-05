@@ -45,6 +45,8 @@ class Lifter:
         self.host = host_symbols            # IAT slot -> host function symbol
         self.md = program.md
         self.unsupported = {}
+        # Function entry -> index into rt_cov[] (per-function call counters).
+        self.coverage_index = {e: i for i, e in enumerate(sorted(program.functions))}
 
     # ----------------------------------------------------------- operands
     def reg(self, r):
@@ -157,6 +159,8 @@ class Lifter:
         L = [f'uint32_t f_{f.entry:08x}(Cpu *c)', '{',
              '    uint32_t ra; uint32_t ft_a = 0, ft_b = 0, ft_r = 0;',
              '    (void)ra; (void)ft_a; (void)ft_b; (void)ft_r;']
+        if self.coverage_index is not None:
+            L.append(f'    RT_COV({self.coverage_index[f.entry]});')
         if order[0] != f.entry:
             L.append(f'    goto L_{f.entry:08x};')
         for a in order:

@@ -125,6 +125,7 @@ static Uint32 ev_quit;
 
 static void quit_now(int code)
 {
+    rt_coverage_dump();
     if (audio_dev)
         SDL_CloseAudioDevice(audio_dev);
     if (audio_dump)
@@ -428,6 +429,11 @@ void rt_platform_run(void)
         int got = SDL_WaitEventTimeout(&e, 10);
         uint32_t now = SDL_GetTicks();
         run_script(now);
+        static uint32_t last_cov;
+        if (now - last_cov >= 2000) {
+            last_cov = now;
+            rt_coverage_dump();
+        }
         while (got) {
             if (e.type == ev_quit) {
                 quit_now(e.user.code);

@@ -241,3 +241,24 @@ void rt_handle_close(uint32_t h)
     if (o)
         memset(o, 0, sizeof *o);
 }
+
+/* ---- coverage ---- */
+/* LULA_COVERAGE=file: write "address calls" for every function that ran.
+ * Called periodically by the platform loop and at exit, so a killed test
+ * run still leaves a recent report. */
+void rt_coverage_dump(void)
+{
+    const char *path = getenv("LULA_COVERAGE");
+    if (!path)
+        return;
+    char tmp[4096];
+    snprintf(tmp, sizeof tmp, "%s.tmp", path);
+    FILE *f = fopen(tmp, "w");
+    if (!f)
+        return;
+    for (uint32_t i = 0; i < rt_cov_count && i < g_guest_entry_count; i++)
+        if (rt_cov[i])
+            fprintf(f, "%08x %u\n", g_guest_entries[i].addr, rt_cov[i]);
+    fclose(f);
+    rename(tmp, path);
+}
