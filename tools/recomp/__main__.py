@@ -146,6 +146,9 @@ def main(argv=None):
         imp = img.imports[slot]
         table.append(f'    {{0x{slot:08x}u, "{imp.dll}", "{imp.name}", {imp.host_symbol}}},')
     table += ['};', f'const size_t g_host_import_count = {len(img.imports)};', '']
+    table += ['/* Per-function call counters (RT_COV), dumped with LULA_COVERAGE=file. */',
+              f'uint32_t rt_cov[{len(prog.functions)}];',
+              f'const uint32_t rt_cov_count = {len(prog.functions)};', '']
     write_if_changed(out / 'gen_tables.c', '\n'.join(table))
 
     stubs = [HEADER, '#include "gen_decls.h"', '',

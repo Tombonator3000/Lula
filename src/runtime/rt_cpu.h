@@ -100,6 +100,12 @@ extern volatile int rt_gil_waiters;
 void rt_gil_yield(void);
 #define RT_POLL() do { if (__builtin_expect(rt_gil_waiters != 0, 0)) rt_gil_yield(); } while (0)
 
+/* Function call counters for coverage reports (index = position of the
+ * entry in g_guest_entries). Relaxed increments: exact counts do not matter,
+ * only whether a function ran. */
+extern uint32_t rt_cov[];
+#define RT_COV(i) (rt_cov[i]++)
+
 /* --- runtime services used by generated code --- */
 uint32_t rt_call_indirect(Cpu *c, uint32_t target);
 uint32_t rt_jump_indirect(Cpu *c, uint32_t target);
