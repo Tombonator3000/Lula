@@ -953,8 +953,8 @@ class Lifter:
         def memload(o, integer=False):
             ea = self.ea(o)
             if integer:
-                return {2: f'(double)(int16_t)R16({ea})', 4: f'(double)(int32_t)R32({ea})',
-                        8: f'(double)(int64_t)R64({ea})'}[o.size]
+                return {2: f'(fpreg_t)(int16_t)R16({ea})', 4: f'(fpreg_t)(int32_t)R32({ea})',
+                        8: f'(fpreg_t)(int64_t)R64({ea})'}[o.size]
             return {4: f'rt_f32(R32({ea}))', 8: f'rt_f64(R64({ea}))', 10: f'rt_f80_load({ea})'}[o.size]
 
         arith = {'fadd': 'a + b', 'fsub': 'a - b', 'fsubr': 'b - a', 'fmul': 'a * b',
@@ -968,18 +968,18 @@ class Lifter:
             expr = arith[base]
             pop = m.endswith('p')
             if mem:
-                return [f'{{ double a = ST(0), b = {memload(mem[0], integer)}; ST(0) = {expr}; }}']
+                return [f'{{ fpreg_t a = ST(0), b = {memload(mem[0], integer)}; ST(0) = {expr}; }}']
             if len(regs) == 2:
                 d, s = sti(regs[0]), sti(regs[1])
             elif len(regs) == 1:
                 d, s = (sti(regs[0]), 0) if pop else (0, sti(regs[0]))
             else:
                 d, s = 1, 0
-            return [f'{{ double a = ST({d}), b = ST({s}); ST({d}) = {expr}; }}' + (' FPOP();' if pop else '')]
+            return [f'{{ fpreg_t a = ST({d}), b = ST({s}); ST({d}) = {expr}; }}' + (' FPOP();' if pop else '')]
         if m == 'fld':
             if mem:
                 return [f'FPUSH({memload(mem[0])});']
-            return [f'{{ double v = ST({sti(regs[0])}); FPUSH(v); }}']
+            return [f'{{ fpreg_t v = ST({sti(regs[0])}); FPUSH(v); }}']
         if m == 'fild':
             return [f'FPUSH({memload(mem[0], True)});']
         if m in ('fst', 'fstp'):
@@ -1002,7 +1002,7 @@ class Lifter:
             i = sti(regs[-1]) if regs else 1
             if i == 0 and len(regs) == 2:
                 i = sti(regs[0])
-            return [f'{{ double t = ST(0); ST(0) = ST({i}); ST({i}) = t; }}']
+            return [f'{{ fpreg_t t = ST(0); ST(0) = ST({i}); ST({i}) = t; }}']
         if m in ('fcom', 'fcomp', 'fucom', 'fucomp'):
             pop = ' FPOP();' if m.endswith('p') else ''
             if mem:
@@ -1012,7 +1012,7 @@ class Lifter:
         if m in ('fcompp', 'fucompp'):
             return ['rt_fcom(c, ST(0), ST(1)); FPOP(); FPOP();']
         if m == 'ftst':
-            return ['rt_fcom(c, ST(0), 0.0);']
+            return ['rt_fcom(c, ST(0), 0.0L);']
         if m in ('fnstsw', 'fstsw'):
             if mem:
                 return [f'W16({self.ea(mem[0])}, rt_fpu_sw(c));']
@@ -1020,7 +1020,8 @@ class Lifter:
         if m in ('fnstcw', 'fstcw'):
             return [f'W16({self.ea(mem[0])}, c->fpu.cw);']
         if m == 'fldcw':
-            return [f'c->fpu.cw = R16({self.ea(mem[0])});']
+            # also loads precision and rounding control into the host x87
+            return [f'rt_fpu_set_cw(c, R16({self.ea(mem[0])}));']
         if m in ('fninit', 'finit'):
             return ['rt_fpu_init(c);']
         if m in ('fnclex', 'fclex'):
@@ -1029,24 +1030,21 @@ class Lifter:
             return [f'rt_fpu_save(c, {self.ea(mem[0])});']
         if m == 'frstor':
             return [f'rt_fpu_restore(c, {self.ea(mem[0])});']
-        unary = {'fchs': '-ST(0)', 'fabs': 'fabs(ST(0))', 'fsqrt': 'sqrt(ST(0))',
-                 'fsin': 'sin(ST(0))', 'fcos': 'cos(ST(0))', 'frndint': 'rt_frndint(c, ST(0))'}
+        unary = {'fchs': '-ST(0)', 'fabs': 'fabsl(ST(0))', 'fsqrt': 'sqrtl(ST(0))',
+                 'frndint': 'rt_frndint(c, ST(0))'}
         if m in unary:
-            out = [f'ST(0) = {unary[m]};']
-            if m in ('fsin', 'fcos'):
-                out.append('c->fpu.c2 = 0;')
-            return out
-        consts = {'fldz': '0.0', 'fld1': '1.0', 'fldlg2': '0.301029995663981195214',
-                  'fldln2': '0.693147180559945309417', 'fldl2e': '1.44269504088896340736',
-                  'fldl2t': '3.32192809488736234787', 'fldpi': '3.14159265358979323846'}
+            return [f'ST(0) = {unary[m]};']
+        consts = {'fldz': '0.0L', 'fld1': '1.0L'}
         if m in consts:
             return [f'FPUSH({consts[m]});']
-        if m == 'fprem':
-            return ['rt_fprem(c);']
-        if m == 'fyl2x':
-            return ['{ double v = ST(1) * log2(ST(0)); FPOP(); ST(0) = v; }']
+        if m in ('fldl2t', 'fldl2e', 'fldpi', 'fldlg2', 'fldln2'):
+            # rounded with the guest rounding control, like the x87 does
+            return [f'FPUSH(rt_fpu_const(c, RT_{m.upper()}));']
+        helpers = {'fprem': 'rt_fprem', 'fsin': 'rt_fsin', 'fcos': 'rt_fcos', 'fyl2x': 'rt_fyl2x'}
+        if m in helpers:
+            return [f'{helpers[m]}(c);']
         if m == 'fscale':
-            return ['ST(0) = ldexp(ST(0), (int)trunc(ST(1)));']
+            return ['ST(0) = ldexpl(ST(0), (int)truncl(ST(1)));']
         if m == 'ffree':
             return []
         if m == 'fucomi' or m == 'fcomi':

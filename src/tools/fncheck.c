@@ -134,7 +134,11 @@ static int compare(const ReconEntry *e, Cpu *a, Cpu *b, uint8_t **ma, uint8_t **
             printf("  %s lifted %u reconstructed %u\n", fn[i], fa[i], fb[i]);
             bad = 1;
         }
-    if (a->fpu.top != b->fpu.top || memcmp(a->fpu.st, b->fpu.st, sizeof a->fpu.st) != 0) {
+    /* Only the significant bytes: a long double register has padding. */
+    int st_same = a->fpu.top == b->fpu.top && a->fpu.cw == b->fpu.cw;
+    for (int i = 0; i < 8; i++)
+        st_same &= memcmp(&a->fpu.st[i], &b->fpu.st[i], RT_FPREG_BYTES) == 0;
+    if (!st_same) {
         printf("  x87 state differs\n");
         bad = 1;
     }
@@ -239,6 +243,7 @@ int main(int argc, char **argv)
             uint8_t **mem_a = save_after();
             restore();
             *c = start;
+            rt_fpu_sync_host(c);             /* the lifted run may have changed the control word */
             c->esp -= 4;
             W32(c->esp, MAGIC);
             uint32_t ra_b = e->reconstructed(c);
@@ -246,6 +251,7 @@ int main(int argc, char **argv)
             uint8_t **mem_b = save_after();
             restore();
             *c = start;
+            rt_fpu_sync_host(c);
             if (compare(e, &after_a, &after_b, mem_a, mem_b, ra_a, ra_b)) {
                 printf("%08x: mismatch in iteration %u (eax=%08x edx=%08x ebx=%08x ecx=%08x)\n", e->addr,
                        it, start.eax, start.edx, start.ebx, start.ecx);

@@ -55,7 +55,10 @@ target_include_directories(lula_core PUBLIC "${CMAKE_SOURCE_DIR}/src/runtime"
 target_link_libraries(lula_core PUBLIC PkgConfig::SDL2 Threads::Threads m)
 target_compile_options(lula_core PRIVATE -Wall -Wno-unused-label -Wno-unused-function -fwrapv)
 # The generated code is large and simple; -O1 keeps compile times reasonable.
-set_source_files_properties(${GEN_SOURCES} PROPERTIES COMPILE_OPTIONS "-O1;-Wno-unused-variable")
+# -frounding-math: the x87 rounding and precision bits are loaded into the
+# host FPU at run time, so the compiler must not fold or reorder FP code
+# across those changes.
+set_source_files_properties(${GEN_SOURCES} PROPERTIES COMPILE_OPTIONS "-O1;-Wno-unused-variable;-frounding-math")
 
 add_executable(lula "${CMAKE_SOURCE_DIR}/src/runtime/main.c")
 target_link_libraries(lula PRIVATE lula_core)

@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#include <float.h>
 #include <stddef.h>
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
@@ -20,10 +21,30 @@
 #endif
 #define RT_NORETURN __attribute__((noreturn))
 
+/* x87 registers are host long doubles. With GCC/Clang on x86 hosts that is
+ * the x87 80-bit format itself: loads, stores and moves are exact, and the
+ * arithmetic runs on the host x87, whose precision and rounding control
+ * follow the guest control word (rt_fpu_set_cw). Other hosts round every
+ * register to their long double precision and ignore precision control
+ * (rt_fpu.c emits a #warning there). */
+typedef long double fpreg_t;
+#if LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384 && !defined(RT_FPU_FORCE_SOFT)
+#define RT_FPREG_X87 1
+#define RT_FPREG_BYTES 10                /* significant bytes; the rest is padding */
+#else
+#define RT_FPREG_X87 0
+#define RT_FPREG_BYTES sizeof(fpreg_t)
+#endif
+#if RT_FPREG_X87 && defined(__GNUC__) && (defined(__x86_64__) || defined(__i386__))
+#define RT_HOST_X87 1                    /* x87 instructions and control word on the host */
+#else
+#define RT_HOST_X87 0
+#endif
+
 typedef struct Fpu {
-    double st[8];
+    fpreg_t st[8];
     uint32_t top;
-    uint16_t cw;           /* control word: rounding control in bits 10-11 */
+    uint16_t cw;           /* control word; change it with rt_fpu_set_cw */
     uint16_t sw;           /* exception bits; TOP and C0-C3 are kept apart */
     uint8_t c0, c1, c2, c3;
 } Fpu;
@@ -89,24 +110,36 @@ void rt_set_eflags(Cpu *c, uint32_t v);
 
 /* --- x87 --- */
 #define ST(i) (c->fpu.st[(c->fpu.top + (i)) & 7])
-#define FPUSH(v) do { double _fv = (v); c->fpu.top = (c->fpu.top - 1) & 7; c->fpu.st[c->fpu.top] = _fv; } while (0)
+#define FPUSH(v) do { fpreg_t _fv = (v); c->fpu.top = (c->fpu.top - 1) & 7; c->fpu.st[c->fpu.top] = _fv; } while (0)
 #define FPOP() do { c->fpu.top = (c->fpu.top + 1) & 7; } while (0)
 
-static inline double rt_f32(uint32_t bits) { float f; memcpy(&f, &bits, 4); return (double)f; }
-static inline double rt_f64(uint64_t bits) { double d; memcpy(&d, &bits, 8); return d; }
-static inline uint32_t rt_f32_bits(double v) { float f = (float)v; uint32_t b; memcpy(&b, &f, 4); return b; }
-static inline uint64_t rt_f64_bits(double v) { uint64_t b; memcpy(&b, &v, 8); return b; }
+/* Conversions round with the host rounding control, which follows the guest's. */
+static inline fpreg_t rt_f32(uint32_t bits) { float f; memcpy(&f, &bits, 4); return (fpreg_t)f; }
+static inline fpreg_t rt_f64(uint64_t bits) { double d; memcpy(&d, &bits, 8); return (fpreg_t)d; }
+static inline uint32_t rt_f32_bits(fpreg_t v) { float f = (float)v; uint32_t b; memcpy(&b, &f, 4); return b; }
+static inline uint64_t rt_f64_bits(fpreg_t v) { double d = (double)v; uint64_t b; memcpy(&b, &d, 8); return b; }
 
-double rt_f80_load(uint32_t addr);
-void rt_f80_store(uint32_t addr, double v);
-int64_t rt_fist(Cpu *c, double v, int bits);
-double rt_frndint(Cpu *c, double v);
+fpreg_t rt_f80_load(uint32_t addr);
+void rt_f80_store(uint32_t addr, fpreg_t v);
+int64_t rt_fist(Cpu *c, fpreg_t v, int bits);
+fpreg_t rt_frndint(Cpu *c, fpreg_t v);
 void rt_fprem(Cpu *c);
+void rt_fsin(Cpu *c);
+void rt_fcos(Cpu *c);
+void rt_fyl2x(Cpu *c);
+/* fldl2t, fldl2e, fldpi, fldlg2, fldln2: rounded with the guest rounding control. */
+enum { RT_FLDL2T, RT_FLDL2E, RT_FLDPI, RT_FLDLG2, RT_FLDLN2 };
+fpreg_t rt_fpu_const(Cpu *c, int which);
 void rt_fpu_init(Cpu *c);
+void rt_fpu_set_cw(Cpu *c, uint16_t cw);
+/* Load the guest control word's precision and rounding control into the
+ * host x87 of the calling thread (after binding a Cpu to a host thread or
+ * copying a Cpu). No-op on hosts without an x87. */
+void rt_fpu_sync_host(Cpu *c);
 void rt_fpu_save(Cpu *c, uint32_t addr);
 void rt_fpu_restore(Cpu *c, uint32_t addr);
 
-static inline void rt_fcom(Cpu *c, double a, double b)
+static inline void rt_fcom(Cpu *c, fpreg_t a, fpreg_t b)
 {
     if (a != a || b != b) { c->fpu.c0 = c->fpu.c2 = c->fpu.c3 = 1; return; }
     c->fpu.c2 = 0;
