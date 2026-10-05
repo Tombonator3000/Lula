@@ -9,6 +9,7 @@
  *   LULA_INPUT=FILE         scripted input: "<ms> move X Y | click X Y | rclick X Y |
  *                           key NAME | quit" one per line, times since start
  *   LULA_SCALE=N            initial window scale (default 2)
+ *   LULA_AUDIODUMP=FILE     also write the mixed audio to a WAV file
  */
 #include "platform.h"
 #include "rt.h"
@@ -37,6 +38,28 @@ static SDL_AudioDeviceID audio_dev;
 static int audio_rate;
 static PlatMixFn mix_fn;
 static void *mix_user;
+static FILE *audio_dump;
+static uint32_t audio_dump_bytes;
+
+static void wav_header(FILE *f, int rate, uint32_t data_bytes)
+{
+    uint8_t h[44];
+    memcpy(h, "RIFF", 4);
+    uint32_t v = 36 + data_bytes;
+    memcpy(h + 4, &v, 4);
+    memcpy(h + 8, "WAVEfmt ", 8);
+    v = 16; memcpy(h + 16, &v, 4);
+    uint16_t w = 1; memcpy(h + 20, &w, 2);          /* PCM */
+    w = 2; memcpy(h + 22, &w, 2);                   /* stereo */
+    v = (uint32_t)rate; memcpy(h + 24, &v, 4);
+    v = (uint32_t)rate * 4; memcpy(h + 28, &v, 4);
+    w = 4; memcpy(h + 32, &w, 2);
+    w = 16; memcpy(h + 34, &w, 2);
+    memcpy(h + 36, "data", 4);
+    memcpy(h + 40, &data_bytes, 4);
+    fseek(f, 0, SEEK_SET);
+    fwrite(h, 1, 44, f);
+}
 
 uint32_t plat_ticks_ms(void) { return SDL_GetTicks(); }
 
@@ -118,6 +141,13 @@ static void audio_cb(void *user, Uint8 *stream, int len)
     memset(stream, 0, (size_t)len);
     if (mix_fn)
         mix_fn((int16_t *)stream, len / 4, mix_user);
+    if (audio_dump) {
+        fseek(audio_dump, 0, SEEK_END);
+        fwrite(stream, 1, (size_t)len, audio_dump);
+        audio_dump_bytes += (uint32_t)len;
+        wav_header(audio_dump, audio_rate, audio_dump_bytes);
+        fflush(audio_dump);
+    }
 }
 
 void plat_audio_start(int rate, PlatMixFn fn, void *user)
@@ -138,6 +168,11 @@ void plat_audio_start(int rate, PlatMixFn fn, void *user)
         return;
     }
     audio_rate = have.freq;
+    if (have.format != AUDIO_S16SYS || have.channels != 2)
+        RT_WARN("audio device format differs from the requested S16 stereo");
+    const char *dump = getenv("LULA_AUDIODUMP");
+    if (dump && (audio_dump = fopen(dump, "w+b")))
+        wav_header(audio_dump, audio_rate, 0);
     SDL_PauseAudioDevice(audio_dev, 0);
 }
 

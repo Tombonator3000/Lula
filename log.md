@@ -39,3 +39,4 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
 - Startet en agent som lager dialogbehandleren (lagring, lasting, bank, lister, tekstfelt) og popupmenyen. Den eier `user32.c`, `gdi32.c`, `res.c` og nye `dialog.c` til den er ferdig.
 - La til `--mods DIR`: en katalog som leses før `original/app`. Testet med endret hovedmenybilde (post 71 i `DIA_BACK.TGP`): de 4000 grønne pikslene vises nøyaktig der de skal.
 - Ny test `tests/test_recompiled_game.py` (3 tester: hovedmeny mot originalens hash, New game, grafikk via mods). Alle går grønt.
+- Lyd: `LULA_AUDIODUMP=fil.wav` skriver den miksede lyden. I menyen er utgangen nøyaktig `sound.tap` post 9 (22050 Hz, 8 bit) spilt med -10 dB, sample for sample. Lagt inn som fjerde ende-til-ende-test.

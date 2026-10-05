@@ -73,6 +73,36 @@ class RecompiledGame(unittest.TestCase):
             log = proc.communicate()[0].decode(errors='replace')
         return temp, sorted(frames.glob('*.ppm')), log
 
+    def test_menu_sound_is_mixed_from_original_samples(self):
+        """The menu loops sound.tap entry 9 (22050 Hz, 8 bit) at -10 dB."""
+        import struct
+        import wave
+        spec = importlib.util.spec_from_file_location('lula_assets_snd', ROOT / 'tools/assets.py')
+        assets = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = assets
+        spec.loader.exec_module(assets)
+        wav = assets.parse_ngs((ROOT / 'original/app/DATA/SOUND/sound.tap').read_bytes()).entries[9].payload
+        start = wav.find(b'data')
+        size = struct.unpack_from('<I', wav, start + 4)[0]
+        samples = wav[start + 8:start + 8 + size]
+        runs = ROOT / 'build' / 'test-runs'
+        runs.mkdir(parents=True, exist_ok=True)
+        dump = Path(tempfile.mkdtemp(prefix='audio-', dir=runs)) / 'mix.wav'
+        os.environ['LULA_AUDIODUMP'] = str(dump)
+        try:
+            self.run_game(8)
+        finally:
+            del os.environ['LULA_AUDIODUMP']
+        with wave.open(str(dump)) as w:
+            self.assertEqual((w.getframerate(), w.getnchannels()), (44100, 2))
+            raw = w.readframes(w.getnframes())
+        left = struct.unpack(f'<{len(raw) // 2}h', raw)[0::2]
+        first = next((i for i, v in enumerate(left) if v), None)
+        self.assertIsNotNone(first, 'no audio was mixed')
+        gain = 10 ** (-10 / 20)
+        expected = [int((samples[k // 2] - 128) * 256 * gain) for k in range(2000)]
+        self.assertEqual(list(left[first:first + 2000]), expected)
+
     def test_replacement_graphics_from_mods_directory(self):
         """Edit the menu background with tools/assets.py and load it via --mods."""
         spec = importlib.util.spec_from_file_location('lula_assets', ROOT / 'tools/assets.py')
