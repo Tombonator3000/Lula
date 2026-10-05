@@ -40,3 +40,4 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
 - La til `--mods DIR`: en katalog som leses før `original/app`. Testet med endret hovedmenybilde (post 71 i `DIA_BACK.TGP`): de 4000 grønne pikslene vises nøyaktig der de skal.
 - Ny test `tests/test_recompiled_game.py` (3 tester: hovedmeny mot originalens hash, New game, grafikk via mods). Alle går grønt.
 - Lyd: `LULA_AUDIODUMP=fil.wav` skriver den miksede lyden. I menyen er utgangen nøyaktig `sound.tap` post 9 (22050 Hz, 8 bit) spilt med -10 dB, sample for sample. Lagt inn som fjerde ende-til-ende-test.
+- Rekonstruksjon: funksjoner merket `RT_RECONSTRUCTED(0x...)` i `src/reconstructed/` erstatter de genererte (som beholdes som `lifted_...`). Første eksempel er Watcoms memcpy (0x442be4). Alle fire ende-til-ende-tester går grønt med den.

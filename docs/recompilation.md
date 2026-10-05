@@ -99,4 +99,20 @@ Testen `tests/test_recompiled_game.py` gjør det samme automatisk med en grønn 
 
 ## Videre rekonstruksjon
 
-Den genererte koden er korrekt, men ikke lesbar som originalkilde. Målet er å erstatte funksjoner én og én med håndskrevet C i `src/reconstructed/`, med den rekompilerte versjonen som fasit. Samme mekanisme åpner for ny renderer og høyere intern oppløsning senere.
+Den genererte koden er korrekt, men ikke lesbar som originalkilde. Funksjoner kan erstattes én og én med håndskrevet C i `src/reconstructed/`:
+
+```c
+#include "reconstructed.h"
+
+RT_RECONSTRUCTED(0x00442be4)
+uint32_t f_00442be4(Cpu *c)
+{
+    ...                      /* argumenter i EAX, EDX, EBX, ECX (Watcom) */
+    c->eax = resultat;
+    return rt_return(c);     /* som 'ret' */
+}
+```
+
+Rekompilatoren ser markeringen, slutter å generere sin egen `f_00442be4` og beholder den som `lifted_00442be4` for sammenligning. CMake regenererer automatisk når filene endres. En erstatning må etterlate registre, flagg som leses senere, stakk og minne slik originalen gjør, fordi kallerne er generert kode. Rekompilatoren advarer hvis funksjonen inngår i flaggflyt på tvers av kall.
+
+Første eksempel er Watcoms `memcpy` (0x442be4) i `src/reconstructed/watcom_crt.c`. Alle ende-til-ende-testene går grønt med den. Samme mekanisme er veien til lesbar kildekode for spillogikken, ny renderer og høyere intern oppløsning.

@@ -23,8 +23,11 @@ find_package(Threads REQUIRED)
 set(LULA_EXE "${CMAKE_SOURCE_DIR}/original/app/WET.EXE" CACHE FILEPATH "Original WET.EXE to recompile")
 set(GEN_DIR "${CMAKE_BINARY_DIR}/gen")
 file(GLOB RECOMP_PY CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/tools/recomp/*.py")
+# RT_RECONSTRUCTED markers in src/reconstructed decide which functions the
+# recompiler leaves out, so their contents are inputs to the generator too.
+file(GLOB RECONSTRUCTED_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/reconstructed/*.c")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-             ${RECOMP_PY} "${CMAKE_SOURCE_DIR}/tools/recomp/config.json" "${LULA_EXE}")
+             ${RECOMP_PY} ${RECONSTRUCTED_SOURCES} "${CMAKE_SOURCE_DIR}/tools/recomp/config.json" "${LULA_EXE}")
 
 message(STATUS "Recompiling ${LULA_EXE}")
 execute_process(
@@ -44,7 +47,7 @@ file(GLOB RUNTIME_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/runtime/*.c
      "${CMAKE_SOURCE_DIR}/src/runtime/win32/*.c" "${CMAKE_SOURCE_DIR}/src/reconstructed/*.c")
 
 add_executable(lula ${RUNTIME_SOURCES} ${GEN_SOURCES})
-target_include_directories(lula PRIVATE "${CMAKE_SOURCE_DIR}/src/runtime" "${GEN_DIR}")
+target_include_directories(lula PRIVATE "${CMAKE_SOURCE_DIR}/src/runtime" "${CMAKE_SOURCE_DIR}/src/reconstructed" "${GEN_DIR}")
 target_link_libraries(lula PRIVATE PkgConfig::SDL2 Threads::Threads m)
 target_compile_options(lula PRIVATE -Wall -Wno-unused-label -Wno-unused-function -fwrapv)
 # The generated code is large and simple; -O1 keeps compile times reasonable.
