@@ -110,10 +110,15 @@ EDGES = {
 QUICK_EDGES = [0, 3, 8, 10]
 
 # x87 comparison classes
-FPU_ARITH = {'fadd', 'fsub', 'fsubr', 'fmul', 'fdiv', 'fdivr', 'faddp', 'fsubp', 'fsubrp',
-             'fmulp', 'fdivp', 'fdivrp', 'fiadd', 'fisub', 'fisubr', 'fimul', 'fidiv',
-             'fidivr', 'fsqrt', 'fscale'}
+# unicorn (QEMU 5) computes these in host doubles or inexactly: compared with
+# a tolerance against unicorn and bit-exactly against the host x87
 FPU_TRANSC = {'fsin', 'fcos', 'fyl2x', 'fprem', 'fptan', 'fpatan', 'f2xm1', 'fyl2xp1'}
+HOST_REF = {'fsin': 1, 'fcos': 2, 'fyl2x': 3, 'fprem': 4}
+# load-constant instructions: (truncated 64-bit mantissa, sign/exponent, round to
+# nearest goes up); the x87 rounds them with RC, QEMU 5 always to nearest
+FPU_CONST = {'fldl2t': (0xd49a784bcd1b8afe, 0x4000, 0), 'fldl2e': (0xb8aa3b295c17f0bb, 0x3fff, 1),
+             'fldpi': (0xc90fdaa22168c234, 0x4000, 1), 'fldlg2': (0x9a209a84fbcff798, 0x3ffd, 1),
+             'fldln2': (0xb17217f7d1cf79ab, 0x3ffe, 1)}
 FPU_COMPARE = {'fcom', 'fcomp', 'fcompp', 'fucom', 'fucomp', 'fucompp', 'ftst', 'ficom', 'ficomp'}
 FPU_RC = {'fist', 'fistp', 'frndint'}
 FPU_INIT = {'fninit', 'finit', 'fnsave', 'fsave'}
@@ -157,16 +162,48 @@ def f80_to_f64(mant, se):
     return -v if neg else v
 
 
-def f80_out_of_double_range(mant, se):
+def f80_is_double(mant, se):
+    """True when the 80-bit value is exactly a double (or a NaN/inf/zero)."""
     e = se & 0x7fff
     if e == 0x7fff or mant == 0:
-        return False
-    top = (e if e else 1) - 16383 - 63 + mant.bit_length() - 1
-    return top > 1023 or top < -1022
+        return True
+    return f64_to_f80(f80_to_f64(mant, se)) == (mant, se)
+
+
+def f80_isnan(t):
+    return (t[1] & 0x7fff) == 0x7fff and (t[0] << 1) & ((1 << 64) - 1) != 0
+
+
+def f80_fraction(mant, se):
+    e = se & 0x7fff
+    v = Fraction(mant) * Fraction(2) ** ((e if e else 1) - 16383 - 63)
+    return -v if se >> 15 else v
+
+
+def fraction_to_f80(v, neg_zero=False):
+    """Exact 80-bit encoding of a rational that has one (else None)."""
+    if v == 0:
+        return 0, 0x8000 if neg_zero else 0
+    sign = 0x8000 if v < 0 else 0
+    v = abs(v)
+    k = v.numerator.bit_length() - v.denominator.bit_length()
+    if Fraction(2) ** k > v:
+        k -= 1
+    e = k + 16383                        # biased exponent of 1.f * 2^k
+    shift = 63 - k if e >= 1 else 16382 + 63
+    m = v * Fraction(2) ** shift
+    if m.denominator != 1 or m.numerator >> 64:
+        return None
+    return int(m), sign | (e if e >= 1 else 0)
 
 
 def f80_bytes(mant, se):
     return struct.pack('<QH', mant, se)
+
+
+def fmt80(t):
+    v = f80_to_f64(*t)
+    return f'{v!r}' if f80_is_double(*t) else f'{v!r}~[{t[1]:04x}:{t[0]:016x}]'
 
 
 def dbits(x):
@@ -256,7 +293,7 @@ class State:
         out = f'{regs} flags={fl}'
         if self.fpu:
             fp = self.fpu
-            sts = ' '.join(f'ST{i}={fp["st"][(fp["top"] + i) & 7]!r}' for i in range(8))
+            sts = ' '.join(f'ST{i}={fmt80(fp["st"][(fp["top"] + i) & 7])}' for i in range(8))
             out += (f'\n      fpu top={fp["top"]} cw={fp["cw"]:04x} sw={fp["sw"]:02x} '
                     f'c0..3={"".join(map(str, fp["c"]))} {sts}')
         for a, b in self.patches:
@@ -286,7 +323,7 @@ class Result:
         out = f'trapped={int(self.trapped)} exit={self.exit:08x} {regs}\n      {fl}'
         if self.fpu:
             fp = self.fpu
-            sts = ' '.join(f'ST{i}={fp["st"][(fp["top"] + i) & 7]!r}' for i in range(8))
+            sts = ' '.join(f'ST{i}={fmt80(fp["st"][(fp["top"] + i) & 7])}' for i in range(8))
             out += (f'\n      fpu top={fp["top"]} cw={fp["cw"]:04x} '
                     f'c0..3={"".join(map(str, fp["c"]))} {sts}')
         if self.mem:
@@ -470,7 +507,7 @@ def select_sequences(world, quick, seed, only):
             key = 'seq ' + group_key(setter) + ' -> ' + ','.join(F.cc_of(i.mnem) + ('' if i.flow == 'jcc' else '(set)') for i in seq[1:])
             chains[key].append((f, seq))
     # x87 status sequences: compare (or fnstsw) ... sahf/test ... jcc
-    starters = FPU_COMPARE | {'fprem', 'fnstsw', 'fstsw'}
+    starters = FPU_COMPARE | {'fprem', 'fnstsw', 'fstsw', 'fldcw'}
     seen_start = set()
     for e in sorted(prog.functions):
         f = prog.functions[e]
@@ -488,7 +525,11 @@ def select_sequences(world, quick, seed, only):
                 cur = nxt
                 if nxt.flow == 'jcc':
                     break
-            if seq[-1].flow != 'jcc' or seq[-1].targets[0] == seq[-1].next:
+            if first.mnem == 'fldcw':
+                # the new control word must reach the host x87 for what follows
+                if len(seq) < 2 or (seq[-1].flow == 'jcc' and seq[-1].targets[0] == seq[-1].next):
+                    continue
+            elif seq[-1].flow != 'jcc' or seq[-1].targets[0] == seq[-1].next:
                 continue
             key = 'fseq ' + ' ; '.join(i.mnem for i in seq)
             chains[key].append((f, seq))
@@ -575,6 +616,10 @@ typedef void (*TestFn)(Cpu *c, uint32_t *exitp);
 extern const TestFn g_tests[];
 extern const uint32_t g_test_count;
 
+#if !RT_HOST_X87
+#error "the harness compares 80-bit registers and needs an x86 host with an x87 long double"
+#endif
+
 uint8_t *g_mem;
 volatile int rt_gil_waiters;          /* RT_POLL() in backward jumps: never set here */
 void rt_gil_yield(void) {}
@@ -614,6 +659,21 @@ static uint8_t *slurp(const char *path, size_t *len)
 static uint32_t get32(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return v; }
 static uint16_t get16(const uint8_t *p) { uint16_t v; memcpy(&v, p, 2); return v; }
 
+/* The host x87 itself, as a reference for what unicorn computes inexactly. */
+static void host_ref(uint32_t op, Cpu *c, uint8_t out[10], uint16_t *swp)
+{
+    long double x = ST(0), y = ST(1), r = 0;
+    uint16_t sw = 0;
+    switch (op) {
+    case 1: __asm__("fsin\n\tfnstsw %1" : "+t"(x), "=a"(sw)); r = x; break;
+    case 2: __asm__("fcos\n\tfnstsw %1" : "+t"(x), "=a"(sw)); r = x; break;
+    case 3: __asm__("fyl2x\n\tfnstsw %1" : "=t"(r), "=a"(sw) : "0"(x), "u"(y) : "st(1)"); break;
+    case 4: __asm__("fprem\n\tfnstsw %1" : "+t"(x), "=a"(sw) : "u"(y)); r = x; break;
+    }
+    memcpy(out, &r, 10);
+    *swp = sw;
+}
+
 static uint8_t outbuf[1 << 20];
 static size_t outlen;
 static void put(const void *p, size_t n) { memcpy(outbuf + outlen, p, n); outlen += n; }
@@ -650,9 +710,16 @@ int main(int argc, char **argv)
         cpu.fs_base = get32(p + 44);
         cpu.fpu.top = get32(p + 48); cpu.fpu.cw = get16(p + 52); cpu.fpu.sw = get16(p + 54);
         cpu.fpu.c0 = p[56]; cpu.fpu.c1 = p[57]; cpu.fpu.c2 = p[58]; cpu.fpu.c3 = p[59];
-        memcpy(cpu.fpu.st, p + 60, 64);
-        uint32_t npatch = get32(p + 124);
-        pos += 128;
+        for (int i = 0; i < 8; i++)
+            memcpy(&cpu.fpu.st[i], p + 60 + 10 * i, 10);
+        uint32_t refop = get32(p + 140);
+        uint32_t npatch = get32(p + 144);
+        pos += 148;
+        rt_fpu_sync_host(&cpu);
+        uint8_t ref[10] = {0};
+        uint16_t ref_sw = 0;
+        if (refop)
+            host_ref(refop, &cpu, ref, &ref_sw);
         for (uint32_t i = 0; i < npatch; i++) {
             uint32_t a = get32(v + pos), len = get32(v + pos + 4);
             memcpy(g_mem + a, v + pos + 8, len);
@@ -672,7 +739,10 @@ int main(int argc, char **argv)
         put32(cpu.cf); put32(cpu.pf); put32(cpu.af); put32(cpu.zf); put32(cpu.sf); put32(cpu.of); put32(cpu.df);
         put32(cpu.fpu.top); put(&cpu.fpu.cw, 2); put(&cpu.fpu.sw, 2);
         put(&cpu.fpu.c0, 1); put(&cpu.fpu.c1, 1); put(&cpu.fpu.c2, 1); put(&cpu.fpu.c3, 1);
-        put(cpu.fpu.st, 64);
+        for (int i = 0; i < 8; i++)
+            put(&cpu.fpu.st[i], 10);
+        put(&ref_sw, 2);
+        put(ref, 10);
         size_t ndiff_at = outlen;
         uint32_t ndiff = 0;
         put32(0);
@@ -698,9 +768,9 @@ int main(int argc, char **argv)
 }
 '''
 
-IN_FMT = '<I8I8BIIHH4B8dI'
-OUT_FMT = '<III8I7IIHH4B8dI'
-assert struct.calcsize(IN_FMT) == 128 and struct.calcsize(OUT_FMT) == 152
+IN_FMT = '<I8I8BIIHH4B80sII'
+OUT_FMT = '<III8I7IIHH4B80sH10sI'
+assert struct.calcsize(IN_FMT) == 148 and struct.calcsize(OUT_FMT) == 180
 
 
 def build_binary(cases, workdir, jobs):
@@ -753,10 +823,12 @@ def build_binary(cases, workdir, jobs):
 
 
 def pack_state(case, st):
-    fpu = st.fpu or {'top': 0, 'cw': 0x027f, 'sw': 0, 'c': [0, 0, 0, 0], 'st': [0.0] * 8}
+    fpu = st.fpu or {'top': 0, 'cw': 0x037f, 'sw': 0, 'c': [0, 0, 0, 0], 'st': [(0, 0)] * 8}
     fl = [1 if st.flags & bit else 0 for _, bit, _ in FLAGS] + [0]
+    regs80 = b''.join(f80_bytes(*t) for t in fpu['st'])
+    refop = HOST_REF.get(case.m, 0) if case.kind == 'insn' and st.fpu else 0
     out = bytearray(struct.pack(IN_FMT, case.idx, *st.regs, *fl, FS_BASE, fpu['top'], fpu['cw'],
-                                fpu['sw'], *fpu['c'], *fpu['st'], len(st.patches)))
+                                fpu['sw'], *fpu['c'], regs80, refop, len(st.patches)))
     for a, b in st.patches:
         out += struct.pack('<II', a, len(b)) + b
     return out
@@ -786,8 +858,10 @@ def run_c(exe, workdir, world, jobs_list):
         res.regs = list(v[3:11])
         res.flags = {n: v[11 + i] for i, (n, _, _) in enumerate(FLAGS)}
         top, cw, sw = v[18], v[19], v[20]
-        res.fpu = {'top': top, 'cw': cw, 'sw': sw, 'c': list(v[21:25]), 'st': list(v[25:33])}
-        ndiff = v[33]
+        st80 = [struct.unpack_from('<QH', v[25], 10 * i) for i in range(8)]
+        res.fpu = {'top': top, 'cw': cw, 'sw': sw, 'c': list(v[21:25]), 'st': st80,
+                   'ref_sw': v[26], 'ref': struct.unpack('<QH', v[27])}
+        ndiff = v[28]
         for i in range(ndiff):
             a, b = struct.unpack_from('<II', data, pos + 8 * i)
             res.mem[a] = b
@@ -861,7 +935,7 @@ class Oracle:
                          fp['top'] << 11 | c[3] << 14)
             uc.reg_write(XC.UC_X86_REG_FPTAG, 0)
             for i in range(8):
-                uc.reg_write(self.fp[i], f64_to_f80(fp['st'][i]))
+                uc.reg_write(self.fp[i], fp['st'][i])
         dirty = []
         for a, b in st.patches:
             uc.mem_write(a, b)
@@ -901,8 +975,7 @@ class Oracle:
             sw = uc.reg_read(XC.UC_X86_REG_FPSW)
             res.fpu = {'top': (sw >> 11) & 7, 'cw': uc.reg_read(XC.UC_X86_REG_FPCW), 'sw': sw,
                        'c': [(sw >> 8) & 1, (sw >> 9) & 1, (sw >> 10) & 1, (sw >> 14) & 1],
-                       'st80': [uc.reg_read(r) for r in self.fp]}
-            res.fpu['st'] = [f80_to_f64(m, e) for m, e in res.fpu['st80']]
+                       'st': [tuple(uc.reg_read(r)) for r in self.fp]}
         # Changed bytes, then restore the pristine image.
         dirty += self.writes
         spans = sorted(dirty)
@@ -1000,7 +1073,7 @@ def fpu_kind(m):
 
 
 class StateGen:
-    def __init__(self, world, fpu_cw=0x027f):
+    def __init__(self, world, fpu_cw=0x127f):
         self.world = world
         self.fpu_cw = fpu_cw
 
@@ -1315,13 +1388,19 @@ class StateGen:
         ins, m = case.ins, case.m
         kind = fpu_kind(m)
         top = rng.randrange(8)
-        vals = [fpu_value(rng) for _ in range(8)]
-        vals[top] = fpu_value(rng, kind)
-        if kind in ('prem', 'log'):
-            vals[(top + 1) & 7] = fpu_value(rng, 'divisor' if kind == 'prem' else '')
+        vals = [widen(rng, fpu_value(rng)) for _ in range(8)]
+        vals[top] = widen(rng, fpu_value(rng, kind))
+        if kind == 'prem':
+            vals[(top + 1) & 7] = widen(rng, fpu_value(rng, 'divisor'))
+            if k % 5 == 4:                    # exponent difference 53..90: partial remainders
+                vals[top] = widen(rng, math.ldexp(rng.uniform(1, 2), rng.randrange(53, 90)))
+        elif kind == 'log':
+            vals[(top + 1) & 7] = widen(rng, fpu_value(rng))
         cw = self.fpu_cw
         if m in FPU_RC:
             cw = (cw & ~0xc00) | (k % 4) << 10
+        elif k % 3 == 2:
+            cw = (cw & ~0xc00) | rng.randrange(1, 4) << 10     # directed rounding
         cbits = [rng.getrandbits(1) for _ in range(4)]
         if m in ('fnstsw', 'fstsw'):
             # sequences test TOP == 0 and C0/C3 (after sahf: CF/ZF)
@@ -1334,11 +1413,11 @@ class StateGen:
             r = k % 4
             if r == 1:
                 if j is None:
-                    vals[top] = rng.choice([0.0, -0.0])
+                    vals[top] = rng.choice([(0, 0), (0, 0x8000)])
                 else:
                     vals[(top + j) & 7] = vals[top]
             elif r == 2 and rng.random() < 0.3:
-                vals[top] = math.nan
+                vals[top] = (0xc000000000000000, 0x7fff)
         st.fpu = {'top': top, 'cw': cw, 'sw': rng.getrandbits(6), 'c': cbits, 'st': vals}
         if not mem:
             return
@@ -1355,51 +1434,63 @@ class StateGen:
                 v = rng.getrandbits(64) if rng.random() < 0.5 else s32(v) & ((1 << 64) - 1)
             st.patches.append((ea, (v & ((1 << bits) - 1)).to_bytes(size, 'little')))
         elif m == 'fldcw':
-            cwv = rng.choice([0x027f, 0x037f, 0x0e7f, 0x0f7f, 0x067f, 0x0a7f, 0x0c7f, 0x007f, 0x0b7f])
+            cwv = rng.choice([0x027f, 0x037f, 0x0e7f, 0x0f7f, 0x067f, 0x0a7f, 0x0c7f, 0x007f, 0x0b7f,
+                              0x127f, 0x1f7f])
             st.patches.append((ea, struct.pack('<H', cwv)))
         elif m == 'frstor':
             img = bytearray(108)
             rtop = rng.randrange(8)
-            regs = [fpu_value(rng) for _ in range(8)]
             sw = rng.getrandbits(6) | rng.getrandbits(1) << 8 | rng.getrandbits(1) << 9 | \
                 rng.getrandbits(1) << 10 | rtop << 11 | rng.getrandbits(1) << 14
-            struct.pack_into('<III', img, 0, 0x027f | (rng.randrange(4) << 10), sw, 0)
+            struct.pack_into('<III', img, 0, rng.choice([0x027f, 0x037f, 0x127f, 0x007f]) |
+                             (rng.randrange(4) << 10), sw, 0)
             for i in range(8):
-                mant, se = f64_to_f80(regs[i])
-                if rng.random() < 0.3 and (se & 0x7fff) not in (0, 0x7fff) and mant:
-                    mant |= rng.getrandbits(11)
-                img[28 + 10 * i:38 + 10 * i] = f80_bytes(mant, se)
+                img[28 + 10 * i:38 + 10 * i] = f80_bytes(*widen(rng, fpu_value(rng)))
             st.patches.append((ea, bytes(img)))
         elif m in ('fld', 'fadd', 'fsub', 'fsubr', 'fmul', 'fdiv', 'fdivr', 'fcom', 'fcomp',
                    'fucom', 'fucomp'):
-            st0 = vals[top]
             v = fpu_value(rng, 'divisor' if m in ('fdiv', 'fdivr') and rng.random() < 0.5 else '')
+            same = False
             if m.startswith('fcom') or m.startswith('fucom'):
                 r = k % 4
                 if r == 1:
-                    v = st0
+                    same = True
                 elif r == 2:
-                    v = math.nan if rng.random() < 0.3 else st0 + rng.choice([1, -1]) * abs(st0) * 1e-9
+                    v = math.nan if rng.random() < 0.3 else v * (1 + rng.choice([1, -1]) * 1e-9)
             if size == 4:
                 try:
                     b = struct.pack('<f', v)
                 except OverflowError:
                     b = struct.pack('<f', math.copysign(math.inf, v))
-                if m.startswith('fcom') and k % 4 == 1:
-                    # make ST(0) exactly the float value so equality is reachable
-                    st.fpu['st'][top] = struct.unpack('<f', b)[0]
+                if same:
+                    st.fpu['st'][top] = f64_to_f80(struct.unpack('<f', b)[0])
             elif size == 8:
                 b = struct.pack('<d', v)
+                if same:
+                    st.fpu['st'][top] = f64_to_f80(v)
             else:
-                mant, se = f64_to_f80(v)
-                r = rng.random()
-                if r < 0.35 and (se & 0x7fff) not in (0, 0x7fff) and mant:
-                    mant |= rng.getrandbits(11) | (1 << 10 if rng.random() < 0.2 else 0)
-                elif r < 0.45:
-                    se = (se & 0x8000) | rng.choice([0x0001, 0x3b00, 0x3c00, 0x4400, 0x7ffe, 0x43fe, 0x3bcc])
-                    mant |= 1 << 63
-                b = f80_bytes(mant, se)
+                t = widen(rng, v, 0.35)
+                if same:
+                    st.fpu['st'][top] = t
+                b = f80_bytes(*t)
             st.patches.append((ea, b))
+
+
+def widen(rng, x, p=0.4):
+    """80-bit register value from x: often with a full 64-bit mantissa, now and
+    then with an exponent beyond the double range or as an extended denormal."""
+    m, se = f64_to_f80(x)
+    if (se & 0x7fff) == 0x7fff or m == 0:
+        return m, se
+    r = rng.random()
+    if r < p:
+        m |= rng.getrandbits(11)
+    elif r < p + 0.04:
+        se = (se & 0x8000) | rng.choice([0x0001, 0x2000, 0x3a00, 0x4500, 0x6000, 0x7ffe])
+    elif r < p + 0.05:
+        se &= 0x8000
+        m = rng.getrandbits(63) | 1
+    return m, se
 
 
 # ------------------------------------------------------------- compare
@@ -1447,26 +1538,34 @@ def insn_undefined(ins, st):
     return 0
 
 
-def fpu_close(a, b, cls):
-    if math.isnan(a) and math.isnan(b):
-        return True, 0.0
-    if cls == 'exact':
-        return dbits(a) == dbits(b), 0.0
-    if a == b:
-        return (math.copysign(1, a) == math.copysign(1, b)) or a != 0, 0.0
-    if math.isinf(a) or math.isinf(b) or math.isnan(a) or math.isnan(b):
-        return False, math.inf
-    rel = abs(a - b) / max(abs(a), abs(b))
-    tol = 1e-12 if cls == 'arith' else 1e-9
-    return rel <= tol, rel
+def f80_rel(a, b):
+    """Relative difference of two 80-bit values (0 if equal, inf if not comparable)."""
+    if a == b or (f80_isnan(a) and f80_isnan(b)):
+        return 0.0
+    if f80_isnan(a) or f80_isnan(b) or (a[1] & 0x7fff) == 0x7fff or (b[1] & 0x7fff) == 0x7fff:
+        return math.inf
+    x, y = f80_fraction(*a), f80_fraction(*b)
+    return float(abs(x - y) / max(abs(x), abs(y)))
 
 
-def fpu_class(m):
-    if m in FPU_ARITH:
-        return 'arith'
-    if m in FPU_TRANSC:
-        return 'transc'
-    return 'exact'
+def f80_exponent(t):
+    m, se = t
+    return (se & 0x7fff or 1) - 16383 + m.bit_length() - 64
+
+
+def fprem_reference(a, b):
+    """Exact complete fprem: (remainder, quotient & 7), or None when the operands
+    are not finite and nonzero or the x87 would leave a partial remainder."""
+    finite = all((t[1] & 0x7fff) != 0x7fff for t in (a, b))
+    if not finite or b[0] == 0:
+        return None
+    if a[0] == 0:
+        return a, 0
+    if f80_exponent(a) - f80_exponent(b) >= 64:
+        return None
+    x, y = f80_fraction(*a), f80_fraction(*b)
+    n = abs(x / y).__floor__() * (1 if (x < 0) == (y < 0) else -1)
+    return fraction_to_f80(x - n * y, neg_zero=bool(a[1] >> 15)), abs(n) & 7
 
 
 def compare(case, st, cr, ur, stats):
@@ -1505,72 +1604,98 @@ def compare(case, st, cr, ur, stats):
         cf, uf = cr.fpu, ur.fpu
         if cf['top'] != uf['top']:
             errs.append(f'fpu TOP: C={cf["top"]} unicorn={uf["top"]}')
-        exact_reg = fprem_q = None
+        top = st.fpu['top']
+        done = set()                      # registers checked against another reference
+        cref = {}                         # C bits checked against another reference
+        uc_partial = False
+        if m in HOST_REF and case.kind == 'insn':
+            # The four instructions unicorn computes in doubles or inexactly are
+            # compared bit for bit with the host x87 running the same instruction.
+            ri = (top + (1 if m == 'fyl2x' else 0)) & 7
+            if cf['st'][ri] != cf['ref']:
+                errs.append(f'ST(0) vs host x87: C={fmt80(cf["st"][ri])} x87={fmt80(cf["ref"])}')
+            bits = (0, 1, 2, 3) if m == 'fprem' else (2,) if m in ('fsin', 'fcos') else ()
+            for bit in bits:
+                cref[bit] = (cf['ref_sw'] >> (8, 9, 10, 14)[bit]) & 1
+            rel = f80_rel(cf['st'][ri], uf['st'][ri])
+            if rel:
+                key = f'{m} (unicorn vs x87)'
+                if rel != math.inf:
+                    stats['fpu_maxrel'][key] = max(stats['fpu_maxrel'].get(key, 0.0), rel)
+                if rel > 1e-13:
+                    known.append(f'ST(0): unicorn {fmt80(uf["st"][ri])}, C and host x87 {fmt80(cf["st"][ri])}')
+            done.add(ri)
         if m == 'fprem':
-            # QEMU 5 (unicorn) computes fprem as st0 - st1 * trunc(st0 / st1) in
-            # doubles, which is inexact; the hardware remainder is exact and
-            # equals math.fmod. Compare C with the exact value instead.
-            top = st.fpu['top']
             a, b = st.fpu['st'][top], st.fpu['st'][(top + 1) & 7]
-            exact = math.fmod(a, b) if math.isfinite(a) and b != 0 and not math.isnan(b) else math.nan
-            if math.isfinite(a) and b != 0 and not math.isnan(b):
-                fprem_q = 0 if math.isinf(b) else abs(int(Fraction(a) / Fraction(b))) & 7
-            exact_reg = top
-            cv, uv = cf['st'][top], uf['st'][top]
-            ok, _ = fpu_close(cv, exact, 'exact')
-            if not ok:
-                errs.append(f'ST(0): C={cv!r} exact fmod={exact!r} unicorn={uv!r}')
-            elif not fpu_close(uv, exact, 'exact')[0]:
-                rel = abs(uv - exact) / max(abs(exact), 1e-300) if math.isfinite(uv) else math.inf
-                stats['fpu_maxrel']['fprem (unicorn vs exact)'] = max(
-                    stats['fpu_maxrel'].get('fprem (unicorn vs exact)', 0.0), rel)
-                known.append(f'ST(0): unicorn fprem {uv!r} is inexact; C and math.fmod give {exact!r}')
-            if math.isfinite(a) and math.isfinite(b) and a and b and \
-                    math.frexp(a)[1] - math.frexp(b)[1] >= 53:
-                known.append('fprem: partial remainder in unicorn (exponent difference >= 53); '
-                             'C completes in one step')
-                exact_reg = 'skip-c2'
+            ref = fprem_reference(a, b)
+            if ref is not None:
+                (rem, q) = ref
+                if rem is None or cf['st'][top] != rem:
+                    errs.append(f'ST(0): C={fmt80(cf["st"][top])} exact remainder={rem and fmt80(rem)}')
+                for bit, v in ((0, q >> 2 & 1), (3, q >> 1 & 1), (1, q & 1), (2, 0)):
+                    if cf['c'][bit] != v:
+                        errs.append(f'fpu C{bit}: C={cf["c"][bit]} exact={v}')
+                    cref.setdefault(bit, v)
+                if uf['st'][top] != rem:
+                    known.append(f'ST(0): unicorn fprem {fmt80(uf["st"][top])} is inexact; '
+                                 f'C and the exact remainder give {fmt80(rem)}')
+                done.add(top)
+            if all((t[1] & 0x7fff) != 0x7fff and t[0] for t in (a, b)) and \
+                    f80_exponent(a) - f80_exponent(b) >= 53:
+                uc_partial = True         # QEMU 5 reduces partially from 53 bits on
+        if m in FPU_CONST:
+            down, se, up = FPU_CONST[m]
+            rc = (st.fpu['cw'] >> 10) & 3
+            want = (down + (1 if rc == 2 else up if rc == 0 else 0), se)
+            ri = (top - 1) & 7
+            if cf['st'][ri] != want:
+                errs.append(f'ST(0): C={fmt80(cf["st"][ri])} x87 constant for RC={rc}: {fmt80(want)}')
+            elif uf['st'][ri] != want:
+                known.append(f'ST(0): unicorn ignores RC={rc} for {m}: {fmt80(uf["st"][ri])}, C {fmt80(want)}')
+            done.add(ri)
+        if m == 'fyl2x' and f80_to_f64(*st.fpu['st'][top]) <= 0:
+            uc_partial = True             # QEMU 5 refuses ST0 <= 0 in double precision: no pop
         if m not in FPU_INIT:
-            cls = fpu_class(m)
-            if any(f64_to_f80(cf['st'][i]) != tuple(uf['st80'][i]) and not math.isnan(cf['st'][i])
-                   for i in range(8)):
-                # unicorn holds more precision (or range) than the C double
-                stats['x87_wider_than_double'][m] = stats['x87_wider_than_double'].get(m, 0) + 1
             for i in range(8):
-                if i == exact_reg:
+                if i in done:
                     continue
-                ok, rel = fpu_close(cf['st'][i], uf['st'][i], cls)
-                if cls != 'exact' and rel != math.inf:
-                    stats['fpu_maxrel'][case.m] = max(stats['fpu_maxrel'].get(case.m, 0.0), rel)
-                if not ok:
+                if cf['st'][i] != uf['st'][i]:
                     sti = (i - uf['top']) & 7
-                    msg = f'ST({sti}) [phys {i}]: C={cf["st"][i]!r} unicorn={uf["st"][i]!r}'
-                    if f80_out_of_double_range(*uf['st80'][i]):
-                        known.append(msg + ' (unicorn value outside the double range: x87 kept in doubles)')
-                    else:
-                        errs.append(msg)
+                    msg = f'ST({sti}) [phys {i}]: C={fmt80(cf["st"][i])} unicorn={fmt80(uf["st"][i])}'
+                    if m in FPU_TRANSC:
+                        rel = f80_rel(cf['st'][i], uf['st'][i])
+                        if rel <= 1e-13:
+                            stats['fpu_maxrel'][f'{m} (unicorn)'] = max(
+                                stats['fpu_maxrel'].get(f'{m} (unicorn)', 0.0), rel)
+                            continue
+                    errs.append(msg)
+            if not errs and any(not f80_is_double(*t) for t in uf['st']):
+                stats['x87_extended'][m] = stats['x87_extended'].get(m, 0) + 1
         cbits = []
         if m in FPU_COMPARE:
             cbits = [0, 2, 3]
-        elif m in ('fsin', 'fcos') or (m == 'fprem' and exact_reg != 'skip-c2'):
+        elif m in ('fsin', 'fcos', 'fprem'):
             cbits = [2]
         elif m in FPU_INIT or m == 'frstor':
             cbits = [0, 1, 2, 3]
-        for b in cbits:
-            if cf['c'][b] != uf['c'][b]:
-                errs.append(f'fpu C{b}: C={cf["c"][b]} unicorn={uf["c"][b]}')
-        if m == 'fprem' and fprem_q is not None:
-            for b, v in ((0, fprem_q >> 2 & 1), (3, fprem_q >> 1 & 1), (1, fprem_q & 1)):
-                if cf['c'][b] != v:
-                    errs.append(f'fpu C{b} (fprem quotient bit): C={cf["c"][b]} exact={v} unicorn={uf["c"][b]}')
-                elif uf['c'][b] != v:
-                    known.append(f'fpu C{b} (fprem quotient bit): unicorn={uf["c"][b]}, C and exact={v}')
+        for bit in set(cbits) | set(cref):
+            want = cref.get(bit, uf['c'][bit])
+            if cf['c'][bit] != want:
+                errs.append(f'fpu C{bit}: C={cf["c"][bit]} expected={want} unicorn={uf["c"][bit]}')
+            elif bit in cref and uf['c'][bit] != want and bit in cbits:
+                known.append(f'fpu C{bit}: unicorn={uf["c"][bit]}, C and reference={want}')
         if m in ('fldcw', 'frstor') or m in FPU_INIT:
             if cf['cw'] != uf['cw']:
                 errs.append(f'fpu CW: C={cf["cw"]:04x} unicorn={uf["cw"]:04x}')
         if m in FPU_INIT or m == 'frstor':
             if (cf['sw'] & 0x3f) != (uf['sw'] & 0x3f):
                 errs.append(f'fpu SW exceptions: C={cf["sw"]:04x} unicorn={uf["sw"]:04x}')
+        host_ok = case.kind == 'insn' and m in HOST_REF and not any('host x87' in e for e in errs)
+        if uc_partial and errs and (case.kind != 'insn' or host_ok and m == 'fyl2x'):
+            # unicorn takes another path: a partial fprem remainder from 53 bits of
+            # exponent difference, or fyl2x of an operand that is <= 0 as a double
+            known += [e + f' (unicorn {m} deviates; C matches the host x87)' for e in errs]
+            errs = []
     return errs, known
 
 
@@ -1614,7 +1739,7 @@ def run(args):
     t_c = time.time() - t0 - t_disc - t_build
 
     oracle = Oracle(world)
-    stats = {'fpu_maxrel': {}, 'x87_wider_than_double': {}}
+    stats = {'fpu_maxrel': {}, 'x87_extended': {}}
     per_case = collections.defaultdict(lambda: {'states': 0, 'fail': 0, 'invalid': 0, 'known': 0, 'exits': set(),
                                                 'first': None, 'known_first': None, 'msgs': collections.Counter()})
     for (c, st), cr in zip(jobs, c_results):
@@ -1705,7 +1830,7 @@ def run(args):
         'unsupported': len(unsupported),
         'cases_failed': len(failures),
         'fpu_max_relative_error': {k: v for k, v in sorted(stats['fpu_maxrel'].items())},
-        'x87_states_wider_than_double': dict(sorted(stats['x87_wider_than_double'].items())),
+        'x87_exact_states_with_non_double_values': dict(sorted(stats['x87_extended'].items())),
         'seconds': {'discover': round(t_disc, 1), 'build': round(t_build, 1), 'c': round(t_c, 1),
                     'unicorn': round(t_uc, 1)},
     }
@@ -1750,9 +1875,9 @@ def main(argv=None):
     ap.add_argument('--states', type=int, help='random states per case (in addition to edge states)')
     ap.add_argument('--no-seq', action='store_true', help='skip fused producer/consumer chains')
     ap.add_argument('--jobs', type=int, default=os.cpu_count() or 2)
-    ap.add_argument('--fpu-cw', type=lambda v: int(v, 0), default=0x027f,
-                    help='x87 control word of the initial states (default 0x027f: 53-bit, as on Windows; '
-                         '0x037f measures the 64-bit precision Watcom\'s fninit leaves)')
+    ap.add_argument('--fpu-cw', type=lambda v: int(v, 0), default=0x127f,
+                    help='x87 control word of the initial states (default 0x127f: 53-bit precision, what '
+                         'Watcom\'s 8087 init at 0x44692a loads; 0x37f: 64-bit, as in 0x44c47c)')
     ap.add_argument('--show', type=int, default=40, help='failures to print')
     ap.add_argument('--out', help='work directory (default build/recomp/unicorn_diff/{quick,full})')
     args = ap.parse_args(argv)
