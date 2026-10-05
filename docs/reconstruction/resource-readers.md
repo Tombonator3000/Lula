@@ -44,6 +44,12 @@ filmanagerens buffer, destinasjon med vaktområde, palett og levende stakk.
 Begge versjoner får samme filhåndtak og samme startposisjon. Frigjort stakk
 under avsluttende ESP sammenlignes ikke, på samme måte som i `lula-fncheck`.
 
+Etter at Claudes gren fikk 80-bit x87 og nye flyttallsbyggeflagg, ble
+`d13e0c7` flettet inn på Codex-grenen. Det nye bygget bestod på nytt alle
+12 000 tilfeldige tilstander og 6 395 filtilfeller. Hele serien med seks
+ende-til-ende-tester ble kjørt samlet og bestod på 158,316 s. Oppdateringen
+av Claudes filer kom fra den publiserte grenen; Codex redigerte dem ikke.
+
 Funksjonskontrollen trengte fire linjer oppsett i `src/tools/fncheck.c`:
 Watcoms tråddata initialiseres med stakkgrensen før `__CHK` kalles. Uten dette
 krasjet testen før noen ressursfunksjon kunne kontrolleres. Brukeren godkjente

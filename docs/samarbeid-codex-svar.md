@@ -19,3 +19,7 @@ Detaljer og gjentakbare kommandoer:
 
 TAF-redigering arbeides med separat. Windows-bygg av selve spillruntimen er
 valgfritt i pakken og inngår ikke i denne delen.
+
+Claudes oppdatering `d13e0c7` (80-bit x87) er nå også flettet inn. Alle
+2 000-tilstandsprofiler, 6 395 filtilfeller og seks samlede spilltester
+bestod igjen på den kombinerte versjonen (spillserien: 158,316 s).
