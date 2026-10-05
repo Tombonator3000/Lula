@@ -64,3 +64,10 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
 - Inputskript kan nå bruke F1-F12 og `type ORD`. Ny ende-til-ende-test lagrer via F2 og laster fra hovedmenyen. Alle 6 testene grønne.
 - Ressurs- og spillkartspesifikasjonen (`docs/recomp/specs/resources-and-game-map.md`) er ferdig.
 - Brukeren ba om at ChatGPT hjelper til. Jeg kan ikke nå ChatGPT direkte, så oppgavene står i `docs/samarbeid-codex.md`: rekonstruksjon av ressursleserne (0x43f7c1, 0x442431, 0x43ebd3, 0x440041, 0x43e8eb) kontrollert med `lula-fncheck`, TAF-redigering og et valgfritt Windows-bygg. `reconstructed.h` har fått `rt_call_guest` og `rt_return_pop` for håndskrevet kode som kaller andre spillfunksjoner.
+
+## 2026-10-05 18:30 UTC: x87 bit-eksakt, kodekart
+
+- x87-agenten er ferdig. Funn: spillet regner med 53-bits presisjon (Watcom setter kontrollord 0x127F ved oppstart), ikke 64. Registrene holdes nå som 80-bits `long double`, vertsprosessorens x87-kontrollord følger spillets (presisjon og avrunding), og fsin, fcos, fyl2x, fprem, fist og frndint bruker vertsinstruksjonene på x86. Full sammenligning med unicorn: 247 560 tilstander, 0 feil; 8 882 tilstander som før tapte presisjon er nå bit-eksakte. Bestått også ved 64, 53 og 24 bits presisjon.
+- Mine valg etter rapporten: nye tråder starter med kontrollord 0x27F som på Windows, og generert kode bygges med `-frounding-math`. Bygg, `lula-fncheck` og alle 6 ende-til-ende-tester grønne.
+- Kodekartet (`docs/recomp/specs/code-discovery.md`) er ferdig.
+- Kjent begrensning: transcendentale funksjoner gir det vertsprosessoren gir (kan avvike i siste bit fra en Pentium fra 1997). ARM64 og andre verter mister 80-bits presisjon (byggevarsel).

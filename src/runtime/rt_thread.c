@@ -103,6 +103,8 @@ Cpu *rt_cpu_new_thread(uint32_t *thread_id)
     W32(teb + 0x24, tid);
     c->fs_base = teb;
     rt_fpu_init(c);
+    c->fpu.cw = 0x027f;      /* Windows starts threads at 53-bit precision; the new
+                              * thread's host control word follows in rt_cpu_bind */
     if (cur_cpu)
         rt_fpu_sync_host(cur_cpu);           /* rt_fpu_init loaded 0x37f into this host thread */
     c->host = (void *)(intptr_t)slot;
