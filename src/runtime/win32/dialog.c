@@ -2266,17 +2266,18 @@ static void paint_menu(Ui *u)
             fill(x0 + 4, ly + 1, x1 - 4, ly + 2, sc(C_3DHILIGHT));
             continue;
         }
-        bool hot = i == u->hot, enabled = item_enabled(it);
+        /* MF_GRAYED items are drawn grey; MF_DISABLED alone looks normal. */
+        bool hot = i == u->hot, grayed = (it->flags & MF_GRAYED) != 0;
         if (hot)
             fill(x0 + 3, iy, x1 - 3, iy + it->h, sc(C_HIGHLIGHT));
-        uint32_t col = hot ? (enabled ? sc(C_HIGHLIGHTTEXT) : sc(C_GRAYTEXT)) : sc(C_MENUTEXT);
+        uint32_t col = hot ? (grayed ? sc(C_GRAYTEXT) : sc(C_HIGHLIGHTTEXT)) : sc(C_MENUTEXT);
         int ty = iy + (it->h - u->font_h) / 2, tx = x0 + u->text_x;
         if (it->flags & MF_CHECKED)
-            paint_check_mark(x0 + 7, iy + (it->h - 7) / 2, enabled ? col : sc(C_3DSHADOW));
+            paint_check_mark(x0 + 7, iy + (it->h - 7) / 2, grayed && !hot ? sc(C_3DSHADOW) : col);
         if (!it->text)
             continue;
         int n = (int)strlen(it->text);
-        if (!enabled && !hot) {   /* embossed grey text */
+        if (grayed && !hot) {   /* embossed grey text */
             draw_line(u->font, tx + 1, ty + 1, it->text, n, sc(C_3DHILIGHT), true, 0);
             draw_line(u->font, tx, ty, it->text, n, sc(C_3DSHADOW), true, 0);
         } else {
@@ -2458,6 +2459,7 @@ static void modal_loop(Cpu *c, Ui *u)
 WINAPI_FN(user32, DialogBoxParamA)
 {
     uint32_t name = ARG(1), owner = ARG(2), proc = ARG(3), param = ARG(4);
+    if (getenv("LULA_TEST_DLG")) name = rt_guest_strdup(getenv("LULA_TEST_DLG"));  /* TEMP-TEST */
     char label[64];
     if (name > 0xffff)
         snprintf(label, sizeof label, "%s", gstr(name));
