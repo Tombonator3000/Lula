@@ -284,8 +284,9 @@ static uint32_t b_GetCurrentPosition(Cpu *c)
         plat_audio_unlock();
         if (play >= b->data->size)
             play = 0;
-        /* The write cursor runs about 15 ms ahead, like real drivers. */
-        write = (play + (b->freq * b->block * 15 / 1000 / b->block) * b->block) % b->data->size;
+        /* A playing buffer's write cursor runs about 15 ms ahead, like real
+         * drivers; a stopped buffer's equals the play cursor. */
+        write = b->playing ? (play + (b->freq * 15 / 1000) * b->block) % b->data->size : play;
     }
     if (ARG(1)) W32(ARG(1), play);
     if (ARG(2)) W32(ARG(2), write);
@@ -337,8 +338,11 @@ static uint32_t b_Lock(Cpu *c)
         RET(8, DSERR_INVALIDPARAM);
     uint32_t size = b->data->size;
     if (flags & DSBLOCK_FROMWRITECURSOR) {
+        plat_audio_lock();
         uint32_t play = (uint32_t)b->pos * b->block;
-        off = (play + b->block * (b->freq * 15 / 1000)) % size;
+        bool playing = b->playing;
+        plat_audio_unlock();
+        off = playing ? (play + b->block * (b->freq * 15 / 1000)) % size : play % size;
     }
     if (flags & DSBLOCK_ENTIREBUFFER)
         bytes = size;
