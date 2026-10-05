@@ -1,32 +1,42 @@
 # Samordning av Lula-arbeidet
 
-Brukeren har bedt Codex samarbeide med Claude om dekompilering, rekonstruksjon og grafikk. Den oppgitte Claude-økten kunne ikke leses eller meldes fra Codex fordi nettleserens sikkerhetskontroll ikke kunne verifiseres. Ingen melding er derfor sendt direkte til Claude, og arbeidsfordelingen nedenfor er et forslag som avventer svar.
+Brukeren formidlet Claudes oppgavepakke i `docs/samarbeid-codex.md` og ba
+Codex gjennomføre den på egne grener med PR-er mot
+`claude/eager-ride-xckkd4`. Samordningen skjer gjennom repoet. Direkte
+lesing eller melding i den oppgitte Claude-økten er ikke bekreftet.
 
-## Spørsmål til Claude
+## Arbeidsfordeling
 
-Hva trenger du hjelp til i Lula-arbeidet: Watcom/dekompilering, rekonstruert spillkode, ressursformater eller grafikk? Hvilken gren bruker du, og hvilke filer/moduler tar du ansvar for? Oppgi én avgrenset oppgave Codex kan eie med et observerbart ferdigkriterium.
+Claude eier `tools/recomp/`, `src/runtime/`, CMake-oppsettet, eksisterende
+spilltester og de løpende logg-/planfilene. Codex har rekonstruert de fem
+ressursleserne i `src/reconstructed/resource_*.c` på
+`codex/resource-readers`, levert i [PR #3](https://github.com/Tombonator3000/Lula/pull/3).
+Resultat og kontrollkommandoer står i `docs/reconstruction/resource-readers.md`
+og `docs/samarbeid-codex-svar.md` på den grenen. Brukeren godkjente særskilt
+fire linjer Watcom-trådoppsett i `src/tools/fncheck.c` for funksjonstesten.
 
-## Tilgjengelig grunnlag
+`codex/taf-frames` leverer oppgave 2: samme-størrelse eksport/import av
+TAF-rammer i Python og den portable C-modulen. Den bygger på Claudes gren
+og henter også inn historikken til den tidligere NGS/TBF-modulen fra
+`main`. TAF-endringer krever ikke PR #3; det originale genererte
+ressursleserbygget er også kontrollert med en endret TAF via `--mods`.
 
-- `main` har 144 uendrede spillfiler via Git LFS, SHA-256-manifest og testet Python-verktøykjede for ressursformatene.
-- Ghidra har eksportert 944/945 identifiserte funksjoner; én ufullstendig funksjon og Watcom-ABI-begrensningene er dokumentert i `docs/binary-analysis.md`.
-- START.TBF og TGP-arkivene har en kontrollert grafikk-ut/inn-rute. TAF kan foreløpig deles/repakkes uendret.
-- Visningsskalering er klargjort separat fra intern oppløsning. De faste 640/480-grensene er kartlagt i `analysis/decompiled/resolution-candidates.tsv`.
+Codex eier i TAF-delen:
 
-## Avgrenset Codex-kandidat
+- `tools/assets.py`, `tools/build_reconstruction.sh` og kontrollverktøyene i `tools/reconstruction/`.
+- `reconstruction/resources/` og den allerede leverte `tests/test_native_resources.py` fra PR #1.
+- Dokumentasjon og kontrollrapporter for egne ressursendringer.
 
-Codex bruker grenen `codex/resource-reconstruction`. Den nye modulen under `reconstruction/resources/` rekonstruerer NGS/TBF-ressursinnlasting i byggbar C11 og sammenlignes med den validerte Python-dekoderen. Den endrer ingen spillregler, originalfiler, eksisterende Ghidra-analyse eller produksjonsgrafikk. Det er en separat utviklingsmodul, ikke et ferdig rekonstruert spill.
+## Kontroller og videre arbeid
 
-Filer som Codex eier i dette avgrensede arbeidet:
+TAF-felt, bruksanvisning og grenser står i `docs/reconstruction/taf-editing.md`.
+`analysis/reconstruction/taf-validation.json` registrerer de utførte
+kontrollene og filhashene. Den eldre `resource-validation.json` er en
+historisk rapport for PR #1; påstandene om manglende spillbygg der gjelder
+bare det tidligere tidspunktet og den portable modulens omfang.
 
-- `reconstruction/resources/`
-- `tools/build_reconstruction.sh`
-- `tests/test_native_resources.py`
-- `docs/reconstruction/resources.md`
-- Denne samordningsfilen og rapporten for modulens verifikasjon.
-
-Claude kan bruke den eksisterende analysen og foreslå videre oppgavefordeling. Ingen eierskap til Claudes filer eller framtidige oppgaver er avtalt. Send status via repoets vanlige branch/PR-fly eller ved å oppdatere samordningen i en separat commit. Bevar `original/app/`, spillatferd og lagringsfiler.
-
-## Aksept av videre rekonstruksjon
-
-En byggbar modul må ha dokumentert samsvar med faktiske originaldata og feiltester. En visuell modul må også kjøres og inspiseres. Et komplett rekonstruert spill må kunne starte, gjennomføre spillflyten og lagre/laste med samme observerbare atferd som originalen. Analysekode, en testprobe eller en grafikkforhåndsvisning alene oppfyller ikke dette.
+Originalfiler og tidligere lagringer bevares. Grafikkendringer som endrer
+intern oppløsning, koordinater, treffområder eller timing krever eget
+arbeid og spillkontroll. Ny HD-grafikk og Windows-bygg av selve spillet er
+ikke gjennomført i denne oppgavepakken. Ressursverktøyet er krysskompilert
+for Windows x86, uten bekreftet Windows/Wine-kjøring.

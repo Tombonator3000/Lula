@@ -110,6 +110,27 @@ treffområder, timing eller intern spilleflate.
   og nullkommandoen beholdt sin oppførsel.
 - CLI-eksport/import av CURSOR.TAF ga byteidentisk fil. Eksisterende
   utdata, ugyldige rammeindekser og endrede dimensjoner ble avvist.
+- Den portable C-modulen bestod 989 uendrede API-rundturer og 988
+  PPM-rundturer mot Python, alle 65 536 RGB565-verdier og åtte endringer
+  med byteidentisk C-/Python-resultat. 37 avvisningskontroller dekker
+  ugyldige headere, rammer, indekser, dimensjoner og eksisterende utdata.
+  Hele korpuset ble kjørt med AddressSanitizer/UBSan; de fire sist
+  tilføyde headerkontrollene ble også kjørt separat med disse kontrollene.
+- Spillet bygget på Claudes `e0b3a2c` viste den endrede TAF-filen via
+  `--mods`. Alle fire markørrammer ble endret til RGB565 `0x1234`, med
+  original størrelse 39×76. Filen krympet fra 11 271 til 879 bytes.
+  Presenterte spillbilder fikk nøyaktig 2 964 nye piksler med denne
+  fargen, uten trap/fatal. Kontroll og modifikasjon brukte nye
+  lagringsmapper; originalfiler og tidligere lagringer ble bevart.
 
-Dette er fil- og kodekkontroller. Runtime-visning av endret TAF-grafikk
-rapporteres separat fra disse resultatene.
+Gjenta filkontrollene med `tools/build_reconstruction.sh` og
+`python3 tools/reconstruction/verify_taf.py`. For minnekontroll, bygg med
+`--sanitize` og gi skriptet `--cli
+build/reconstruction/lula-resource-cli-sanitize --api-check
+build/reconstruction/lula-taf-check-sanitize`. Etter separat CMake-bygg av
+spillet gjentas runtime-kontrollen med
+`python3 tools/reconstruction/verify_taf_runtime.py`.
+
+Kontrollene bekrefter redigeringsruten og den testede markørvisningen.
+Nye illustrasjoner, intern oppløsningsendring og langvarig gjennomspilling
+inngår ikke i denne leveransen.
