@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "original_unchanged": true,
+  "checks": [
+    {
+      "path": "original/app/DATA/BACK/START.TBF",
+      "size": 2364,
+      "sha256": "fea045ec70f3ada6f3a6285edcc134761fae41c830cd86470a3d72511a745bb4"
+    },
+    {
+      "path": "build/asset-proof/START.TBF",
+      "size": 2364,
+      "sha256": "fea045ec70f3ada6f3a6285edcc134761fae41c830cd86470a3d72511a745bb4"
+    },
+    {
+      "path": "original/app/DATA/BACK/back.tgp",
+      "size": 25581278,
+      "sha256": "f325ad382fceddfb80baaeef67586fb127b7693ee5df24567f7fb3a27e1b86cc"
+    },
+    {
+      "path": "build/asset-proof/back.tgp",
+      "size": 25581278,
+      "sha256": "f325ad382fceddfb80baaeef67586fb127b7693ee5df24567f7fb3a27e1b86cc"
+    },
+    {
+      "path": "build/native/lula-toolchain-probe.exe",
+      "size": 252068,
+      "sha256": "d9ba63f1dd84001831bd49701f97e501b74217b4b7ebc2fac9847eb633c81d70"
+    }
+  ],
+  "toolchain_probe": {
+    "target": "i686-w64-mingw32",
+    "compiler": "GCC 13-posix",
+    "import": "DirectDrawCreate",
+    "scope": "native tooling only; not a rebuilt game"
+  },
+  "runtime": "UNVERIFIED: Wine is unavailable; Windows input/video/audio not tested",
+  "asset_roundtrips": [
+    "standalone TBF -> editable PPM -> byte-identical TBF",
+    "NGS back.tgp -> individual payloads -> byte-identical back.tgp"
+  ]
+}

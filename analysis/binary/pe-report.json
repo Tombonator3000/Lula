@@ -1,0 +1,2883 @@
+{
+  "input": "original/app/WET.EXE",
+  "sha256": "8c223b528b912dd141dbe8db272b96b15279dab4bb2c31115b86d3c53842cea9",
+  "size": 450048,
+  "machine": "0x14c",
+  "format": "PE32",
+  "linker_version": "2.18",
+  "timestamp_utc": "1997-09-26T14:41:17+00:00",
+  "image_base": "0x400000",
+  "entry_rva": "0x42cfc",
+  "entry_va": "0x442cfc",
+  "subsystem": 2,
+  "sections": [
+    {
+      "name": "BEGTEXT",
+      "virtual_size": 0,
+      "rva": 4096,
+      "raw_size": 311296,
+      "file_offset": 1024,
+      "characteristics": 1610612768
+    },
+    {
+      "name": "DGROUP",
+      "virtual_size": 0,
+      "rva": 315392,
+      "raw_size": 29696,
+      "file_offset": 312320,
+      "characteristics": 3221225536
+    },
+    {
+      "name": ".bss",
+      "virtual_size": 0,
+      "rva": 348160,
+      "raw_size": 219648,
+      "file_offset": 0,
+      "characteristics": 3221225600
+    },
+    {
+      "name": ".idata",
+      "virtual_size": 0,
+      "rva": 569344,
+      "raw_size": 4096,
+      "file_offset": 342016,
+      "characteristics": 3221225536
+    },
+    {
+      "name": ".reloc",
+      "virtual_size": 0,
+      "rva": 573440,
+      "raw_size": 30720,
+      "file_offset": 346112,
+      "characteristics": 1107296320
+    },
+    {
+      "name": ".rsrc",
+      "virtual_size": 72860,
+      "rva": 606208,
+      "raw_size": 73216,
+      "file_offset": 376832,
+      "characteristics": 1073741888
+    }
+  ],
+  "imports": [
+    {
+      "dll": "ole32.dll",
+      "name": "CoCreateInstance",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 569580,
+      "iat_va": 4763884
+    },
+    {
+      "dll": "ole32.dll",
+      "name": "CoInitialize",
+      "ordinal": null,
+      "hint": 2,
+      "iat_rva": 569584,
+      "iat_va": 4763888
+    },
+    {
+      "dll": "ole32.dll",
+      "name": "CoUninitialize",
+      "ordinal": null,
+      "hint": 3,
+      "iat_rva": 569588,
+      "iat_va": 4763892
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "auxGetDevCapsA",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 569672,
+      "iat_va": 4763976
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "auxGetNumDevs",
+      "ordinal": null,
+      "hint": 2,
+      "iat_rva": 569676,
+      "iat_va": 4763980
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "auxGetVolume",
+      "ordinal": null,
+      "hint": 3,
+      "iat_rva": 569680,
+      "iat_va": 4763984
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "auxSetVolume",
+      "ordinal": null,
+      "hint": 4,
+      "iat_rva": 569684,
+      "iat_va": 4763988
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "mciSendCommandA",
+      "ordinal": null,
+      "hint": 5,
+      "iat_rva": 569688,
+      "iat_va": 4763992
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "midiOutGetDevCapsA",
+      "ordinal": null,
+      "hint": 6,
+      "iat_rva": 569692,
+      "iat_va": 4763996
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "midiOutGetNumDevs",
+      "ordinal": null,
+      "hint": 7,
+      "iat_rva": 569696,
+      "iat_va": 4764000
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "midiOutGetVolume",
+      "ordinal": null,
+      "hint": 8,
+      "iat_rva": 569700,
+      "iat_va": 4764004
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "midiOutSetVolume",
+      "ordinal": null,
+      "hint": 9,
+      "iat_rva": 569704,
+      "iat_va": 4764008
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "timeBeginPeriod",
+      "ordinal": null,
+      "hint": 10,
+      "iat_rva": 569708,
+      "iat_va": 4764012
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "timeEndPeriod",
+      "ordinal": null,
+      "hint": 11,
+      "iat_rva": 569712,
+      "iat_va": 4764016
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "timeGetDevCaps",
+      "ordinal": null,
+      "hint": 12,
+      "iat_rva": 569716,
+      "iat_va": 4764020
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "timeKillEvent",
+      "ordinal": null,
+      "hint": 13,
+      "iat_rva": 569720,
+      "iat_va": 4764024
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "timeSetEvent",
+      "ordinal": null,
+      "hint": 14,
+      "iat_rva": 569724,
+      "iat_va": 4764028
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "waveOutGetDevCapsA",
+      "ordinal": null,
+      "hint": 15,
+      "iat_rva": 569728,
+      "iat_va": 4764032
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "waveOutGetNumDevs",
+      "ordinal": null,
+      "hint": 16,
+      "iat_rva": 569732,
+      "iat_va": 4764036
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "waveOutGetVolume",
+      "ordinal": null,
+      "hint": 17,
+      "iat_rva": 569736,
+      "iat_va": 4764040
+    },
+    {
+      "dll": "WINMM.dll",
+      "name": "waveOutSetVolume",
+      "ordinal": null,
+      "hint": 18,
+      "iat_rva": 569740,
+      "iat_va": 4764044
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "CreateFontIndirectA",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 569796,
+      "iat_va": 4764100
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "CreateSolidBrush",
+      "ordinal": null,
+      "hint": 2,
+      "iat_rva": 569800,
+      "iat_va": 4764104
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "DPtoLP",
+      "ordinal": null,
+      "hint": 3,
+      "iat_rva": 569804,
+      "iat_va": 4764108
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "DeleteObject",
+      "ordinal": null,
+      "hint": 4,
+      "iat_rva": 569808,
+      "iat_va": 4764112
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "GetStockObject",
+      "ordinal": null,
+      "hint": 5,
+      "iat_rva": 569812,
+      "iat_va": 4764116
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "SelectObject",
+      "ordinal": null,
+      "hint": 6,
+      "iat_rva": 569816,
+      "iat_va": 4764120
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "SetBkColor",
+      "ordinal": null,
+      "hint": 7,
+      "iat_rva": 569820,
+      "iat_va": 4764124
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "SetBkMode",
+      "ordinal": null,
+      "hint": 8,
+      "iat_rva": 569824,
+      "iat_va": 4764128
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "SetTextAlign",
+      "ordinal": null,
+      "hint": 9,
+      "iat_rva": 569828,
+      "iat_va": 4764132
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "SetTextColor",
+      "ordinal": null,
+      "hint": 10,
+      "iat_rva": 569832,
+      "iat_va": 4764136
+    },
+    {
+      "dll": "GDI32.dll",
+      "name": "TextOutA",
+      "ordinal": null,
+      "hint": 11,
+      "iat_rva": 569836,
+      "iat_va": 4764140
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "CloseHandle",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 569912,
+      "iat_va": 4764216
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "CreateFileA",
+      "ordinal": null,
+      "hint": 2,
+      "iat_rva": 569916,
+      "iat_va": 4764220
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "DeleteFileA",
+      "ordinal": null,
+      "hint": 3,
+      "iat_rva": 569920,
+      "iat_va": 4764224
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "GetCommandLineA",
+      "ordinal": null,
+      "hint": 4,
+      "iat_rva": 569924,
+      "iat_va": 4764228
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "GetCurrentDirectoryA",
+      "ordinal": null,
+      "hint": 5,
+      "iat_rva": 569928,
+      "iat_va": 4764232
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "GetLastError",
+      "ordinal": null,
+      "hint": 6,
+      "iat_rva": 569932,
+      "iat_va": 4764236
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "GetPrivateProfileIntA",
+      "ordinal": null,
+      "hint": 7,
+      "iat_rva": 569936,
+      "iat_va": 4764240
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "GetPrivateProfileStringA",
+      "ordinal": null,
+      "hint": 8,
+      "iat_rva": 569940,
+      "iat_va": 4764244
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "GetTickCount",
+      "ordinal": null,
+      "hint": 9,
+      "iat_rva": 569944,
+      "iat_va": 4764248
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "GlobalMemoryStatus",
+      "ordinal": null,
+      "hint": 10,
+      "iat_rva": 569948,
+      "iat_va": 4764252
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "MoveFileA",
+      "ordinal": null,
+      "hint": 11,
+      "iat_rva": 569952,
+      "iat_va": 4764256
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "MultiByteToWideChar",
+      "ordinal": null,
+      "hint": 12,
+      "iat_rva": 569956,
+      "iat_va": 4764260
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "ReadFile",
+      "ordinal": null,
+      "hint": 13,
+      "iat_rva": 569960,
+      "iat_va": 4764264
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "SetFilePointer",
+      "ordinal": null,
+      "hint": 14,
+      "iat_rva": 569964,
+      "iat_va": 4764268
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "WriteFile",
+      "ordinal": null,
+      "hint": 15,
+      "iat_rva": 569968,
+      "iat_va": 4764272
+    },
+    {
+      "dll": "KERNEL32.dll",
+      "name": "WritePrivateProfileStringA",
+      "ordinal": null,
+      "hint": 16,
+      "iat_rva": 569972,
+      "iat_va": 4764276
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "AppendMenuA",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 570176,
+      "iat_va": 4764480
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "BeginPaint",
+      "ordinal": null,
+      "hint": 2,
+      "iat_rva": 570180,
+      "iat_va": 4764484
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "ClientToScreen",
+      "ordinal": null,
+      "hint": 3,
+      "iat_rva": 570184,
+      "iat_va": 4764488
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "CreatePopupMenu",
+      "ordinal": null,
+      "hint": 4,
+      "iat_rva": 570188,
+      "iat_va": 4764492
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "CreateWindowExA",
+      "ordinal": null,
+      "hint": 5,
+      "iat_rva": 570192,
+      "iat_va": 4764496
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "DefWindowProcA",
+      "ordinal": null,
+      "hint": 6,
+      "iat_rva": 570196,
+      "iat_va": 4764500
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "DestroyMenu",
+      "ordinal": null,
+      "hint": 7,
+      "iat_rva": 570200,
+      "iat_va": 4764504
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "DestroyWindow",
+      "ordinal": null,
+      "hint": 8,
+      "iat_rva": 570204,
+      "iat_va": 4764508
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "DialogBoxParamA",
+      "ordinal": null,
+      "hint": 9,
+      "iat_rva": 570208,
+      "iat_va": 4764512
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "DispatchMessageA",
+      "ordinal": null,
+      "hint": 10,
+      "iat_rva": 570212,
+      "iat_va": 4764516
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "DrawTextA",
+      "ordinal": null,
+      "hint": 11,
+      "iat_rva": 570216,
+      "iat_va": 4764520
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "EndDialog",
+      "ordinal": null,
+      "hint": 12,
+      "iat_rva": 570220,
+      "iat_va": 4764524
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "EndPaint",
+      "ordinal": null,
+      "hint": 13,
+      "iat_rva": 570224,
+      "iat_va": 4764528
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "GetAsyncKeyState",
+      "ordinal": null,
+      "hint": 14,
+      "iat_rva": 570228,
+      "iat_va": 4764532
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "GetClientRect",
+      "ordinal": null,
+      "hint": 15,
+      "iat_rva": 570232,
+      "iat_va": 4764536
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "GetDlgItem",
+      "ordinal": null,
+      "hint": 16,
+      "iat_rva": 570236,
+      "iat_va": 4764540
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "GetDlgItemInt",
+      "ordinal": null,
+      "hint": 17,
+      "iat_rva": 570240,
+      "iat_va": 4764544
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "GetDlgItemTextA",
+      "ordinal": null,
+      "hint": 18,
+      "iat_rva": 570244,
+      "iat_va": 4764548
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "GetMessageA",
+      "ordinal": null,
+      "hint": 19,
+      "iat_rva": 570248,
+      "iat_va": 4764552
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "GetSysColor",
+      "ordinal": null,
+      "hint": 20,
+      "iat_rva": 570252,
+      "iat_va": 4764556
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "GetSystemMetrics",
+      "ordinal": null,
+      "hint": 21,
+      "iat_rva": 570256,
+      "iat_va": 4764560
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "InvalidateRect",
+      "ordinal": null,
+      "hint": 22,
+      "iat_rva": 570260,
+      "iat_va": 4764564
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "KillTimer",
+      "ordinal": null,
+      "hint": 23,
+      "iat_rva": 570264,
+      "iat_va": 4764568
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "LoadCursorA",
+      "ordinal": null,
+      "hint": 24,
+      "iat_rva": 570268,
+      "iat_va": 4764572
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "LoadIconA",
+      "ordinal": null,
+      "hint": 25,
+      "iat_rva": 570272,
+      "iat_va": 4764576
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "LoadMenuA",
+      "ordinal": null,
+      "hint": 26,
+      "iat_rva": 570276,
+      "iat_va": 4764580
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "LoadStringA",
+      "ordinal": null,
+      "hint": 27,
+      "iat_rva": 570280,
+      "iat_va": 4764584
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "MessageBeep",
+      "ordinal": null,
+      "hint": 28,
+      "iat_rva": 570284,
+      "iat_va": 4764588
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "MessageBoxA",
+      "ordinal": null,
+      "hint": 29,
+      "iat_rva": 570288,
+      "iat_va": 4764592
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "MsgWaitForMultipleObjects",
+      "ordinal": null,
+      "hint": 30,
+      "iat_rva": 570292,
+      "iat_va": 4764596
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "PeekMessageA",
+      "ordinal": null,
+      "hint": 31,
+      "iat_rva": 570296,
+      "iat_va": 4764600
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "PostMessageA",
+      "ordinal": null,
+      "hint": 32,
+      "iat_rva": 570300,
+      "iat_va": 4764604
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "PostQuitMessage",
+      "ordinal": null,
+      "hint": 33,
+      "iat_rva": 570304,
+      "iat_va": 4764608
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "RegisterClassA",
+      "ordinal": null,
+      "hint": 34,
+      "iat_rva": 570308,
+      "iat_va": 4764612
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "ScreenToClient",
+      "ordinal": null,
+      "hint": 35,
+      "iat_rva": 570312,
+      "iat_va": 4764616
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "SendMessageA",
+      "ordinal": null,
+      "hint": 36,
+      "iat_rva": 570316,
+      "iat_va": 4764620
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "SetCursor",
+      "ordinal": null,
+      "hint": 37,
+      "iat_rva": 570320,
+      "iat_va": 4764624
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "SetCursorPos",
+      "ordinal": null,
+      "hint": 38,
+      "iat_rva": 570324,
+      "iat_va": 4764628
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "SetDlgItemTextA",
+      "ordinal": null,
+      "hint": 39,
+      "iat_rva": 570328,
+      "iat_va": 4764632
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "SetMenu",
+      "ordinal": null,
+      "hint": 40,
+      "iat_rva": 570332,
+      "iat_va": 4764636
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "SetScrollInfo",
+      "ordinal": null,
+      "hint": 41,
+      "iat_rva": 570336,
+      "iat_va": 4764640
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "SetSysColors",
+      "ordinal": null,
+      "hint": 42,
+      "iat_rva": 570340,
+      "iat_va": 4764644
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "SetTimer",
+      "ordinal": null,
+      "hint": 43,
+      "iat_rva": 570344,
+      "iat_va": 4764648
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "ShowCursor",
+      "ordinal": null,
+      "hint": 44,
+      "iat_rva": 570348,
+      "iat_va": 4764652
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "ShowWindow",
+      "ordinal": null,
+      "hint": 45,
+      "iat_rva": 570352,
+      "iat_va": 4764656
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "TrackPopupMenu",
+      "ordinal": null,
+      "hint": 46,
+      "iat_rva": 570356,
+      "iat_va": 4764660
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "TranslateMessage",
+      "ordinal": null,
+      "hint": 47,
+      "iat_rva": 570360,
+      "iat_va": 4764664
+    },
+    {
+      "dll": "USER32.dll",
+      "name": "UpdateWindow",
+      "ordinal": null,
+      "hint": 48,
+      "iat_rva": 570364,
+      "iat_va": 4764668
+    },
+    {
+      "dll": "USER32.DLL",
+      "name": "GetActiveWindow",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 570384,
+      "iat_va": 4764688
+    },
+    {
+      "dll": "USER32.DLL",
+      "name": "wsprintfA",
+      "ordinal": null,
+      "hint": 2,
+      "iat_rva": 570388,
+      "iat_va": 4764692
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "CloseHandle",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 570568,
+      "iat_va": 4764872
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "CreateEventA",
+      "ordinal": null,
+      "hint": 2,
+      "iat_rva": 570572,
+      "iat_va": 4764876
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "CreateFileA",
+      "ordinal": null,
+      "hint": 3,
+      "iat_rva": 570576,
+      "iat_va": 4764880
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "CreateMutexA",
+      "ordinal": null,
+      "hint": 4,
+      "iat_rva": 570580,
+      "iat_va": 4764884
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "CreateThread",
+      "ordinal": null,
+      "hint": 5,
+      "iat_rva": 570584,
+      "iat_va": 4764888
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "DeleteFileA",
+      "ordinal": null,
+      "hint": 6,
+      "iat_rva": 570588,
+      "iat_va": 4764892
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "ExitProcess",
+      "ordinal": null,
+      "hint": 7,
+      "iat_rva": 570592,
+      "iat_va": 4764896
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "ExitThread",
+      "ordinal": null,
+      "hint": 8,
+      "iat_rva": 570596,
+      "iat_va": 4764900
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetCommandLineA",
+      "ordinal": null,
+      "hint": 9,
+      "iat_rva": 570600,
+      "iat_va": 4764904
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetConsoleMode",
+      "ordinal": null,
+      "hint": 10,
+      "iat_rva": 570604,
+      "iat_va": 4764908
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetCurrentProcessId",
+      "ordinal": null,
+      "hint": 11,
+      "iat_rva": 570608,
+      "iat_va": 4764912
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetCurrentThreadId",
+      "ordinal": null,
+      "hint": 12,
+      "iat_rva": 570612,
+      "iat_va": 4764916
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetCurrentThread",
+      "ordinal": null,
+      "hint": 13,
+      "iat_rva": 570616,
+      "iat_va": 4764920
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetEnvironmentStrings",
+      "ordinal": null,
+      "hint": 14,
+      "iat_rva": 570620,
+      "iat_va": 4764924
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetFileType",
+      "ordinal": null,
+      "hint": 15,
+      "iat_rva": 570624,
+      "iat_va": 4764928
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetLastError",
+      "ordinal": null,
+      "hint": 16,
+      "iat_rva": 570628,
+      "iat_va": 4764932
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetLocalTime",
+      "ordinal": null,
+      "hint": 17,
+      "iat_rva": 570632,
+      "iat_va": 4764936
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetModuleFileNameA",
+      "ordinal": null,
+      "hint": 18,
+      "iat_rva": 570636,
+      "iat_va": 4764940
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetModuleHandleA",
+      "ordinal": null,
+      "hint": 19,
+      "iat_rva": 570640,
+      "iat_va": 4764944
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetProcAddress",
+      "ordinal": null,
+      "hint": 20,
+      "iat_rva": 570644,
+      "iat_va": 4764948
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetStdHandle",
+      "ordinal": null,
+      "hint": 21,
+      "iat_rva": 570648,
+      "iat_va": 4764952
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetTimeZoneInformation",
+      "ordinal": null,
+      "hint": 22,
+      "iat_rva": 570652,
+      "iat_va": 4764956
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "GetVersion",
+      "ordinal": null,
+      "hint": 23,
+      "iat_rva": 570656,
+      "iat_va": 4764960
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "LoadLibraryA",
+      "ordinal": null,
+      "hint": 24,
+      "iat_rva": 570660,
+      "iat_va": 4764964
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "PeekConsoleInputA",
+      "ordinal": null,
+      "hint": 25,
+      "iat_rva": 570664,
+      "iat_va": 4764968
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "ReadConsoleInputA",
+      "ordinal": null,
+      "hint": 26,
+      "iat_rva": 570668,
+      "iat_va": 4764972
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "ReleaseMutex",
+      "ordinal": null,
+      "hint": 27,
+      "iat_rva": 570672,
+      "iat_va": 4764976
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "RtlUnwind",
+      "ordinal": null,
+      "hint": 28,
+      "iat_rva": 570676,
+      "iat_va": 4764980
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "SetConsoleCtrlHandler",
+      "ordinal": null,
+      "hint": 29,
+      "iat_rva": 570680,
+      "iat_va": 4764984
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "SetConsoleMode",
+      "ordinal": null,
+      "hint": 30,
+      "iat_rva": 570684,
+      "iat_va": 4764988
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "SetEvent",
+      "ordinal": null,
+      "hint": 31,
+      "iat_rva": 570688,
+      "iat_va": 4764992
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "SetFilePointer",
+      "ordinal": null,
+      "hint": 32,
+      "iat_rva": 570692,
+      "iat_va": 4764996
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "SetStdHandle",
+      "ordinal": null,
+      "hint": 33,
+      "iat_rva": 570696,
+      "iat_va": 4765000
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "TlsAlloc",
+      "ordinal": null,
+      "hint": 34,
+      "iat_rva": 570700,
+      "iat_va": 4765004
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "TlsFree",
+      "ordinal": null,
+      "hint": 35,
+      "iat_rva": 570704,
+      "iat_va": 4765008
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "TlsGetValue",
+      "ordinal": null,
+      "hint": 36,
+      "iat_rva": 570708,
+      "iat_va": 4765012
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "TlsSetValue",
+      "ordinal": null,
+      "hint": 37,
+      "iat_rva": 570712,
+      "iat_va": 4765016
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "VirtualAlloc",
+      "ordinal": null,
+      "hint": 38,
+      "iat_rva": 570716,
+      "iat_va": 4765020
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "VirtualFree",
+      "ordinal": null,
+      "hint": 39,
+      "iat_rva": 570720,
+      "iat_va": 4765024
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "WaitForSingleObject",
+      "ordinal": null,
+      "hint": 40,
+      "iat_rva": 570724,
+      "iat_va": 4765028
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "WriteConsoleA",
+      "ordinal": null,
+      "hint": 41,
+      "iat_rva": 570728,
+      "iat_va": 4765032
+    },
+    {
+      "dll": "KERNEL32.DLL",
+      "name": "WriteFile",
+      "ordinal": null,
+      "hint": 42,
+      "iat_rva": 570732,
+      "iat_va": 4765036
+    },
+    {
+      "dll": "DSOUND.dll",
+      "name": "DirectSoundCreate",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 570748,
+      "iat_va": 4765052
+    },
+    {
+      "dll": "DDRAW.dll",
+      "name": "DirectDrawCreate",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 570764,
+      "iat_va": 4765068
+    },
+    {
+      "dll": "comdlg32.dll",
+      "name": "GetOpenFileNameA",
+      "ordinal": null,
+      "hint": 1,
+      "iat_rva": 570780,
+      "iat_va": 4765084
+    }
+  ],
+  "resources": [
+    {
+      "path": [
+        3,
+        1,
+        0
+      ],
+      "type": "ICON",
+      "rva": 612584,
+      "va": 4806888,
+      "file_offset": 383208,
+      "size": 3752,
+      "codepage": 1252,
+      "sha256": "08ec3e4668ce5090e71fad700c5db51080035fcc9294e27565a1d9676e11d848"
+    },
+    {
+      "path": [
+        5,
+        "AUSZAHLEN_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 616336,
+      "va": 4810640,
+      "file_offset": 386960,
+      "size": 348,
+      "codepage": 1252,
+      "sha256": "997189b1739ea3bed24897263ec2b9b6d7b529621865c067f20195e74fe8d3ca"
+    },
+    {
+      "path": [
+        5,
+        "CD_NOT_FOUND_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 616684,
+      "va": 4810988,
+      "file_offset": 387308,
+      "size": 540,
+      "codepage": 1252,
+      "sha256": "78464891b2e8c4193795fbc94b00edf65153abaad157ee0bf5ef28db3bee8016"
+    },
+    {
+      "path": [
+        5,
+        "DEBUG_EDIT_EQUIP_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 617224,
+      "va": 4811528,
+      "file_offset": 387848,
+      "size": 668,
+      "codepage": 1252,
+      "sha256": "e52140d84de6a1cbbc9218a28d10df7a7f7fc09bfaf721bfebe65701c92353bb"
+    },
+    {
+      "path": [
+        5,
+        "DEBUG_EDIT_PERSO_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 617892,
+      "va": 4812196,
+      "file_offset": 388516,
+      "size": 1500,
+      "codepage": 1252,
+      "sha256": "45d1bbe7bcf15b219d4e933351e1c5a6b496f7993b5a74087ecd83d2360191e1"
+    },
+    {
+      "path": [
+        5,
+        "DEBUG_PERSO_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 619392,
+      "va": 4813696,
+      "file_offset": 390016,
+      "size": 252,
+      "codepage": 1252,
+      "sha256": "c14b3a69918d13cd9ce48a316091bc900130b836bc0acb31b282b157b8d442fb"
+    },
+    {
+      "path": [
+        5,
+        "DEBUG_PORTRAIT_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 619644,
+      "va": 4813948,
+      "file_offset": 390268,
+      "size": 604,
+      "codepage": 1252,
+      "sha256": "9c3f79b3a983d1888d838b597e4459242195232f96b3195b381d49f08cc12d00"
+    },
+    {
+      "path": [
+        5,
+        "EINZAHLEN_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 620248,
+      "va": 4814552,
+      "file_offset": 390872,
+      "size": 348,
+      "codepage": 1252,
+      "sha256": "73a9ab5699d7fafaa0fa5c880458c1268a3cf0d1d063f764b35ea969c0afc215"
+    },
+    {
+      "path": [
+        5,
+        "GAME_IO_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 620596,
+      "va": 4814900,
+      "file_offset": 391220,
+      "size": 220,
+      "codepage": 1252,
+      "sha256": "fec950b19e12971cb39b4ba7774cf1f62c357353b114855040f5ad54601963dc"
+    },
+    {
+      "path": [
+        5,
+        "MAKLER_IMMO_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 620816,
+      "va": 4815120,
+      "file_offset": 391440,
+      "size": 732,
+      "codepage": 1252,
+      "sha256": "84608709a1442ca75b46688958e950a1e6fce1107cd00d17bece9c332dd4bfc5"
+    },
+    {
+      "path": [
+        5,
+        "PERSONALKOSTEN_LIST_BOX_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 621548,
+      "va": 4815852,
+      "file_offset": 392172,
+      "size": 348,
+      "codepage": 1252,
+      "sha256": "577bd0ebe9367283bb6481294cf78bdf5da196979d69ebe1292147787501c045"
+    },
+    {
+      "path": [
+        5,
+        "STANDARD_GET_TXT_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 621896,
+      "va": 4816200,
+      "file_offset": 392520,
+      "size": 228,
+      "codepage": 1252,
+      "sha256": "0ad38cbd2fd96905045c3532f899bfd315c533ad6e2d513280b9ae8ed04f1694"
+    },
+    {
+      "path": [
+        5,
+        "STANDARD_LIST_BOX_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 622124,
+      "va": 4816428,
+      "file_offset": 392748,
+      "size": 316,
+      "codepage": 1252,
+      "sha256": "76f336bf92ca3276ecdba1dea98494f509496b2805458e62c17fac69774428ac"
+    },
+    {
+      "path": [
+        5,
+        "WORK_ORDER_DLG",
+        0
+      ],
+      "type": "DIALOG",
+      "rva": 622440,
+      "va": 4816744,
+      "file_offset": 393064,
+      "size": 284,
+      "codepage": 1252,
+      "sha256": "97a6116112dc768cc379abacca32ab3d1e1554d26575bd50e88f723afd1ea090"
+    },
+    {
+      "path": [
+        6,
+        7,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 622724,
+      "va": 4817028,
+      "file_offset": 393348,
+      "size": 324,
+      "codepage": 1252,
+      "sha256": "79333aff8b52ff96e95b7d21a91b31db63b571e26ca34d02d8f1dbe8390e454c"
+    },
+    {
+      "path": [
+        6,
+        8,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 623048,
+      "va": 4817352,
+      "file_offset": 393672,
+      "size": 116,
+      "codepage": 1252,
+      "sha256": "60aca87600e6725f935d3ef0c94eff284716beb7f47498db106f13e6757c5c29"
+    },
+    {
+      "path": [
+        6,
+        13,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 623164,
+      "va": 4817468,
+      "file_offset": 393788,
+      "size": 138,
+      "codepage": 1252,
+      "sha256": "b0a39969cb00c81fc51538b22988c883e4bf3e71b822ce68377193b76104b2b1"
+    },
+    {
+      "path": [
+        6,
+        14,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 623304,
+      "va": 4817608,
+      "file_offset": 393928,
+      "size": 974,
+      "codepage": 1252,
+      "sha256": "de73e80548ef7817b0fc9625ac91a5e1e27b2c95a46e2aaf690b09b2b167c5d0"
+    },
+    {
+      "path": [
+        6,
+        16,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 624280,
+      "va": 4818584,
+      "file_offset": 394904,
+      "size": 358,
+      "codepage": 1252,
+      "sha256": "cb888fa4ceac1f9366624eafff6464c07073633160af50c7238ae8e879d54117"
+    },
+    {
+      "path": [
+        6,
+        17,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 624640,
+      "va": 4818944,
+      "file_offset": 395264,
+      "size": 520,
+      "codepage": 1252,
+      "sha256": "9f4bcc89848519571aad3797f753e2ece92e02c19856806ce68ce6acfe3eaad4"
+    },
+    {
+      "path": [
+        6,
+        18,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 625160,
+      "va": 4819464,
+      "file_offset": 395784,
+      "size": 230,
+      "codepage": 1252,
+      "sha256": "dca0cacf2f264044bff993293e20335febd51c5d59c5fb1d80b0aa4c642da30a"
+    },
+    {
+      "path": [
+        6,
+        19,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 625392,
+      "va": 4819696,
+      "file_offset": 396016,
+      "size": 110,
+      "codepage": 1252,
+      "sha256": "0b2147e64f4079639cafb922672fd1728b9ea28fe18da7453c779ce9e962af1d"
+    },
+    {
+      "path": [
+        6,
+        20,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 625504,
+      "va": 4819808,
+      "file_offset": 396128,
+      "size": 474,
+      "codepage": 1252,
+      "sha256": "143ef23d994c109196850f30f580d5a8af471ee457ecccac3e389f8371104168"
+    },
+    {
+      "path": [
+        6,
+        21,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 625980,
+      "va": 4820284,
+      "file_offset": 396604,
+      "size": 218,
+      "codepage": 1252,
+      "sha256": "a5d9783e22ee1b6008f0794c49c529059aeb68b4c72eda801ee538a86bc1101b"
+    },
+    {
+      "path": [
+        6,
+        22,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 626200,
+      "va": 4820504,
+      "file_offset": 396824,
+      "size": 74,
+      "codepage": 1252,
+      "sha256": "a94cc8ca13619c8ab25f3acec57f64a108457cb6353def36ebb97b4300940861"
+    },
+    {
+      "path": [
+        6,
+        23,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 626276,
+      "va": 4820580,
+      "file_offset": 396900,
+      "size": 814,
+      "codepage": 1252,
+      "sha256": "e13882dbdca07af6e21b2cb4eeae5f379d7ca93f1f4af86b6ed04c005f7d9257"
+    },
+    {
+      "path": [
+        6,
+        26,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 627092,
+      "va": 4821396,
+      "file_offset": 397716,
+      "size": 986,
+      "codepage": 1252,
+      "sha256": "eca6352bd050856705cd1acf59481e4487b7cb55c2e556146941945311fe46db"
+    },
+    {
+      "path": [
+        6,
+        32,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 628080,
+      "va": 4822384,
+      "file_offset": 398704,
+      "size": 620,
+      "codepage": 1252,
+      "sha256": "d75751c434e45b7124f016787aaf57b6610ebc4736202f2cda4166eb3b1aa7f7"
+    },
+    {
+      "path": [
+        6,
+        33,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 628700,
+      "va": 4823004,
+      "file_offset": 399324,
+      "size": 1146,
+      "codepage": 1252,
+      "sha256": "eacd7c688b95b9b71a957c7eb86e1a34a5d9c48f8557336ff40d004bd3deb660"
+    },
+    {
+      "path": [
+        6,
+        34,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 629848,
+      "va": 4824152,
+      "file_offset": 400472,
+      "size": 88,
+      "codepage": 1252,
+      "sha256": "5bb02f5ac291601d630542827a20fb9f6e37d9c3e84e2f27e42150fd45b52b4c"
+    },
+    {
+      "path": [
+        6,
+        38,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 629936,
+      "va": 4824240,
+      "file_offset": 400560,
+      "size": 828,
+      "codepage": 1252,
+      "sha256": "8c1171505fcdab1182bc7304c0530142afb865d97ed4bffe7b38a57ab70a9481"
+    },
+    {
+      "path": [
+        6,
+        39,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 630764,
+      "va": 4825068,
+      "file_offset": 401388,
+      "size": 1936,
+      "codepage": 1252,
+      "sha256": "641f82532d58f016d108c1af2043bfe3ef645a7385695260c78e4ec0f94a9bb4"
+    },
+    {
+      "path": [
+        6,
+        40,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 632700,
+      "va": 4827004,
+      "file_offset": 403324,
+      "size": 1910,
+      "codepage": 1252,
+      "sha256": "27f465dec1edba2fb8a5f9fe0e31278e4664c2001895e4802dd9ca7a8cac6754"
+    },
+    {
+      "path": [
+        6,
+        41,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 634612,
+      "va": 4828916,
+      "file_offset": 405236,
+      "size": 1670,
+      "codepage": 1252,
+      "sha256": "99764d3d32b0ebb4fd9b5ef96179962864460fd689c069f9bb407ae0562255ac"
+    },
+    {
+      "path": [
+        6,
+        42,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 636284,
+      "va": 4830588,
+      "file_offset": 406908,
+      "size": 334,
+      "codepage": 1252,
+      "sha256": "d970f1051d245a495751b5a98687155c39fa64ec83e753c150c785790b03b35f"
+    },
+    {
+      "path": [
+        6,
+        44,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 636620,
+      "va": 4830924,
+      "file_offset": 407244,
+      "size": 204,
+      "codepage": 1252,
+      "sha256": "f4c508f9e6c54f689189cccdf55a8bf1d93a26278acec702673577fe2e3a03ae"
+    },
+    {
+      "path": [
+        6,
+        45,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 636824,
+      "va": 4831128,
+      "file_offset": 407448,
+      "size": 698,
+      "codepage": 1252,
+      "sha256": "29bf99f608966eed8349c7aa36e0763fb45f6f1ca811cfce007ff76041b44765"
+    },
+    {
+      "path": [
+        6,
+        46,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 637524,
+      "va": 4831828,
+      "file_offset": 408148,
+      "size": 312,
+      "codepage": 1252,
+      "sha256": "32815ac24f91fa334c0526aa1784d65bd482fc43c1031cccce7ea2e5699c3342"
+    },
+    {
+      "path": [
+        6,
+        47,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 637836,
+      "va": 4832140,
+      "file_offset": 408460,
+      "size": 602,
+      "codepage": 1252,
+      "sha256": "aa7bda7dfeacbda3d4d9b38a47cf5e8ce672e4dbb715cb11dc1bcb8014e19b0c"
+    },
+    {
+      "path": [
+        6,
+        48,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 638440,
+      "va": 4832744,
+      "file_offset": 409064,
+      "size": 670,
+      "codepage": 1252,
+      "sha256": "af1efbc6c5164b45a03b3d8db395ace4d1f5033f0efb3140683efa2880b58457"
+    },
+    {
+      "path": [
+        6,
+        49,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 639112,
+      "va": 4833416,
+      "file_offset": 409736,
+      "size": 682,
+      "codepage": 1252,
+      "sha256": "1967f99f9590fb1bc3548754afa1cab9e85163148b4901eb0001df1d29e89279"
+    },
+    {
+      "path": [
+        6,
+        50,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 639796,
+      "va": 4834100,
+      "file_offset": 410420,
+      "size": 842,
+      "codepage": 1252,
+      "sha256": "e708584b8da9042f6ea31bd2c07c126a5ffd1511ddf222e857d13b5b85207fde"
+    },
+    {
+      "path": [
+        6,
+        51,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 640640,
+      "va": 4834944,
+      "file_offset": 411264,
+      "size": 728,
+      "codepage": 1252,
+      "sha256": "a7e5cb9f14c721f17122d12c4ee5bfaaacc0745c24d74a177a3e40e683574a8f"
+    },
+    {
+      "path": [
+        6,
+        54,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 641368,
+      "va": 4835672,
+      "file_offset": 411992,
+      "size": 992,
+      "codepage": 1252,
+      "sha256": "13e86f2f62b9c6adaabd789026bcc262b9f2c7c025b9154688f91207e832f6a6"
+    },
+    {
+      "path": [
+        6,
+        57,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 642360,
+      "va": 4836664,
+      "file_offset": 412984,
+      "size": 800,
+      "codepage": 1252,
+      "sha256": "5c65014181179fab6e8f7ddcd2bb6228ca7e2fafe5832e2d6957ccf089926451"
+    },
+    {
+      "path": [
+        6,
+        58,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 643160,
+      "va": 4837464,
+      "file_offset": 413784,
+      "size": 450,
+      "codepage": 1252,
+      "sha256": "46f5c0affc37ad243992147bade81a4b066e74458af20e807be6d9c538c59f14"
+    },
+    {
+      "path": [
+        6,
+        59,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 643612,
+      "va": 4837916,
+      "file_offset": 414236,
+      "size": 504,
+      "codepage": 1252,
+      "sha256": "04fba600cfbdb554ea0f7d7ea46af7966842aaae2d761b708291e8f576e9c6f8"
+    },
+    {
+      "path": [
+        6,
+        60,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 644116,
+      "va": 4838420,
+      "file_offset": 414740,
+      "size": 670,
+      "codepage": 1252,
+      "sha256": "ef5ded8bf1aa24aeab2deda5f83af0fe75f0f4b3c2c341c852c5aed88eaafc99"
+    },
+    {
+      "path": [
+        6,
+        61,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 644788,
+      "va": 4839092,
+      "file_offset": 415412,
+      "size": 660,
+      "codepage": 1252,
+      "sha256": "9a1f7167d4caea69254f2e0aabcf4b84e6c80746e29cfea04cd2d9e912858386"
+    },
+    {
+      "path": [
+        6,
+        62,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 645448,
+      "va": 4839752,
+      "file_offset": 416072,
+      "size": 570,
+      "codepage": 1252,
+      "sha256": "c1142c3526991e61c1585d5c90689497c7c6a0bab094c3583467d27f452d9b27"
+    },
+    {
+      "path": [
+        6,
+        63,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 646020,
+      "va": 4840324,
+      "file_offset": 416644,
+      "size": 378,
+      "codepage": 1252,
+      "sha256": "c3e06bc0c623b5ced92724884f79722601cd11fe8acd0f7093ae19974dd0ee0c"
+    },
+    {
+      "path": [
+        6,
+        69,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 646400,
+      "va": 4840704,
+      "file_offset": 417024,
+      "size": 136,
+      "codepage": 1252,
+      "sha256": "eecca213ba86cf72268a616eec6230ded5a951cfd431d77075fca7f77d046be1"
+    },
+    {
+      "path": [
+        6,
+        72,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 646536,
+      "va": 4840840,
+      "file_offset": 417160,
+      "size": 210,
+      "codepage": 1252,
+      "sha256": "143187b98c0ddad65c380260ed37acb3235a37737e9f095271dc288be665def0"
+    },
+    {
+      "path": [
+        6,
+        73,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 646748,
+      "va": 4841052,
+      "file_offset": 417372,
+      "size": 190,
+      "codepage": 1252,
+      "sha256": "038a5349d76971085045634190cd713fa722e34ddaf5a85552192bf68c313478"
+    },
+    {
+      "path": [
+        6,
+        76,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 646940,
+      "va": 4841244,
+      "file_offset": 417564,
+      "size": 1386,
+      "codepage": 1252,
+      "sha256": "6d262fe4a3b7987cb1814c4e694c1a15397db05748438dccc8dd0f90955cc729"
+    },
+    {
+      "path": [
+        6,
+        77,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 648328,
+      "va": 4842632,
+      "file_offset": 418952,
+      "size": 594,
+      "codepage": 1252,
+      "sha256": "782a91a15efc3b6daa83db5aff866b72bee5ffe362d8b24e0e3cdfc2377765f6"
+    },
+    {
+      "path": [
+        6,
+        82,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 648924,
+      "va": 4843228,
+      "file_offset": 419548,
+      "size": 58,
+      "codepage": 1252,
+      "sha256": "5b1e87fc71df671daf9ce5c3b9aa594934cf09963efe438e533c657a8c5cdc4a"
+    },
+    {
+      "path": [
+        6,
+        88,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 648984,
+      "va": 4843288,
+      "file_offset": 419608,
+      "size": 330,
+      "codepage": 1252,
+      "sha256": "cad2fadea741d0e63439ea560589966c88acf154e287b4789444d81e4c246a4f"
+    },
+    {
+      "path": [
+        6,
+        89,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 649316,
+      "va": 4843620,
+      "file_offset": 419940,
+      "size": 320,
+      "codepage": 1252,
+      "sha256": "a741d8a77a8018f2e426b3d6f08a1412afb853cb3cfff2cc8fa1f47229362a01"
+    },
+    {
+      "path": [
+        6,
+        94,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 649636,
+      "va": 4843940,
+      "file_offset": 420260,
+      "size": 182,
+      "codepage": 1252,
+      "sha256": "b082363031f232ede80e964fc71b4a28fe707d84e368ebd8cc7ced78b2f2df90"
+    },
+    {
+      "path": [
+        6,
+        95,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 649820,
+      "va": 4844124,
+      "file_offset": 420444,
+      "size": 252,
+      "codepage": 1252,
+      "sha256": "d9779bdfde837db79a70195d59c3023128cb3acf7e49dcb3ebe68f9ec00deb58"
+    },
+    {
+      "path": [
+        6,
+        101,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 650072,
+      "va": 4844376,
+      "file_offset": 420696,
+      "size": 1606,
+      "codepage": 1252,
+      "sha256": "6d964011af9ac0fe26ca4db3e03286d1fc8efb1f41b7ba563cfd37debe503ca7"
+    },
+    {
+      "path": [
+        6,
+        102,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 651680,
+      "va": 4845984,
+      "file_offset": 422304,
+      "size": 198,
+      "codepage": 1252,
+      "sha256": "38fc5f1bfccf24b95154e12f024299fd9e3c2adf216ebf5e6a7db20d3a54fbe2"
+    },
+    {
+      "path": [
+        6,
+        104,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 651880,
+      "va": 4846184,
+      "file_offset": 422504,
+      "size": 374,
+      "codepage": 1252,
+      "sha256": "e6ad4ce78fad836d0d7249164a2430f06cbf9ee060f233700c8ac7c2d0c187b2"
+    },
+    {
+      "path": [
+        6,
+        107,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 652256,
+      "va": 4846560,
+      "file_offset": 422880,
+      "size": 418,
+      "codepage": 1252,
+      "sha256": "bab4e7c96b8fa6fd5b7a02904581f52b2514aa25d75468c1344a6b9a31e916dc"
+    },
+    {
+      "path": [
+        6,
+        113,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 652676,
+      "va": 4846980,
+      "file_offset": 423300,
+      "size": 422,
+      "codepage": 1252,
+      "sha256": "3e49158d91541fa1a7719e374b30e7286478ba99ebdce0a11af3703012dfe852"
+    },
+    {
+      "path": [
+        6,
+        114,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 653100,
+      "va": 4847404,
+      "file_offset": 423724,
+      "size": 74,
+      "codepage": 1252,
+      "sha256": "54a94d437f08b3edeac641ebddd9f4b86765ff69005400d53a89973bc1ef53ed"
+    },
+    {
+      "path": [
+        6,
+        116,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 653176,
+      "va": 4847480,
+      "file_offset": 423800,
+      "size": 384,
+      "codepage": 1252,
+      "sha256": "07bbe179e99e5c8f288f43609916b4b922f2c746e6bcba04a7ba63e57a45c72f"
+    },
+    {
+      "path": [
+        6,
+        119,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 653560,
+      "va": 4847864,
+      "file_offset": 424184,
+      "size": 250,
+      "codepage": 1252,
+      "sha256": "0f14a8f7966082619662d5f4e2dce2f27bc07b3a6717c169998cb94716a9087a"
+    },
+    {
+      "path": [
+        6,
+        120,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 653812,
+      "va": 4848116,
+      "file_offset": 424436,
+      "size": 518,
+      "codepage": 1252,
+      "sha256": "51d098cc3892652e3d2f197811e8ef27ce47f5e02580424d0fd58786044f4bdc"
+    },
+    {
+      "path": [
+        6,
+        126,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 654332,
+      "va": 4848636,
+      "file_offset": 424956,
+      "size": 1072,
+      "codepage": 1252,
+      "sha256": "9ec432ff988cb98da993a7909c888f142390a3d40384ffc272b01e47a018c7ac"
+    },
+    {
+      "path": [
+        6,
+        127,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 655404,
+      "va": 4849708,
+      "file_offset": 426028,
+      "size": 1396,
+      "codepage": 1252,
+      "sha256": "2366839245b526554e279305f2f33560e221ca5faa870fdca8ba8b1147107fa1"
+    },
+    {
+      "path": [
+        6,
+        128,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 656800,
+      "va": 4851104,
+      "file_offset": 427424,
+      "size": 932,
+      "codepage": 1252,
+      "sha256": "369acc7342d1a45530acafc4163d9ca9b7f40c1665f0b76c9e96e94535bf9e6a"
+    },
+    {
+      "path": [
+        6,
+        129,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 657732,
+      "va": 4852036,
+      "file_offset": 428356,
+      "size": 624,
+      "codepage": 1252,
+      "sha256": "6b2eb15c86976ea4255586d8e584c97adcfc6d5b08c3a2d979ee38f138b45913"
+    },
+    {
+      "path": [
+        6,
+        130,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 658356,
+      "va": 4852660,
+      "file_offset": 428980,
+      "size": 766,
+      "codepage": 1252,
+      "sha256": "a573879e6d38ad6c2784e6db9c8ada6967d266129d9028cb9d2433e282ed5679"
+    },
+    {
+      "path": [
+        6,
+        132,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 659124,
+      "va": 4853428,
+      "file_offset": 429748,
+      "size": 760,
+      "codepage": 1252,
+      "sha256": "84cae19b0ee0c43e670d874fb6636e9d327920c06e3e5f88db8ab09532663483"
+    },
+    {
+      "path": [
+        6,
+        133,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 659884,
+      "va": 4854188,
+      "file_offset": 430508,
+      "size": 724,
+      "codepage": 1252,
+      "sha256": "8f750d2976e49941d9baf51318344ea87c8ed00ef0d99303b50fe792983ced00"
+    },
+    {
+      "path": [
+        6,
+        134,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 660608,
+      "va": 4854912,
+      "file_offset": 431232,
+      "size": 736,
+      "codepage": 1252,
+      "sha256": "7f4862df794f08ce76ecf4e11884e3f5eeca74da4046a9b54f4a8047f14a875d"
+    },
+    {
+      "path": [
+        6,
+        135,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 661344,
+      "va": 4855648,
+      "file_offset": 431968,
+      "size": 356,
+      "codepage": 1252,
+      "sha256": "5676da9f66466bf9e70ff7143b946c4aa78166f2a4930cbbcbdeb4f010707c67"
+    },
+    {
+      "path": [
+        6,
+        138,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 661700,
+      "va": 4856004,
+      "file_offset": 432324,
+      "size": 570,
+      "codepage": 1252,
+      "sha256": "d99fb79b911280f453a23900c0fbb0aff3b8c7c98fd323224904be899f64c818"
+    },
+    {
+      "path": [
+        6,
+        139,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 662272,
+      "va": 4856576,
+      "file_offset": 432896,
+      "size": 402,
+      "codepage": 1252,
+      "sha256": "05912574ad32ccdb0e82ad5761956e550f6ff86d287224913315e320e5679ac9"
+    },
+    {
+      "path": [
+        6,
+        194,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 662676,
+      "va": 4856980,
+      "file_offset": 433300,
+      "size": 72,
+      "codepage": 1252,
+      "sha256": "9e03bdd5fc0640d9a9b8bba936d4445d3190b3e937a98b42570dcc963df01b66"
+    },
+    {
+      "path": [
+        6,
+        195,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 662748,
+      "va": 4857052,
+      "file_offset": 433372,
+      "size": 1340,
+      "codepage": 1252,
+      "sha256": "ac4e184635105379f9f9d85ef20005819392a027f73b94fb557e7bc51e4ca93c"
+    },
+    {
+      "path": [
+        6,
+        196,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 664088,
+      "va": 4858392,
+      "file_offset": 434712,
+      "size": 178,
+      "codepage": 1252,
+      "sha256": "a1720ba988c1ca2d791ec964ac23631d714df8e571ae6ff22afc5796e32f1ada"
+    },
+    {
+      "path": [
+        6,
+        201,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 664268,
+      "va": 4858572,
+      "file_offset": 434892,
+      "size": 354,
+      "codepage": 1252,
+      "sha256": "93f001a750b06384d4261b2f4a94a6f230d367ba45813b56466009d7df0f4f07"
+    },
+    {
+      "path": [
+        6,
+        202,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 664624,
+      "va": 4858928,
+      "file_offset": 435248,
+      "size": 1044,
+      "codepage": 1252,
+      "sha256": "8aaf0464fb93bebe21ea2b9cf7f6e364b1700e8b830599d6a8b280925b41c99c"
+    },
+    {
+      "path": [
+        6,
+        213,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 665668,
+      "va": 4859972,
+      "file_offset": 436292,
+      "size": 98,
+      "codepage": 1252,
+      "sha256": "7cef59a19f9b9379b8bf48e7230baf063c9c128ffc5b5c1684c57fa5c8810bc9"
+    },
+    {
+      "path": [
+        6,
+        269,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 665768,
+      "va": 4860072,
+      "file_offset": 436392,
+      "size": 112,
+      "codepage": 1252,
+      "sha256": "d2a2dd157081c12ad3bc7a68390c860d8ea6517f5cdcef399941e381c3426441"
+    },
+    {
+      "path": [
+        6,
+        270,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 665880,
+      "va": 4860184,
+      "file_offset": 436504,
+      "size": 436,
+      "codepage": 1252,
+      "sha256": "f0c1e47bcb25b84bd7cda9e9b21cb4be9f546e59104ccb42852477731522e9e0"
+    },
+    {
+      "path": [
+        6,
+        276,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 666316,
+      "va": 4860620,
+      "file_offset": 436940,
+      "size": 430,
+      "codepage": 1252,
+      "sha256": "766fdc286a2aaab561b4a34974e78bf535d93aeb6eff02fa11ea3d3b57f49e15"
+    },
+    {
+      "path": [
+        6,
+        277,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 666748,
+      "va": 4861052,
+      "file_offset": 437372,
+      "size": 84,
+      "codepage": 1252,
+      "sha256": "efc891afb50b50ee640a17db680d19b2028352ce6a16fb6d6298c501491bbc20"
+    },
+    {
+      "path": [
+        6,
+        282,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 666832,
+      "va": 4861136,
+      "file_offset": 437456,
+      "size": 320,
+      "codepage": 1252,
+      "sha256": "0de37b6edad22cd26931bd63d0a2733c3dfd374065b4d84eeb4d7e74f63cce75"
+    },
+    {
+      "path": [
+        6,
+        283,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 667152,
+      "va": 4861456,
+      "file_offset": 437776,
+      "size": 148,
+      "codepage": 1252,
+      "sha256": "ed466283a607af163ad198dfb71f04e7c9f687dba291f38187816c9ddbb64338"
+    },
+    {
+      "path": [
+        6,
+        288,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 667300,
+      "va": 4861604,
+      "file_offset": 437924,
+      "size": 340,
+      "codepage": 1252,
+      "sha256": "00111ef9faea9ccba88fc3df7bf7d315c03f0fd4d52adc00ab7b5edd99fed274"
+    },
+    {
+      "path": [
+        6,
+        294,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 667640,
+      "va": 4861944,
+      "file_offset": 438264,
+      "size": 188,
+      "codepage": 1252,
+      "sha256": "ba25f859a2ef8c1a41146e54ba98f3cd90c0c4df14555ee2275e4cd2a802c8e1"
+    },
+    {
+      "path": [
+        6,
+        295,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 667828,
+      "va": 4862132,
+      "file_offset": 438452,
+      "size": 54,
+      "codepage": 1252,
+      "sha256": "c8f3391a746ff7b92fa8e4aea9d5203199572be5d3282e052c7c73314e8156b0"
+    },
+    {
+      "path": [
+        6,
+        301,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 667884,
+      "va": 4862188,
+      "file_offset": 438508,
+      "size": 668,
+      "codepage": 1252,
+      "sha256": "6477e8a2a3d659e6970e1e5b763b934dc6b5ea2142f14cb1b8ca5dad54ed04f6"
+    },
+    {
+      "path": [
+        6,
+        307,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 668552,
+      "va": 4862856,
+      "file_offset": 439176,
+      "size": 200,
+      "codepage": 1252,
+      "sha256": "c1feb74fcab21298c92f1c7ff1e3ae9e38f9a29b95d1d0fb2836e3d3e7aa85fe"
+    },
+    {
+      "path": [
+        6,
+        313,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 668752,
+      "va": 4863056,
+      "file_offset": 439376,
+      "size": 148,
+      "codepage": 1252,
+      "sha256": "d0c15a633c5df1daba043a6095e34d37e12d776e8e02754efb32bea7c947dc56"
+    },
+    {
+      "path": [
+        6,
+        314,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 668900,
+      "va": 4863204,
+      "file_offset": 439524,
+      "size": 1024,
+      "codepage": 1252,
+      "sha256": "9d8f99b972daf1a29111ae1f7938553cc0844e2f6510cc91763882dc0af94a1e"
+    },
+    {
+      "path": [
+        6,
+        315,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 669924,
+      "va": 4864228,
+      "file_offset": 440548,
+      "size": 1262,
+      "codepage": 1252,
+      "sha256": "64b412afa509a9314a84e156bfbfcbe6d4c995b16b836c066feb80ef4026df2a"
+    },
+    {
+      "path": [
+        6,
+        316,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 671188,
+      "va": 4865492,
+      "file_offset": 441812,
+      "size": 228,
+      "codepage": 1252,
+      "sha256": "7cc69ab384ea774e9ef17bfed2a3e386227562efcb3b25a8690fda027020559c"
+    },
+    {
+      "path": [
+        6,
+        319,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 671416,
+      "va": 4865720,
+      "file_offset": 442040,
+      "size": 100,
+      "codepage": 1252,
+      "sha256": "c529aa6168b395e71ca4813dd16f3cd78f64f45c767c869292aa031c82e8003d"
+    },
+    {
+      "path": [
+        6,
+        320,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 671516,
+      "va": 4865820,
+      "file_offset": 442140,
+      "size": 230,
+      "codepage": 1252,
+      "sha256": "28ddf9a417455702b2c7933994dea89b40e8bf8f73267b0d6adb652c441d13db"
+    },
+    {
+      "path": [
+        6,
+        326,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 671748,
+      "va": 4866052,
+      "file_offset": 442372,
+      "size": 636,
+      "codepage": 1252,
+      "sha256": "769f655037fb94233185c750637dadc489cecaac761742d6b007a0c647e8db26"
+    },
+    {
+      "path": [
+        6,
+        332,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 672384,
+      "va": 4866688,
+      "file_offset": 443008,
+      "size": 480,
+      "codepage": 1252,
+      "sha256": "9090dfee0dd329e3909412429d2c9f9021e68b622137d59ed6c2546dfd092b05"
+    },
+    {
+      "path": [
+        6,
+        333,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 672864,
+      "va": 4867168,
+      "file_offset": 443488,
+      "size": 572,
+      "codepage": 1252,
+      "sha256": "ed5b2bbda9d8519d23353db3032b5c7429834ebc79f383afebc625778c08becc"
+    },
+    {
+      "path": [
+        6,
+        334,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 673436,
+      "va": 4867740,
+      "file_offset": 444060,
+      "size": 382,
+      "codepage": 1252,
+      "sha256": "b04815123db25e18ea0c55e09caeb43268e9332abe2d242732a489c99c2471e0"
+    },
+    {
+      "path": [
+        6,
+        335,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 673820,
+      "va": 4868124,
+      "file_offset": 444444,
+      "size": 418,
+      "codepage": 1252,
+      "sha256": "7e5d659429bd7b9750d580aa675a4c63ee1bf8aab5b48b8b36ea9382811f9946"
+    },
+    {
+      "path": [
+        6,
+        336,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 674240,
+      "va": 4868544,
+      "file_offset": 444864,
+      "size": 436,
+      "codepage": 1252,
+      "sha256": "ff2d59406dba021aa4c6cb989e3b7cfc680a72658796d99e6bd3211195151670"
+    },
+    {
+      "path": [
+        6,
+        337,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 674676,
+      "va": 4868980,
+      "file_offset": 445300,
+      "size": 230,
+      "codepage": 1252,
+      "sha256": "43d98b7974b8c117a103472cddadf62e5e5ff90911b6ff6f998678fa6f367dbf"
+    },
+    {
+      "path": [
+        6,
+        338,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 674908,
+      "va": 4869212,
+      "file_offset": 445532,
+      "size": 1194,
+      "codepage": 1252,
+      "sha256": "dc93ab83e00c3556c3d5232744d740f25ece40bcfb7eaaf621b37bb2a4915632"
+    },
+    {
+      "path": [
+        6,
+        339,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 676104,
+      "va": 4870408,
+      "file_offset": 446728,
+      "size": 1426,
+      "codepage": 1252,
+      "sha256": "2253ba3324a87dd658c0615ab1d40857481883418f5a69d50e1da2ea6b9b4d5f"
+    },
+    {
+      "path": [
+        6,
+        501,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 677532,
+      "va": 4871836,
+      "file_offset": 448156,
+      "size": 392,
+      "codepage": 1252,
+      "sha256": "e702b40f3a4ec85d06c7b9ab12a311a59762264be11ce9d22bb383fec962ebb8"
+    },
+    {
+      "path": [
+        6,
+        502,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 677924,
+      "va": 4872228,
+      "file_offset": 448548,
+      "size": 370,
+      "codepage": 1252,
+      "sha256": "e3cc75bc14fdf8412c3bc1970b378d8b11c5808e7474b035d954f08407f01882"
+    },
+    {
+      "path": [
+        6,
+        503,
+        1031
+      ],
+      "type": "STRING",
+      "rva": 678296,
+      "va": 4872600,
+      "file_offset": 448920,
+      "size": 274,
+      "codepage": 1252,
+      "sha256": "6440b05b5c703a80646e69859f69eec7cd89740a6a1c2c71c8b900d1e34c37c3"
+    },
+    {
+      "path": [
+        10,
+        "DLGINCLUDE",
+        0
+      ],
+      "type": "RCDATA",
+      "rva": 678572,
+      "va": 4872876,
+      "file_offset": 449196,
+      "size": 34,
+      "codepage": 1252,
+      "sha256": "ccba08fc215a648d9f9c62e196689aeee6ae04cad9b1f597cf3a687670cc1179"
+    },
+    {
+      "path": [
+        14,
+        "WET",
+        0
+      ],
+      "type": "GROUP_ICON",
+      "rva": 678608,
+      "va": 4872912,
+      "file_offset": 449232,
+      "size": 20,
+      "codepage": 1252,
+      "sha256": "c04493b5cb4e400e784578fb8c753741c693ea4e58bfba318b4cffb66ef163eb"
+    },
+    {
+      "path": [
+        24,
+        1,
+        1033
+      ],
+      "type": "MANIFEST",
+      "rva": 678628,
+      "va": 4872932,
+      "file_offset": 449252,
+      "size": 440,
+      "codepage": 1252,
+      "sha256": "16ad2db6751b23f8e9c0cf14aced9bb3433e6a1b4a060b31470ce0807d294f4a"
+    }
+  ],
+  "strings_count": 17780,
+  "limitations": [
+    "PE timestamp and linker version are metadata, not proof of authorship or compiler.",
+    "Strings in executable sections may be coincidental byte sequences.",
+    "Static disassembly and Ghidra analysis do not recover original source code."
+  ]
+}

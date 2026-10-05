@@ -1,0 +1,149 @@
+{
+  "original": "original/app/WET.EXE",
+  "original_sha256": "8c223b528b912dd141dbe8db272b96b15279dab4bb2c31115b86d3c53842cea9",
+  "toolchain": "tools/ghidra/toolchain.json",
+  "verified_checks": [
+    "PE parser import names match independent objdump listing (143 of 143)",
+    "Ghidra project saved and reopened successfully",
+    "Ghidra export source SHA-256 matches unchanged original",
+    "945 function rows and one incomplete result agree with Ghidra summary",
+    "shell syntax, Python compilation and local toolchain hash checks passed"
+  ],
+  "generated_files": [
+    {
+      "path": "analysis/binary/disassembly.asm",
+      "size": 4527941,
+      "sha256": "98a791d7a1c6413986d7b999644c1ef59d4ce1deafaa5abff249eee95f249009"
+    },
+    {
+      "path": "analysis/binary/headers.txt",
+      "size": 642061,
+      "sha256": "4b143fd2b2088aa560a7dca51d57cb9238d90da195d516a68c09f66a2d5f6fcd"
+    },
+    {
+      "path": "analysis/binary/imports.tsv",
+      "size": 6547,
+      "sha256": "0552d01ab2fd8725641ba651e66b416922352a50ccc6d1c1e03f579b2b844766"
+    },
+    {
+      "path": "analysis/binary/interesting-strings.tsv",
+      "size": 8127,
+      "sha256": "ae3e3334508480c6f90ac2061284a2168239854ea45a39625a76ef5e96e72f4f"
+    },
+    {
+      "path": "analysis/binary/pe-report.json",
+      "size": 60194,
+      "sha256": "bc86fdb1041218652aa9d4bceae37cfbffc4d193de61216cdbe2046c8b8682d2"
+    },
+    {
+      "path": "analysis/binary/strings.tsv",
+      "size": 828319,
+      "sha256": "e2cb7c504bb2190b1c38bc30a2245d66e13b6d396d90382a65db171355d91d05"
+    },
+    {
+      "path": "analysis/decompiled/WET.analysis.c",
+      "size": 909166,
+      "sha256": "aa712683984aa990a49d2b7163fd83df90165e6201688b84c189c5b3b1f8cba5"
+    },
+    {
+      "path": "analysis/decompiled/callgraph.tsv",
+      "size": 515951,
+      "sha256": "f03aee088195904212836698c0e14be489a051132ceba25a73058eee12a3e1af"
+    },
+    {
+      "path": "analysis/decompiled/defined-strings.tsv",
+      "size": 97440,
+      "sha256": "d8f7823542bb0b74b023bb544b0f596454f7868d3bbea22aad574e58742bbe0b"
+    },
+    {
+      "path": "analysis/decompiled/focus/00401010_startup.analysis.c",
+      "size": 8525,
+      "sha256": "50227243f722761a5f8317d044c2ca5d9dfbfe1217249f553a503177c8fef4ec"
+    },
+    {
+      "path": "analysis/decompiled/focus/00401ab6_resource_pool_initialization.analysis.c",
+      "size": 5673,
+      "sha256": "6024825d875d871994b7253b22d323fff1f6a3487e5365510798668a3bc50e00"
+    },
+    {
+      "path": "analysis/decompiled/focus/004092b1_video_loading_candidate.analysis.c",
+      "size": 2426,
+      "sha256": "222a9d26c840bbdfc3585de192a6977ed4788654b359cfd4d0411cd1fc95f151"
+    },
+    {
+      "path": "analysis/decompiled/focus/00433f2e_window_initialization.analysis.c",
+      "size": 2346,
+      "sha256": "03d263b69d79e7600a50f87189ca2997d85b412099c6d81ae1a8758c4eb1aed8"
+    },
+    {
+      "path": "analysis/decompiled/focus/004340b3_directdraw_initialization.analysis.c",
+      "size": 1363,
+      "sha256": "e22fb9b502d689f5c59ae389db060c9ad7fd8c1748fffb1977cce3c2ba065921"
+    },
+    {
+      "path": "analysis/decompiled/focus/00434247_display_mode_candidate.analysis.c",
+      "size": 414,
+      "sha256": "145baa0c4b88980a4ea29c71ae3ce0e3de1c75e78eff97a10fb0c756aed83348"
+    },
+    {
+      "path": "analysis/decompiled/focus/00434a1c_pixel_format_check.analysis.c",
+      "size": 1603,
+      "sha256": "5a370c16625bb7e47e84ac6d014450306a10b1485fddb55a76281b690ca027cf"
+    },
+    {
+      "path": "analysis/decompiled/focus/0043a9c8_render_target_dimensions.analysis.c",
+      "size": 2741,
+      "sha256": "43f1a1b2f5ed6dab6a9edcf65535fc9c5171423d8f81aec484c845b2f9422f44"
+    },
+    {
+      "path": "analysis/decompiled/focus/004425ac_file_open_wrapper.analysis.c",
+      "size": 1615,
+      "sha256": "3f493b85d826a74058bd64ec96df62c9cf0fa9ac946420d4b1fa056801865af3"
+    },
+    {
+      "path": "analysis/decompiled/focus/004426d1_file_read_wrapper.analysis.c",
+      "size": 792,
+      "sha256": "f2fbfbdba0c0be61be1a0fecc599f5173b8e5e6314820caf7238d92608620868"
+    },
+    {
+      "path": "analysis/decompiled/focus/00444816_sprite_blit_candidate.analysis.c",
+      "size": 2293,
+      "sha256": "e98f27d87512469d97ced29711bfbda6e2756524df058b88b024a35df57b77c8"
+    },
+    {
+      "path": "analysis/decompiled/focus-index.json",
+      "size": 2818,
+      "sha256": "49216066bb02aaf3037e90a7734ead9774c178d50167e7d74f0f70887bce4d98"
+    },
+    {
+      "path": "analysis/decompiled/functions.tsv",
+      "size": 41140,
+      "sha256": "c4f9ffb9ca1a3d9ec122bbabeac12bdf99765fe9ad09e0d9608a2777b0fccbbc"
+    },
+    {
+      "path": "analysis/decompiled/import-xrefs.tsv",
+      "size": 39523,
+      "sha256": "a1a66e9125b587eab5b6d913746c08e6e033fd012c4e0af31a8b2467a0a4fdf5"
+    },
+    {
+      "path": "analysis/decompiled/resolution-candidates.tsv",
+      "size": 7596,
+      "sha256": "2f960a70b56f62108a01e3e83fd8ee91e80554863f66df8c57ea99e3f2898cb5"
+    },
+    {
+      "path": "analysis/decompiled/string-xrefs.tsv",
+      "size": 32246,
+      "sha256": "40bf8d054c741ff3124a71e13cba1be1fbf837b6c23fbb4af35e1b34886f8847"
+    },
+    {
+      "path": "analysis/decompiled/summary.json",
+      "size": 296,
+      "sha256": "a93dc40abd8c5ee287bf30191de63be2843ec90f2240084d3a3814144f3ae015"
+    },
+    {
+      "path": "analysis/decompiled/symbols.tsv",
+      "size": 683211,
+      "sha256": "532060ef9a05b98d14598a5512cac2d59d2f47bb3de84278c7ccead9ae199a30"
+    }
+  ]
+}
