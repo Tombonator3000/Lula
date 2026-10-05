@@ -104,6 +104,16 @@ class RecompiledGame(unittest.TestCase):
         expected = [int((samples[k // 2] - 128) * 256 * gain) for k in range(2000)]
         self.assertEqual(list(left[first:first + 2000]), expected)
 
+    def test_version_overlay_formats_floats(self):
+        """F7 toggles the version overlay, which uses sprintf("%f") (x87 code
+        and the get-PC stub at 0x44c3c3)."""
+        temp, frames, log = self.run_game(22, '14000 move 505 88\n15000 click 505 88\n'
+                                              '19000 key F7\n')
+        self.assertNotIn('lula[trap]', log)
+        self.assertNotIn('lula[fatal]', log)
+        menu = [masked_rgb565(read_ppm(f), MENU_LABELS) for f in frames]
+        self.assertNotEqual(menu[-1], MENU_SHA256, f'still in the main menu; frames in {temp}')
+
     def test_reconstructed_functions_match_generated_code(self):
         fncheck = BINARY.with_name('lula-fncheck')
         if not fncheck.is_file():
