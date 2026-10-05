@@ -2,6 +2,7 @@
  * main loop, window procedures called back into guest code, timers and the
  * small amount of cursor/system state the game queries. */
 #include "win32.h"
+#include "dialog.h"
 #include "../platform.h"
 
 #include <pthread.h>
@@ -45,12 +46,15 @@ typedef struct Window {
     int32_t x, y, w, h;
     bool visible, invalid, destroyed;
     char title[128];
+    WinHostProc host;          /* dialogs and controls: window procedure in dialog.c */
 } Window;
 
+#define MAX_WINDOWS 256
 static WinClass classes[16];
 static int nclasses;
-static Window windows[32];
+static Window windows[MAX_WINDOWS];
 static int nwindows;
+static uint32_t next_hwnd = 0x00010010u;
 static uint32_t main_hwnd;
 static pthread_mutex_t win_lock = PTHREAD_MUTEX_INITIALIZER;
 
@@ -66,6 +70,49 @@ static Window *window_of(uint32_t hwnd)
     return NULL;
 }
 
+/* A cleared window slot with a new handle. Slots of destroyed windows are
+ * reused, handles never are. */
+static Window *alloc_window(void)
+{
+    pthread_mutex_lock(&win_lock);
+    Window *win = NULL;
+    for (int i = 0; i < nwindows && !win; i++)
+        if (windows[i].destroyed)
+            win = &windows[i];
+    if (!win && nwindows < MAX_WINDOWS)
+        win = &windows[nwindows++];
+    if (win) {
+        memset(win, 0, sizeof *win);
+        win->hwnd = next_hwnd;
+        next_hwnd += 4;
+    }
+    pthread_mutex_unlock(&win_lock);
+    if (!win)
+        rt_fatal("too many windows");
+    return win;
+}
+
+uint32_t win_host_create(uint32_t parent, uint32_t id, uint32_t style, uint32_t exstyle,
+                         int x, int y, int w, int h, WinHostProc proc)
+{
+    Window *win = alloc_window();
+    win->host = proc;
+    win->parent = parent;
+    win->id = id;
+    win->style = style;
+    win->exstyle = exstyle;
+    win->x = x; win->y = y; win->w = w; win->h = h;
+    win->visible = (style & 0x10000000u) != 0;
+    return win->hwnd;
+}
+
+void win_host_destroy(uint32_t hwnd)
+{
+    Window *w = window_of(hwnd);
+    if (w && w->host)
+        w->destroyed = true;
+}
+
 /* ---------------------------------------------------------------- queue */
 #define QCAP 1024
 typedef struct QMsg { WinMsg m; int ch; } QMsg;
@@ -76,6 +123,7 @@ static pthread_cond_t q_cond = PTHREAD_COND_INITIALIZER;
 static bool quit_posted;
 static uint32_t quit_code;
 static int32_t last_mouse_x, last_mouse_y;
+static int pending_activate;       /* 0 none, 1 deactivate, 2 activate (sent message) */
 static uint32_t mouse_buttons;     /* MK_LBUTTON 1, MK_RBUTTON 2, MK_MBUTTON 0x10 */
 
 static uint32_t now_ms(void)
@@ -122,6 +170,23 @@ void user32_input_mouse(int x, int y, int button, bool down)
     if (button == 1) msg = down ? WM_LBUTTONDOWN : WM_LBUTTONUP;
     else if (button == 3) msg = down ? WM_RBUTTONDOWN : WM_RBUTTONUP;
     else if (button == 2) msg = down ? WM_MBUTTONDOWN : WM_MBUTTONUP;
+    /* The class has CS_DBLCLKS: a second press within 500 ms and inside the
+     * 4x4 double-click rectangle arrives as a double click instead. */
+    if (down && button) {
+        static uint32_t last_time[4];
+        static int last_x[4], last_y[4], last_btn = -1;
+        uint32_t t = now_ms();
+        int b = button & 3;
+        if (last_btn == b && t - last_time[b] <= 500 && abs(x - last_x[b]) <= 2 && abs(y - last_y[b]) <= 2) {
+            msg = msg == WM_LBUTTONDOWN ? WM_LBUTTONDBLCLK : msg == WM_RBUTTONDOWN ? WM_RBUTTONDBLCLK : msg;
+            last_btn = -1;      /* a third click starts a new pair */
+        } else {
+            last_btn = b;
+            last_time[b] = t;
+            last_x[b] = x;
+            last_y[b] = y;
+        }
+    }
     uint32_t lp = ((uint32_t)(uint16_t)y << 16) | (uint16_t)x;
     /* Coalesce consecutive mouse moves like Windows does. */
     if (msg == WM_MOUSEMOVE && qlen) {
@@ -145,11 +210,17 @@ void user32_input_key(int vk, bool down, int ch)
     if (!main_hwnd)
         return;
     if (vk == -1) {
-        win_post_message(main_hwnd, WM_CLOSE, 0, 0);
-        return;
+        /* In the original, closing the window only ends the current session
+         * and returns to the main menu with a dead window; a player closing
+         * the host window wants to quit. */
+        RT_INFO("window closed by the user");
+        rt_exit_process(0);
     }
     if (vk == -2) {
-        win_post_message(main_hwnd, WM_ACTIVATEAPP, down ? 1 : 0, 0);
+        pthread_mutex_lock(&q_lock);
+        pending_activate = down ? 2 : 1;
+        pthread_cond_broadcast(&q_cond);
+        pthread_mutex_unlock(&q_lock);
         return;
     }
     pthread_mutex_lock(&q_lock);
@@ -159,19 +230,24 @@ void user32_input_key(int vk, bool down, int ch)
 }
 
 /* ---------------------------------------------------------------- timers */
-typedef struct Timer { uint32_t hwnd, id, ms, proc, due; bool used; } Timer;
+typedef struct Timer { uint32_t hwnd, id, ms, proc, start, next; bool used; } Timer;
 static Timer timers[32];
 
+/* Windows marks a timer ready when a period elapses; retrieving WM_TIMER
+ * clears it and missed periods coalesce. 'next' is the time the timer becomes
+ * ready again, always on the period grid anchored at SetTimer. */
 static bool due_timer(uint32_t hwnd_filter, WinMsg *out, bool remove)
 {
     uint32_t t = now_ms();
     for (int i = 0; i < 32; i++) {
         Timer *tm = &timers[i];
-        if (!tm->used || (hwnd_filter && tm->hwnd != hwnd_filter) || (int32_t)(t - tm->due) < 0)
+        if (!tm->used || (hwnd_filter && tm->hwnd != hwnd_filter) || (int32_t)(t - tm->next) < 0)
             continue;
         *out = (WinMsg){tm->hwnd, WM_TIMER, tm->id, tm->proc, t, last_mouse_x, last_mouse_y};
-        if (remove)
-            tm->due = t + (tm->ms ? tm->ms : 1);
+        if (remove) {
+            uint32_t periods = (t - tm->start) / tm->ms + 1;
+            tm->next = tm->start + periods * tm->ms;
+        }
         return true;
     }
     return false;
@@ -184,7 +260,7 @@ static int32_t next_timer_wait(void)
     for (int i = 0; i < 32; i++) {
         if (!timers[i].used)
             continue;
-        int32_t d = (int32_t)(timers[i].due - t);
+        int32_t d = (int32_t)(timers[i].next - t);
         if (d < 0)
             d = 0;
         if (best < 0 || d < best)
@@ -197,19 +273,35 @@ static int32_t next_timer_wait(void)
 static uint32_t call_wndproc(Cpu *c, uint32_t hwnd, uint32_t msg, uint32_t wp, uint32_t lp)
 {
     Window *w = window_of(hwnd);
+    if (w && w->host)
+        return w->host(c, hwnd, msg, wp, lp);
     if (!w || !w->wndproc)
         return 0;
     return rt_guest_call(c, w->wndproc, 4, hwnd, msg, wp, lp);
 }
 
+uint32_t win_send(Cpu *c, uint32_t hwnd, uint32_t msg, uint32_t wp, uint32_t lp)
+{
+    return call_wndproc(c, hwnd, msg, wp, lp);
+}
+
+uint32_t win_now_ms(void) { return now_ms(); }
+
 /* Fetch the next message. wait_ms: 0 = poll, UINT32_MAX = forever. */
 static bool get_message(Cpu *c, WinMsg *out, uint32_t hwnd, uint32_t lo, uint32_t hi,
                         bool remove, uint32_t wait_ms)
 {
-    (void)c;
     uint32_t start = now_ms();
     for (;;) {
         pthread_mutex_lock(&q_lock);
+        if (pending_activate && main_hwnd) {
+            /* Sent, not posted: the WndProc sees it, PeekMessage does not. */
+            uint32_t on = pending_activate == 2;
+            pending_activate = 0;
+            pthread_mutex_unlock(&q_lock);
+            call_wndproc(c, main_hwnd, WM_ACTIVATEAPP, on, 0);
+            continue;
+        }
         for (int i = 0; i < qlen; i++) {
             WinMsg *m = &queue[i].m;
             if (hwnd && m->hwnd != hwnd)
@@ -224,11 +316,11 @@ static bool get_message(Cpu *c, WinMsg *out, uint32_t hwnd, uint32_t lo, uint32_
             }
             /* Remember the character for TranslateMessage. */
             if (out->message == WM_KEYDOWN)
-                out->y = ch, out->x = -12345;
+                out->y = ch, out->x = WIN_KEYCHAR_MARK;
             pthread_mutex_unlock(&q_lock);
             return true;
         }
-        if (quit_posted && (!lo && !hi)) {
+        if (quit_posted && !hwnd && (!lo && !hi)) {
             *out = (WinMsg){0, WM_QUIT, quit_code, 0, now_ms(), 0, 0};
             if (remove)
                 quit_posted = false;
@@ -274,6 +366,21 @@ static bool get_message(Cpu *c, WinMsg *out, uint32_t hwnd, uint32_t lo, uint32_
     }
 }
 
+bool win_get_message(Cpu *c, WinMsg *out, uint32_t hwnd, uint32_t lo, uint32_t hi, bool remove,
+                     uint32_t wait_ms)
+{
+    return get_message(c, out, hwnd, lo, hi, remove, wait_ms);
+}
+
+void win_post_quit(uint32_t code)
+{
+    pthread_mutex_lock(&q_lock);
+    quit_posted = true;
+    quit_code = code;
+    pthread_cond_broadcast(&q_cond);
+    pthread_mutex_unlock(&q_lock);
+}
+
 static void write_msg(uint32_t p, const WinMsg *m)
 {
     W32(p + 0, m->hwnd);
@@ -309,7 +416,7 @@ WINAPI_FN(user32, PeekMessageA)
 WINAPI_FN(user32, TranslateMessage)
 {
     uint32_t p = ARG(0);
-    if (R32(p + 4) == WM_KEYDOWN && (int32_t)R32(p + 20) == -12345) {
+    if (R32(p + 4) == WM_KEYDOWN && (int32_t)R32(p + 20) == WIN_KEYCHAR_MARK) {
         int ch = (int)R32(p + 24);
         if (ch > 0)
             win_post_message(R32(p), WM_CHAR, (uint32_t)ch, R32(p + 12));
@@ -318,23 +425,28 @@ WINAPI_FN(user32, TranslateMessage)
     RET(1, 0);
 }
 
-WINAPI_FN(user32, DispatchMessageA)
+uint32_t win_dispatch(Cpu *c, const WinMsg *m)
 {
-    uint32_t p = ARG(0);
-    uint32_t hwnd = R32(p), msg = R32(p + 4), wp = R32(p + 8), lp = R32(p + 12);
     uint32_t r;
-    if (msg == WM_TIMER && lp) {
+    if (m->message == WM_TIMER && m->lparam) {
         /* TIMERPROC(hwnd, WM_TIMER, id, time) */
-        r = rt_guest_call(c, lp, 4, hwnd, msg, wp, R32(p + 16));
+        r = rt_guest_call(c, m->lparam, 4, m->hwnd, m->message, m->wparam, m->time);
     } else {
-        r = call_wndproc(c, hwnd, msg, wp, lp);
-        if (msg == WM_PAINT) {
-            Window *w = window_of(hwnd);
+        r = call_wndproc(c, m->hwnd, m->message, m->wparam, m->lparam);
+        if (m->message == WM_PAINT) {
+            Window *w = window_of(m->hwnd);
             if (w)
                 w->invalid = false;   /* a WndProc without BeginPaint would loop */
         }
     }
-    RET(1, r);
+    return r;
+}
+
+WINAPI_FN(user32, DispatchMessageA)
+{
+    uint32_t p = ARG(0);
+    WinMsg m = {R32(p), R32(p + 4), R32(p + 8), R32(p + 12), R32(p + 16), 0, 0};
+    RET(1, win_dispatch(c, &m));
 }
 
 WINAPI_FN(user32, MsgWaitForMultipleObjects)
@@ -374,11 +486,11 @@ WINAPI_FN(user32, SendMessageA)
 
 WINAPI_FN(user32, PostQuitMessage)
 {
-    pthread_mutex_lock(&q_lock);
-    quit_posted = true;
-    quit_code = ARG(0);
-    pthread_cond_broadcast(&q_cond);
-    pthread_mutex_unlock(&q_lock);
+    if (!window_of(main_hwnd)) {
+        /* Only reached after the main window is gone (spec section 7.4). */
+        rt_exit_process(ARG(0));
+    }
+    win_post_quit(ARG(0));
     RET(1, 0);
 }
 
@@ -438,12 +550,7 @@ WINAPI_FN(user32, CreateWindowExA)
         RT_WARN("CreateWindowExA: unknown class %s", cls ? cls : "#atom");
         RET(12, 0);
     }
-    pthread_mutex_lock(&win_lock);
-    Window *win = &windows[nwindows];
-    memset(win, 0, sizeof *win);
-    win->hwnd = 0x00010010u + 4u * (uint32_t)nwindows;
-    nwindows++;
-    pthread_mutex_unlock(&win_lock);
+    Window *win = alloc_window();
     win->wndproc = k->wndproc;
     win->style = style;
     win->exstyle = exstyle;
@@ -552,7 +659,8 @@ WINAPI_FN(user32, InvalidateRect)
         w->invalid = true;
     else if (!ARG(0))
         for (int i = 0; i < nwindows; i++)
-            windows[i].invalid = true;
+            if (!windows[i].host)
+                windows[i].invalid = true;
     RET(3, 1);
 }
 
@@ -572,6 +680,9 @@ uint32_t gdi_screen_dc(void);
 WINAPI_FN(user32, BeginPaint)
 {
     uint32_t hwnd = ARG(0), ps = ARG(1);
+    uint32_t ddc = dlg_begin_paint(c, hwnd, ps);
+    if (ddc)
+        RET(2, ddc);
     Window *w = window_of(hwnd);
     if (w)
         w->invalid = false;
@@ -584,7 +695,11 @@ WINAPI_FN(user32, BeginPaint)
     RET(2, dc);
 }
 
-WINAPI_FN(user32, EndPaint) { RET(2, 1); }
+WINAPI_FN(user32, EndPaint)
+{
+    dlg_end_paint(c, ARG(0), ARG(1));
+    RET(2, 1);
+}
 
 WINAPI_FN(user32, GetActiveWindow) { RET(0, main_hwnd); }
 
@@ -603,7 +718,9 @@ WINAPI_FN(user32, SetTimer)
         RET(4, 0);
     if (!hwnd && !id)
         id = 0x100 + (uint32_t)(slot - timers);
-    *slot = (Timer){hwnd, id, ms < 10 ? 10 : ms, proc, now_ms() + (ms < 10 ? 10 : ms), true};
+    uint32_t period = ms < 10 ? 10 : ms;
+    uint32_t t0 = now_ms();
+    *slot = (Timer){hwnd, id, period, proc, t0, t0 + period, true};
     RT_INFO("SetTimer(hwnd=%08x, id=%u, %u ms, proc=%08x)", hwnd, id, ms, proc);
     RET(4, id);
 }
@@ -625,13 +742,19 @@ WINAPI_FN(user32, GetAsyncKeyState)
     RET(1, plat_async_key_state((int)ARG(0)));
 }
 
-static int cursor_count;
+static int cursor_count, modal_cursor;
 
 WINAPI_FN(user32, ShowCursor)
 {
     cursor_count += ARG(0) ? 1 : -1;
-    plat_show_cursor(cursor_count >= 0);
+    plat_show_cursor(cursor_count >= 0 || modal_cursor > 0);
     RET(1, (uint32_t)cursor_count);
+}
+
+void win_modal_cursor(bool enter)
+{
+    modal_cursor += enter ? 1 : -1;
+    plat_show_cursor(cursor_count >= 0 || modal_cursor > 0);
 }
 
 WINAPI_FN(user32, SetCursor) { RET(1, 0); }
@@ -681,6 +804,8 @@ static uint32_t syscolors[32] = {
 
 WINAPI_FN(user32, GetSysColor) { RET(1, ARG(0) < 32 ? syscolors[ARG(0)] : 0); }
 
+uint32_t win_sys_color(int index) { return index >= 0 && index < 32 ? syscolors[index] : 0; }
+
 WINAPI_FN(user32, SetSysColors)
 {
     uint32_t n = ARG(0), idx = ARG(1), vals = ARG(2);
@@ -694,23 +819,12 @@ WINAPI_FN(user32, SetSysColors)
 
 WINAPI_FN(user32, MessageBeep) { RET(1, 1); }
 
-WINAPI_FN(user32, MessageBoxA)
-{
-    const char *text = gstr(ARG(1)), *cap = gstr(ARG(2));
-    uint32_t type = ARG(3);
-    RT_WARN("MessageBox \"%s\": %s (type %x)", cap ? cap : "", text ? text : "", type);
-    /* IDOK for OK boxes, IDYES/IDOK otherwise; the host cannot ask yet. */
-    uint32_t r = (type & 0xf) == 4 || (type & 0xf) == 3 ? 6 : 1;
-    RET(4, r);
-}
-
 WINAPI_FN(user32, SetScrollInfo) { RET(4, 0); }
 
 /* ---------------------------------------------------------------- strings */
 WINAPI_FN(user32, LoadStringA)
 {
     uint32_t id = ARG(1), buf = ARG(2), cap = ARG(3);
-    uint32_t res_string(uint32_t id, char *out, uint32_t cap);
     char tmp[1024];
     uint32_t n = res_string(id, tmp, sizeof tmp);
     if (!n) {
@@ -802,12 +916,8 @@ WINAPI_FN(user32, wsprintfA)
     return rt_ret_cdecl(c, n);
 }
 
-/* ---------------------------------------------------------------- menus and dialogs
- * The final game has no visible menu bar; dialogs are implemented once their
- * use is mapped (docs/recomp/specs/user32-gdi32.md). */
-WINAPI_FN(user32, LoadMenuA) { RET(2, 0x00040001u); }
-WINAPI_FN(user32, CreatePopupMenu) { RET(0, 0x00040002u); }
-WINAPI_FN(user32, AppendMenuA) { RET(4, 1); }
-WINAPI_FN(user32, DestroyMenu) { RET(1, 1); }
+/* ---------------------------------------------------------------- menus
+ * The final game has no menu bar (LoadMenuA and SetMenu are dead code, the
+ * EXE has no RT_MENU). Popup menus, dialogs and message boxes are in dialog.c. */
+WINAPI_FN(user32, LoadMenuA) { RET(2, 0); }
 WINAPI_FN(user32, SetMenu) { RET(2, 1); }
-WINAPI_FN(user32, TrackPopupMenu) { RET(7, 0); }

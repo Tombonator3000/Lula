@@ -3,9 +3,13 @@
  * The game draws its button labels with GetDC on the back buffer and
  * DrawTextA in a 14 px bold font. Fonts are rasterised with stb_truetype
  * from the metric-compatible Liberation fonts in assets/fonts. Set
- * LULA_TEXT_AA=0 for unsmoothed text like Windows 95 drew it. */
+ * LULA_TEXT_AA=0 for unsmoothed text like Windows 95 drew it.
+ *
+ * The dialog manager (dialog.c) uses the same fonts, DCs and brushes through
+ * the gdi_* helpers declared in dialog.h. */
 #include "win32.h"
 #include "ddraw_internal.h"
+#include "dialog.h"
 #include "../platform.h"
 
 #include <ctype.h>
@@ -22,10 +26,14 @@
 #define HDC_BASE 0x00050000u
 #define HFONT_BASE 0x00060000u
 #define HSTOCK_BASE 0x00070000u
-#define HBRUSH_BASE 0x00080000u
+/* A brush handle carries its colour, so brushes are never-freed records:
+ * the save dialog keeps returning a brush it already deleted (spec 12.2). */
+#define HBRUSH_TAG 0x0b000000u
 
+enum { FF_SANS, FF_SANS_BOLD, FF_MONO, FF_COUNT };
 typedef struct FontFile { const char *file; unsigned char *data; stbtt_fontinfo info; bool ok; } FontFile;
-static FontFile font_files[2] = {{"LiberationSans-Regular.ttf"}, {"LiberationSans-Bold.ttf"}};
+static FontFile font_files[FF_COUNT] = {
+    {"LiberationSans-Regular.ttf"}, {"LiberationSans-Bold.ttf"}, {"LiberationMono-Regular.ttf"}};
 
 typedef struct Font {
     bool used;
@@ -35,6 +43,7 @@ typedef struct Font {
     FontFile *ff;
     float scale;
     int ascent, descent, line_gap;
+    int cell_h, asc_px;        /* fixed cell metrics of the Windows bitmap fonts, 0 = from the TTF */
 } Font;
 
 typedef struct DC {
@@ -44,6 +53,9 @@ typedef struct DC {
     uint32_t text_color, bk_color;
     uint32_t bk_mode;          /* 1 TRANSPARENT, 2 OPAQUE */
     uint32_t align;
+    int32_t org_x, org_y;      /* window origin on the surface */
+    bool clipped;
+    int32_t clip[4];           /* surface coordinates */
 } DC;
 
 static Font fonts[MAX_FONT];
@@ -67,16 +79,17 @@ static char *font_dir(void)
     return dir;
 }
 
-static FontFile *load_font_file(bool bold)
+static FontFile *load_font_file(int which)
 {
-    FontFile *f = &font_files[bold ? 1 : 0];
+    FontFile *f = &font_files[which];
     if (f->ok || f->data)
         return f->ok ? f : NULL;
     const char *candidates[] = {font_dir(), "/usr/share/fonts/truetype/liberation",
                                 "/usr/share/fonts/liberation", NULL};
     for (int i = 0; candidates[i]; i++) {
         char path[4096];
-        snprintf(path, sizeof path, "%s/%s", candidates[i], f->file);
+        if (snprintf(path, sizeof path, "%s/%s", candidates[i], f->file) >= (int)sizeof path)
+            continue;
         FILE *fp = fopen(path, "rb");
         if (!fp)
             continue;
@@ -130,7 +143,9 @@ static uint32_t create_font(int32_t height, int32_t width, int32_t weight, bool 
     f->underline = underline;
     snprintf(f->face, sizeof f->face, "%s", face ? face : "");
     pthread_mutex_unlock(&gdi_lock);
-    f->ff = load_font_file(weight >= 600);
+    bool mono = face && (strncasecmp(face, "Fixedsys", 8) == 0 || strncasecmp(face, "Courier", 7) == 0 ||
+                         strncasecmp(face, "Terminal", 8) == 0);
+    f->ff = load_font_file(mono ? FF_MONO : weight >= 600 ? FF_SANS_BOLD : FF_SANS);
     if (f->ff) {
         /* Negative height = em (character) height, positive = cell height. */
         f->scale = height < 0 ? stbtt_ScaleForMappingEmToPixels(&f->ff->info, (float)-height)
@@ -235,9 +250,18 @@ static int text_width(Font *f, const char *s, int n)
 
 static int line_height(Font *f)
 {
+    if (f && f->cell_h)
+        return f->cell_h;
     if (!f || !f->ff)
         return 14;
     return (int)((float)(f->ascent - f->descent) * f->scale + 0.5f);
+}
+
+static int font_ascent(Font *f)
+{
+    if (f->asc_px)
+        return f->asc_px;
+    return (int)((float)f->ascent * f->scale + 0.5f);
 }
 
 /* Draw a run of text with its top-left cell corner at (x, y). Clip to clip[4]. */
@@ -254,6 +278,12 @@ static void draw_text(DC *d, int x, int y, const char *s, int n, const int32_t c
     uint16_t color = rgb565(d->text_color);
     int cx0 = clip ? clip[0] : 0, cy0 = clip ? clip[1] : 0;
     int cx1 = clip ? clip[2] : (int)surf->width, cy1 = clip ? clip[3] : (int)surf->height;
+    if (d->clipped) {
+        if (cx0 < d->clip[0]) cx0 = d->clip[0];
+        if (cy0 < d->clip[1]) cy0 = d->clip[1];
+        if (cx1 > d->clip[2]) cx1 = d->clip[2];
+        if (cy1 > d->clip[3]) cy1 = d->clip[3];
+    }
     if (cx0 < 0) cx0 = 0;
     if (cy0 < 0) cy0 = 0;
     if (cx1 > (int)surf->width) cx1 = (int)surf->width;
@@ -271,7 +301,7 @@ static void draw_text(DC *d, int x, int y, const char *s, int n, const int32_t c
                     row[xx] = bk;
         }
     }
-    int baseline = y + (int)((float)f->ascent * f->scale + 0.5f);
+    int baseline = y + font_ascent(f);
     float pen = (float)x;
     for (int i = 0; i < n; i++) {
         int ch = (unsigned char)s[i];
@@ -328,12 +358,13 @@ WINAPI_FN(gdi32, CreateFontIndirectA)
     RET(1, h);
 }
 
-WINAPI_FN(gdi32, CreateSolidBrush) { RET(1, HBRUSH_BASE | (ARG(0) & 0xffff)); }
+WINAPI_FN(gdi32, CreateSolidBrush) { RET(1, HBRUSH_TAG | (ARG(0) & 0xffffff)); }
 
+/* Brushes and unknown or already deleted handles are harmless no-ops. */
 WINAPI_FN(gdi32, DeleteObject)
 {
     Font *f = font_of(ARG(0));
-    if (f)
+    if (f && !f->cell_h)       /* dialog fonts are shared and kept */
         f->used = false;
     RET(1, 1);
 }
@@ -406,13 +437,15 @@ WINAPI_FN(gdi32, TextOutA)
         Font *f = font_of(d->font);
         if (!f)
             f = default_font();
+        x += d->org_x;
+        y += d->org_y;
         /* TA_CENTER 6, TA_RIGHT 2, TA_BOTTOM 8, TA_BASELINE 24 */
         if ((d->align & 6) == 6)
             x -= text_width(f, s, n) / 2;
         else if (d->align & 2)
             x -= text_width(f, s, n);
         if ((d->align & 24) == 24 && f && f->ff)
-            y -= (int)((float)f->ascent * f->scale + 0.5f);
+            y -= font_ascent(f);
         else if (d->align & 8)
             y -= line_height(f);
         draw_text(d, x, y, s, n, NULL);
@@ -436,6 +469,9 @@ WINAPI_FN(user32, DrawTextA)
     if (!f)
         f = default_font();
     int32_t r[4] = {(int32_t)R32(pr), (int32_t)R32(pr + 4), (int32_t)R32(pr + 8), (int32_t)R32(pr + 12)};
+    int32_t ox = d ? d->org_x : 0, oy = d ? d->org_y : 0;
+    r[0] += ox; r[2] += ox;
+    r[1] += oy; r[3] += oy;
     RT_TRACE("DrawTextA(\"%.*s\", rect %d,%d,%d,%d, fmt %x, surface %08x)", n, s, r[0], r[1], r[2], r[3],
              fmt, d && d->surf ? d->surf->obj : 0);
     int lh = line_height(f);
@@ -472,8 +508,8 @@ WINAPI_FN(user32, DrawTextA)
             if (lw > w)
                 w = lw;
         }
-        W32(pr + 8, (uint32_t)(r[0] + w));
-        W32(pr + 12, (uint32_t)(r[1] + total_h));
+        W32(pr + 8, (uint32_t)(r[0] - ox + w));
+        W32(pr + 12, (uint32_t)(r[1] - oy + total_h));
         RET(5, (uint32_t)total_h);
     }
     int y = r[1];
@@ -492,4 +528,148 @@ WINAPI_FN(user32, DrawTextA)
         draw_text(d, x, y + k * lh, s + starts[k], lens[k], clip);
     }
     RET(5, (uint32_t)total_h);
+}
+
+/* ---------------------------------------------------------------- host UI helpers
+ * Used by the dialog manager (dialog.c) to draw controls with GDI fonts. */
+
+/* Dialog fonts. "Helv" 8 pt is MS Sans Serif 8 on Windows 95 (cell 13 px,
+ * ascent 11, dialog base units 6x13); "Fixedsys" is the 8x15 system font. */
+uint32_t gdi_dialog_font(const char *face, int points, int weight, int *base_x, int *base_y)
+{
+    static struct { char face[32]; int points, weight; uint32_t h; int bx, by; } cache[8];
+    static int ncache;
+    for (int i = 0; i < ncache; i++)
+        if (cache[i].points == points && cache[i].weight == weight && strcasecmp(cache[i].face, face) == 0) {
+            *base_x = cache[i].bx;
+            *base_y = cache[i].by;
+            return cache[i].h;
+        }
+    bool fixedsys = strncasecmp(face, "Fixedsys", 8) == 0 || strncasecmp(face, "Terminal", 8) == 0;
+    bool sans = strcasecmp(face, "Helv") == 0 || strcasecmp(face, "MS Sans Serif") == 0 ||
+                strcasecmp(face, "MS Shell Dlg") == 0 || strcasecmp(face, "System") == 0;
+    int em = (points * 96 + 36) / 72;
+    uint32_t h = create_font(-em, 0, weight, false, false, fixedsys ? "Fixedsys" : face);
+    Font *f = font_of(h);
+    int bx = 6, by = 13;
+    if (f && fixedsys) {
+        f->cell_h = 15;
+        f->asc_px = 12;
+        bx = 8;
+        by = 15;
+        if (f->ff) {
+            int adv, lsb;
+            stbtt_GetCodepointHMetrics(&f->ff->info, 'M', &adv, &lsb);
+            if (adv > 0)
+                f->scale = 8.0f / (float)adv;   /* exactly 8 px per character */
+        }
+    } else if (f && sans && points <= 8) {
+        f->cell_h = 13;
+        f->asc_px = 11;
+    } else if (f) {
+        f->cell_h = line_height(f);
+        f->asc_px = font_ascent(f);
+        by = f->cell_h;
+        bx = (text_width(f, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52) / 26 + 1) / 2;
+    }
+    if (ncache < 8) {
+        snprintf(cache[ncache].face, sizeof cache[ncache].face, "%s", face);
+        cache[ncache].points = points;
+        cache[ncache].weight = weight;
+        cache[ncache].h = h;
+        cache[ncache].bx = bx;
+        cache[ncache].by = by;
+        ncache++;
+    }
+    *base_x = bx;
+    *base_y = by;
+    return h;
+}
+
+int gdi_font_height(uint32_t hfont)
+{
+    Font *f = font_of(hfont);
+    return line_height(f ? f : default_font());
+}
+
+int gdi_font_ascent(uint32_t hfont)
+{
+    Font *f = font_of(hfont);
+    if (!f)
+        f = default_font();
+    return f ? font_ascent(f) : 11;
+}
+
+int gdi_text_width(uint32_t hfont, const char *s, int n)
+{
+    Font *f = font_of(hfont);
+    return text_width(f ? f : default_font(), s, n);
+}
+
+/* Transparent text with its cell top-left at (x, y) on a surface. */
+void gdi_text(Surface *surf, uint32_t hfont, int x, int y, const char *s, int n, uint32_t colorref,
+              const int32_t clip[4])
+{
+    DC tmp = {true, surf, hfont, 0, colorref, 0xffffff, 1, 0, 0, 0, false, {0, 0, 0, 0}};
+    draw_text(&tmp, x, y, s, n, clip);
+}
+
+/* A DC on a surface with a window origin and clip rectangle (surface coordinates). */
+uint32_t gdi_create_dc(Surface *surf, int org_x, int org_y, const int32_t clip[4])
+{
+    uint32_t h = new_dc(surf);
+    DC *d = dc_of(h);
+    d->org_x = org_x;
+    d->org_y = org_y;
+    if (clip) {
+        d->clipped = true;
+        memcpy(d->clip, clip, sizeof d->clip);
+    }
+    return h;
+}
+
+void gdi_delete_dc(uint32_t hdc)
+{
+    DC *d = dc_of(hdc);
+    if (d)
+        d->used = false;
+}
+
+void gdi_dc_set_colors(uint32_t hdc, uint32_t text, uint32_t bk)
+{
+    DC *d = dc_of(hdc);
+    if (d) {
+        d->text_color = text;
+        d->bk_color = bk;
+    }
+}
+
+void gdi_dc_colors(uint32_t hdc, uint32_t *text, uint32_t *bk, uint32_t *mode)
+{
+    DC *d = dc_of(hdc);
+    *text = d ? d->text_color : 0;
+    *bk = d ? d->bk_color : 0xffffff;
+    *mode = d ? d->bk_mode : 2;
+}
+
+uint32_t gdi_solid_brush(uint32_t colorref) { return HBRUSH_TAG | (colorref & 0xffffff); }
+
+/* Colour of a brush handle: solid brushes, stock brushes and the
+ * "COLOR_xxx + 1" system colour convention. */
+bool gdi_brush_color(uint32_t h, uint32_t *colorref)
+{
+    static const uint32_t stock[5] = {0xffffff, 0xc0c0c0, 0x808080, 0x404040, 0x000000};
+    if ((h & 0xff000000u) == HBRUSH_TAG) {
+        *colorref = h & 0xffffff;
+        return true;
+    }
+    if (h >= HSTOCK_BASE && h < HSTOCK_BASE + 5) {
+        *colorref = stock[h - HSTOCK_BASE];
+        return true;
+    }
+    if (h >= 1 && h <= 31) {
+        *colorref = win_sys_color((int)h - 1);
+        return true;
+    }
+    return false;
 }
