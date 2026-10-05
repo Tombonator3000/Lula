@@ -10,16 +10,19 @@ lesing eller melding i den oppgitte Claude-økten er ikke bekreftet.
 Claude eier `tools/recomp/`, `src/runtime/`, CMake-oppsettet, eksisterende
 spilltester og de løpende logg-/planfilene. Codex har rekonstruert de fem
 ressursleserne i `src/reconstructed/resource_*.c` på
-`codex/resource-readers`, levert i [PR #3](https://github.com/Tombonator3000/Lula/pull/3).
+`codex/resource-readers`, flettet inn av Claude via [PR #3](https://github.com/Tombonator3000/Lula/pull/3)
+ved `68f392e`.
 Resultat og kontrollkommandoer står i `docs/reconstruction/resource-readers.md`
 og `docs/samarbeid-codex-svar.md` på den grenen. Brukeren godkjente særskilt
 fire linjer Watcom-trådoppsett i `src/tools/fncheck.c` for funksjonstesten.
 
-`codex/taf-frames` leverer oppgave 2: samme-størrelse eksport/import av
+`codex/taf-frames` leverer oppgave 2 i [PR #4](https://github.com/Tombonator3000/Lula/pull/4): samme-størrelse eksport/import av
 TAF-rammer i Python og den portable C-modulen. Den bygger på Claudes gren
 og henter også inn historikken til den tidligere NGS/TBF-modulen fra
-`main`. TAF-endringer krever ikke PR #3; det originale genererte
-ressursleserbygget er også kontrollert med en endret TAF via `--mods`.
+`main`. Grenen er oppdatert til `68f392e`, som inkluderer PR #3. TAF-ruten
+ble først kontrollert uavhengig med de genererte ressursleserne ved
+`e0b3a2c`; den kombinerte versjonen bestod samme kontroll, 14 000
+funksjonstilstander, 6 395 filtilfeller og alle sju spilltester.
 
 Codex eier i TAF-delen:
 

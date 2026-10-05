@@ -2,7 +2,7 @@
   "schema": 1,
   "date": "2026-10-05",
   "scope": "same-size TAF frame editing; Python and portable C; native Linux mod presentation",
-  "claude_base": "e0b3a2cc280c34aae48a7233b118cc7741e13e8b",
+  "claude_base": "68f392e0aad0d8ab973d3dd5f50215bd373b7dbc",
   "format_checks": {
     "files": 78,
     "frames": 989,
@@ -102,10 +102,40 @@
     },
     {
       "path": "build/game/lula",
-      "size": 1720232,
-      "sha256": "12e1ae94ba4d91810dc491f34d8a2c524571dcc7bbb2c02a0812d53eaebb5292"
+      "size": 1750448,
+      "sha256": "8d513f65810768efda40f0012dff104edc2873d368ce47d242f3efc730a2ef26"
     }
   ],
-  "native_game_tests": "PASS 7/7, 155.214 s; e0b3a2c plus independent TAF branch",
-  "original_files": "PASS 144/144 SHA-256 preserved"
+  "original_files": "PASS 144/144 SHA-256 preserved after final combined tests",
+  "independent_claude_base": "e0b3a2cc280c34aae48a7233b118cc7741e13e8b",
+  "verified_code_commit": "6bc9dbe6b996c9b18aa0fd9ee1ace40e8ac20b86",
+  "native_game_tests_independent": "PASS 7/7, 155.214 s; e0b3a2c plus independent TAF branch",
+  "runtime_independent": {
+    "result": "pass",
+    "source": "DATA/CURSOR/CURSOR.TAF",
+    "frames_edited": 4,
+    "rgb565_color": 4660,
+    "added_presented_pixels": 2964,
+    "expected_cursor_pixels": [
+      2964
+    ],
+    "original_bytes": 11271,
+    "edited_bytes": 879,
+    "original_files_modified": false
+  },
+  "combined_resource_checks": {
+    "stock_functions": 7,
+    "iterations_each": 2000,
+    "total_states": 14000,
+    "new_resource_functions": 5,
+    "new_resource_states": 10000,
+    "directed_file_signature_cases": 6395,
+    "mismatches": 0
+  },
+  "independent_game_binary": {
+    "path": "build/game/lula",
+    "size": 1720232,
+    "sha256": "12e1ae94ba4d91810dc491f34d8a2c524571dcc7bbb2c02a0812d53eaebb5292"
+  },
+  "native_game_tests": "PASS 7/7, 174.892 s; combined resource-readers and TAF branch based on 68f392e"
 }
