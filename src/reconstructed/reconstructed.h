@@ -12,6 +12,13 @@
 
 #define RT_RECONSTRUCTED(address)
 
+/* Input profile for tools/fncheck, e.g.
+ * RT_CHECK(0x00442be4, "eax:ptr edx:ptr ebx:size(0,4096)").
+ * Kinds: ptr (into a scratch buffer), size(lo,hi), int, any. Registers not
+ * named get random values; arg0.. name stack arguments above the return
+ * address. */
+#define RT_CHECK(address, profile)
+
 /* Pop the return address like a plain 'ret' and hand it to the caller. */
 static inline uint32_t rt_return(Cpu *c)
 {

@@ -41,3 +41,4 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
 - Ny test `tests/test_recompiled_game.py` (3 tester: hovedmeny mot originalens hash, New game, grafikk via mods). Alle går grønt.
 - Lyd: `LULA_AUDIODUMP=fil.wav` skriver den miksede lyden. I menyen er utgangen nøyaktig `sound.tap` post 9 (22050 Hz, 8 bit) spilt med -10 dB, sample for sample. Lagt inn som fjerde ende-til-ende-test.
 - Rekonstruksjon: funksjoner merket `RT_RECONSTRUCTED(0x...)` i `src/reconstructed/` erstatter de genererte (som beholdes som `lifted_...`). Første eksempel er Watcoms memcpy (0x442be4). Alle fire ende-til-ende-tester går grønt med den.
+- Nytt verktøy `lula-fncheck` (CMake-mål): kjører hver rekonstruerte funksjon og den genererte originalen på tilfeldige tilstander og sammenligner registre, levende flagg, x87 og minne. memcpy består 3000 av 3000. CMake bruker nå et objektbibliotek (`lula_core`) som deles av spillet og verktøyene.

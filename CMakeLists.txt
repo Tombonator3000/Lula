@@ -44,11 +44,24 @@ foreach(name IN LISTS gen_names)
 endforeach()
 
 file(GLOB RUNTIME_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/runtime/*.c"
-     "${CMAKE_SOURCE_DIR}/src/runtime/win32/*.c" "${CMAKE_SOURCE_DIR}/src/reconstructed/*.c")
+     "${CMAKE_SOURCE_DIR}/src/runtime/win32/*.c")
+list(REMOVE_ITEM RUNTIME_SOURCES "${CMAKE_SOURCE_DIR}/src/runtime/main.c")
 
-add_executable(lula ${RUNTIME_SOURCES} ${GEN_SOURCES})
-target_include_directories(lula PRIVATE "${CMAKE_SOURCE_DIR}/src/runtime" "${CMAKE_SOURCE_DIR}/src/reconstructed" "${GEN_DIR}")
-target_link_libraries(lula PRIVATE PkgConfig::SDL2 Threads::Threads m)
-target_compile_options(lula PRIVATE -Wall -Wno-unused-label -Wno-unused-function -fwrapv)
+# Everything except main() goes into one object library shared by the game
+# and the tools.
+add_library(lula_core OBJECT ${RUNTIME_SOURCES} ${RECONSTRUCTED_SOURCES} ${GEN_SOURCES})
+target_include_directories(lula_core PUBLIC "${CMAKE_SOURCE_DIR}/src/runtime"
+                           "${CMAKE_SOURCE_DIR}/src/reconstructed" "${GEN_DIR}")
+target_link_libraries(lula_core PUBLIC PkgConfig::SDL2 Threads::Threads m)
+target_compile_options(lula_core PRIVATE -Wall -Wno-unused-label -Wno-unused-function -fwrapv)
 # The generated code is large and simple; -O1 keeps compile times reasonable.
 set_source_files_properties(${GEN_SOURCES} PROPERTIES COMPILE_OPTIONS "-O1;-Wno-unused-variable")
+
+add_executable(lula "${CMAKE_SOURCE_DIR}/src/runtime/main.c")
+target_link_libraries(lula PRIVATE lula_core)
+target_compile_options(lula PRIVATE -Wall)
+
+# tools/fncheck: compares hand-reconstructed functions with the generated ones.
+add_executable(lula-fncheck "${CMAKE_SOURCE_DIR}/src/tools/fncheck.c")
+target_link_libraries(lula-fncheck PRIVATE lula_core)
+target_compile_options(lula-fncheck PRIVATE -Wall)

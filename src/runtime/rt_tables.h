@@ -20,3 +20,14 @@ extern const GuestEntry g_guest_entries[];
 extern const size_t g_guest_entry_count;
 extern const HostImport g_host_imports[];
 extern const size_t g_host_import_count;
+
+/* Hand-reconstructed functions (src/reconstructed) and the generated code they
+ * replace; flags_live is the EFLAGS mask callers read after the call. */
+typedef struct ReconEntry {
+    uint32_t addr;
+    GuestFn reconstructed, lifted;
+    uint32_t flags_live;
+    const char *profile;
+} ReconEntry;
+extern const ReconEntry g_reconstructed[];
+extern const size_t g_reconstructed_count;

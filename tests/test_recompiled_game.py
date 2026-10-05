@@ -103,6 +103,13 @@ class RecompiledGame(unittest.TestCase):
         expected = [int((samples[k // 2] - 128) * 256 * gain) for k in range(2000)]
         self.assertEqual(list(left[first:first + 2000]), expected)
 
+    def test_reconstructed_functions_match_generated_code(self):
+        fncheck = BINARY.with_name('lula-fncheck')
+        if not fncheck.is_file():
+            self.skipTest('lula-fncheck not built')
+        result = subprocess.run([str(fncheck), '--iterations', '1500'], capture_output=True, timeout=600)
+        self.assertEqual(result.returncode, 0, result.stdout.decode(errors='replace'))
+
     def test_replacement_graphics_from_mods_directory(self):
         """Edit the menu background with tools/assets.py and load it via --mods."""
         spec = importlib.util.spec_from_file_location('lula_assets', ROOT / 'tools/assets.py')

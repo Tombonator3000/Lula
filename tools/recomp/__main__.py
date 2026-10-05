@@ -39,6 +39,16 @@ def reconstructed_functions():
     return found
 
 
+def check_profiles():
+    """Argument profiles for tools/fncheck: RT_CHECK(0x..., "eax:ptr ...")."""
+    found = {}
+    for path in sorted(RECONSTRUCTED.glob('*.c')):
+        text = path.read_text(encoding='utf-8')
+        for m in re.finditer(r'RT_CHECK\(\s*0x([0-9a-fA-F]+)\s*,\s*"([^"]*)"\s*\)', text):
+            found[int(m.group(1), 16)] = m.group(2)
+    return found
+
+
 def seeds_from_ghidra(path):
     seeds = set()
     if path.is_file():
@@ -143,7 +153,17 @@ def main(argv=None):
     for s in host_syms:
         stubs.append(f'RT_WEAK uint32_t {s}(Cpu *c) {{ return rt_unimplemented(c, "{s[2:]}"); }}')
     write_if_changed(out / 'gen_stubs.c', '\n'.join(stubs) + '\n')
-    files += ['gen_tables.c', 'gen_stubs.c']
+    profiles = check_profiles()
+    recon = [HEADER, '#include "gen_decls.h"', '#include "rt_tables.h"', '',
+             '/* Reconstructed functions with their generated counterparts (tools/fncheck). */',
+             'const ReconEntry g_reconstructed[] = {']
+    for a in sorted(replaced):
+        mask = live.ret_live.get(a, 0)
+        recon.append(f'    {{0x{a:08x}u, f_{a:08x}, lifted_{a:08x}, 0x{mask:02x}u, '
+                     f'{json.dumps(profiles.get(a, ""))}}},')
+    recon += ['    {0, 0, 0, 0, 0}', '};', f'const size_t g_reconstructed_count = {len(replaced)};', '']
+    write_if_changed(out / 'gen_reconstructed.c', '\n'.join(recon))
+    files += ['gen_tables.c', 'gen_stubs.c', 'gen_reconstructed.c']
 
     report = {
         'image_sha256': img.sha256,

@@ -115,4 +115,6 @@ uint32_t f_00442be4(Cpu *c)
 
 Rekompilatoren ser markeringen, slutter å generere sin egen `f_00442be4` og beholder den som `lifted_00442be4` for sammenligning. CMake regenererer automatisk når filene endres. En erstatning må etterlate registre, flagg som leses senere, stakk og minne slik originalen gjør, fordi kallerne er generert kode. Rekompilatoren advarer hvis funksjonen inngår i flaggflyt på tvers av kall.
 
-Første eksempel er Watcoms `memcpy` (0x442be4) i `src/reconstructed/watcom_crt.c`. Alle ende-til-ende-testene går grønt med den. Samme mekanisme er veien til lesbar kildekode for spillogikken, ny renderer og høyere intern oppløsning.
+Første eksempel er Watcoms `memcpy` (0x442be4) i `src/reconstructed/watcom_crt.c`. Alle ende-til-ende-testene går grønt med den.
+
+`build/game/lula-fncheck` kontrollerer hver erstatning mot den genererte versjonen. Den bygger tilfeldige maskintilstander ut fra en profil i kildekoden, for eksempel `RT_CHECK(0x00442be4, "eax:ptr edx:ptr ebx:size(0,600)")`, kjører begge versjonene og sammenligner registre, flaggene kallerne leser, x87-tilstand og minne (skrapebuffere, stakk over stakkpekeren og hele programbildet). memcpy består 3000 av 3000 tilstander. Samme mekanisme er veien til lesbar kildekode for spillogikken, ny renderer og høyere intern oppløsning.

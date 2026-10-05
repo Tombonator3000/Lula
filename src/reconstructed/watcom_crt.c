@@ -7,6 +7,7 @@
  * then n % 4 bytes. ECX, ESI, EDI and ES are saved and restored. Copying in
  * the same order keeps overlapping copies identical to the original. */
 RT_RECONSTRUCTED(0x00442be4)
+RT_CHECK(0x00442be4, "eax:ptr edx:ptr ebx:size(0,600)")
 uint32_t f_00442be4(Cpu *c)
 {
     uint32_t dst = c->eax, src = c->edx, n = c->ebx;
