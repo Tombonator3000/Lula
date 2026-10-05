@@ -246,6 +246,8 @@ class Lifter:
         if setter.mnem in ('sar', 'shl', 'shr') and not F.shift_count_is_imm(setter):
             return [], 0
         _, sdef, _ = F.use_def(setter)
+        if not sdef:
+            return [], 0               # e.g. a shift by 0 leaves the old flags
         chain, extra, prev = [], 0, setter
         while True:
             nxt = f.insns.get(prev.next)
@@ -261,8 +263,22 @@ class Lifter:
             prev = nxt
         if not chain:
             return [], 0
+        # Flags read where the chain is left: after the last reader and at
+        # the target of every branch taken inside the chain.
         live_after = self.live.live_out.get((f.entry, prev.addr), F.ALL)
+        r = setter
+        while r is not prev:
+            r = f.insns[r.next]
+            if r.flow == 'jcc' and r is not prev:
+                live_after |= self.live_in(f, r.targets[0])
         return chain, (sdef & live_after) | (extra & sdef)
+
+    def live_in(self, f, addr):
+        ins = f.insns.get(addr)
+        if ins is None:
+            return F.ALL
+        use, d, _ = self.live.local_use_def(f, ins)
+        return use | (self.live.live_out.get((f.entry, addr), F.ALL) & ~d)
 
     def fused_cond(self, setter, cc):
         n = setter.ops[0].size
@@ -308,14 +324,23 @@ class Lifter:
         if ins.mnem.startswith('set'):
             op = ins.ops[0]
             return [self.wr(op, f'({cond}) ? 1 : 0')]
-        return [f'if ({cond}) goto L_{ins.targets[0]:08x};']
+        return [f'if ({cond}) {self.goto(ins, ins.targets[0])}']
+
+    @staticmethod
+    def goto(ins, t):
+        """Jump to a local label. Backward jumps close loops; there another
+        guest thread waiting for the global lock gets a turn (spin-waits on
+        flags set by the sound timer thread depend on it)."""
+        if t <= ins.addr:
+            return f'{{ RT_POLL(); goto L_{t:08x}; }}'
+        return f'goto L_{t:08x};'
 
     def i_jmp(self, f, ins):
         if ins.flow == 'jmp':
             t = ins.targets[0]
             if t in f.tailcalls:
                 return [f'return f_{t:08x}(c);']
-            return [f'goto L_{t:08x};']
+            return [self.goto(ins, t)]
         op = ins.ops[0]
         if ins.iat is not None:
             return [f'return {self.host[ins.iat]}(c);']
@@ -351,7 +376,7 @@ class Lifter:
 
     def _loop(self, f, ins, cond):
         t = ins.targets[0]
-        return [f'if ({cond}) goto L_{t:08x};']
+        return [f'if ({cond}) {self.goto(ins, t)}']
 
     def i_loop(self, f, ins):
         return self._loop(f, ins, '--c->ecx != 0')
@@ -1017,7 +1042,7 @@ class Lifter:
         if m in consts:
             return [f'FPUSH({consts[m]});']
         if m == 'fprem':
-            return ['ST(0) = fmod(ST(0), ST(1)); c->fpu.c2 = 0;']
+            return ['rt_fprem(c);']
         if m == 'fyl2x':
             return ['{ double v = ST(1) * log2(ST(0)); FPOP(); ST(0) = v; }']
         if m == 'fscale':

@@ -116,6 +116,7 @@ static Surface *new_surface(uint32_t w, uint32_t h, uint32_t caps)
     s->pitch = (w * 2 + 3) & ~3u;
     s->caps = caps;
     s->mem = rt_heap_alloc(s->pitch * h + 16);
+    s->home = s->mem;
     s->refs = 1;
     s->obj = com_new(vt_surf, s);
     return s;
@@ -391,7 +392,19 @@ static uint32_t dd_WaitForVerticalBlank(Cpu *c)
     RET(3, DD_OK);
 }
 
-static uint32_t dd_FlipToGDISurface(Cpu *c) { RET(1, DD_OK); }
+/* GDI draws on the original primary buffer: if a Flip left the other chain
+ * buffer in front, swap back, then show it (directx.md section 4.5). */
+static uint32_t dd_FlipToGDISurface(Cpu *c)
+{
+    Surface *p = dd.primary;
+    if (p && p->back && p->mem != p->home) {
+        uint32_t t = p->mem;
+        p->mem = p->back->mem;
+        p->back->mem = t;
+    }
+    ddraw_present();
+    RET(1, DD_OK);
+}
 
 static uint32_t dd_GetAvailableVidMem(Cpu *c)
 {

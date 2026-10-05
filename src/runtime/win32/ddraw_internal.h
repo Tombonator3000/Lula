@@ -10,6 +10,7 @@ typedef struct Surface {
     uint32_t obj;                 /* guest COM object */
     uint32_t width, height, pitch;
     uint32_t mem;                 /* guest address of RGB565 pixels */
+    uint32_t home;                /* buffer this surface owned at creation */
     uint32_t caps, refs, locked;
     bool primary, is_back;
     struct Surface *back;         /* attached back buffer of a flip chain */

@@ -119,6 +119,27 @@ double rt_frndint(Cpu *c, double v)
     return fpu_round(c, v);
 }
 
+/* fprem: exact truncating remainder ST(0) mod ST(1) (what fmod computes) and
+ * the low quotient bits Q2, Q1, Q0 in C0, C3, C1. The reduction is always
+ * completed here (C2 = 0); the hardware may report a partial remainder
+ * (C2 = 1) when the exponents differ by 64 or more, but a fprem loop then
+ * ends with the same remainder and the same low quotient bits. */
+void rt_fprem(Cpu *c)
+{
+    double a = ST(0), b = ST(1), r = fmod(a, b);
+    unsigned q = 0;
+    if (r == r && b - b == 0) {                    /* finite operands, b != 0 */
+        double b8 = 8.0 * b;
+        double r8 = b8 - b8 == 0 ? fmod(a, b8) : a; /* 8b overflows: |a / b| < 8 */
+        q = (unsigned)floor(fabs((r8 - r) / b) + 0.5) & 7;
+    }
+    ST(0) = r;
+    c->fpu.c2 = 0;
+    c->fpu.c0 = (q >> 2) & 1;
+    c->fpu.c3 = (q >> 1) & 1;
+    c->fpu.c1 = q & 1;
+}
+
 int64_t rt_fist(Cpu *c, double v, int bits)
 {
     double r = fpu_round(c, v);

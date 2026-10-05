@@ -51,6 +51,8 @@ def check_profiles():
 
 def seeds_from_ghidra(path):
     seeds = set()
+    if path.is_file() and path.read_bytes()[:24] == b'version https://git-lfs':
+        raise SystemExit(f'{path} is a Git LFS pointer; run "git lfs pull" first')
     if path.is_file():
         with path.open(encoding='utf-8') as stream:
             for row in csv.DictReader(stream, delimiter='\t'):

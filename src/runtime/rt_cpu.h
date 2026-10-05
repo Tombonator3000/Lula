@@ -74,6 +74,11 @@ static inline void *G2H(uint32_t a) { return a ? (void *)(g_mem + a) : NULL; }
 
 extern const uint8_t rt_parity[256];
 
+/* Loop back-edges: let a guest thread that waits for the global lock run. */
+extern volatile int rt_gil_waiters;
+void rt_gil_yield(void);
+#define RT_POLL() do { if (__builtin_expect(rt_gil_waiters != 0, 0)) rt_gil_yield(); } while (0)
+
 /* --- runtime services used by generated code --- */
 uint32_t rt_call_indirect(Cpu *c, uint32_t target);
 uint32_t rt_jump_indirect(Cpu *c, uint32_t target);
@@ -96,6 +101,7 @@ double rt_f80_load(uint32_t addr);
 void rt_f80_store(uint32_t addr, double v);
 int64_t rt_fist(Cpu *c, double v, int bits);
 double rt_frndint(Cpu *c, double v);
+void rt_fprem(Cpu *c);
 void rt_fpu_init(Cpu *c);
 void rt_fpu_save(Cpu *c, uint32_t addr);
 void rt_fpu_restore(Cpu *c, uint32_t addr);
