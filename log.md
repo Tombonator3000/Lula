@@ -55,3 +55,11 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
 - Kjent avvik: x87 holdes i `double`, men Watcom setter 64-bits presisjon. Agenten har fått i oppgave å gjøre x87 80-bit-eksakt med `long double` og sammenligne eksakt mot unicorn.
 - Kjør på nytt: `python3 tests/recomp/unicorn_diff.py` (ca. 3 min) eller `--quick`.
 - WINMM/timing-spesifikasjonen er ferdig. Etter den: timertråden (lydmotoren, 2 ms) kjører nå hver tick ferdig uten å gi fra seg den globale låsen, slik en tidskritisk timertråd på en Win9x-maskin med én CPU gjorde. Spillets volumglidebryter (`waveOutSetVolume`) virker nå som master-volum på vår egen miks, aldri på systemmikseren. Timertrådens stakk ligger over hovedtrådens stakkgrense, som Watcoms stakksjekk krever (gitt av rekkefølgen trådene lages i).
+
+## 2026-10-05 18:00 UTC: dialoger, lagring og lasting
+
+- Dialogagenten er ferdig (`src/runtime/win32/dialog.c`, ca. 2800 linjer): modale Win32-dialoger fra EXE-ressursene med STATIC, EDIT, LISTBOX og BUTTON, hele WM_CTLCOLOR-protokollen, nestede dialoger, popupmenyen "Set Digital Output" og ekte MessageBox. Sammenlignet med Wine-skjermbilder av originalens dialoger.
+- Lagring og lasting virker: lagret fra F2-menyen til `DATA/SAVE/SAVEGAME.  4` i lagringskatalogen og lastet inn igjen etter omstart.
+- Rettet krasj ved `ExitProcess`: SDL ble avsluttet fra spilltråden. Nå ber spilltråden hovedtråden om å avslutte.
+- Inputskript kan nå bruke F1-F12 og `type ORD`. Ny ende-til-ende-test lagrer via F2 og laster fra hovedmenyen. Alle 6 testene grønne.
+- Ressurs- og spillkartspesifikasjonen (`docs/recomp/specs/resources-and-game-map.md`) er ferdig.

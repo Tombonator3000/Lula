@@ -722,8 +722,32 @@ static void ui_unshow(Ui *u)
         }
     }
     under_free(u);
-    if (restored)
+    if (restored) {
+        for (int i = 0; i < nui; i++) {
+            Ui *o = uis[i];
+            if (o != u && o->visible && o->shown && o->under_mem == s->mem)
+                region_copy(s, o, o->shown);
+        }
         present();
+    }
+}
+
+/* Something else drew over a waiting window (the game reacting to
+ * WM_ACTIVATEAPP, say): paint it again, as Windows repaints on reactivation. */
+static void check_overdraw(void)
+{
+    Surface *s = screen();
+    if (!s || painting)
+        return;
+    bool had_caret = caret.on;
+    caret_hide();
+    for (int i = 0; i < nui; i++) {
+        Ui *u = uis[i];
+        if (u->visible && !u->ended && u->shown_valid && u->under_mem == s->mem && !region_equals(s, u, u->shown))
+            u->full_dirty = true;
+    }
+    if (had_caret)
+        caret_show();
 }
 
 /* ---------------------------------------------------------------- notifications */
@@ -2410,8 +2434,10 @@ static void ui_timers(Cpu *c)
         present();
     }
     /* Keep presenting while a modal window waits (frame dumps, window resizes). */
-    if (now - last_present >= 250)
+    if (now - last_present >= 250) {
+        check_overdraw();
         present();
+    }
 }
 
 /* Run until u ends. Input goes to the topmost window; everything else is
@@ -2459,7 +2485,6 @@ static void modal_loop(Cpu *c, Ui *u)
 WINAPI_FN(user32, DialogBoxParamA)
 {
     uint32_t name = ARG(1), owner = ARG(2), proc = ARG(3), param = ARG(4);
-    if (getenv("LULA_TEST_DLG")) name = rt_guest_strdup(getenv("LULA_TEST_DLG"));  /* TEMP-TEST */
     char label[64];
     if (name > 0xffff)
         snprintf(label, sizeof label, "%s", gstr(name));

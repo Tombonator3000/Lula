@@ -7,7 +7,8 @@
  *   LULA_HEADLESS=1         dummy video/audio drivers
  *   LULA_FRAMEDUMP=DIR      write presented frames as PPM (see LULA_FRAMEDUMP_MS)
  *   LULA_INPUT=FILE         scripted input: "<ms> move X Y | click X Y | rclick X Y |
- *                           key NAME | quit" one per line, times since start
+ *                           key NAME | type WORD | quit" one per line, times since
+ *                           start (NAME: RETURN, ESCAPE, F1..F12, a letter, ...)
  *   LULA_SCALE=N            initial window scale (default 2)
  *   LULA_AUDIODUMP=FILE     also write the mixed audio to a WAV file
  */
@@ -17,8 +18,10 @@
 
 #include <SDL.h>
 #include <pthread.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <unistd.h>
 
 static SDL_Window *window;
 static SDL_Renderer *renderer;
@@ -117,21 +120,39 @@ uint16_t plat_async_key_state(int vk)
     return r;
 }
 
-void plat_quit(int code)
+static pthread_t main_thread;
+static Uint32 ev_quit;
+
+static void quit_now(int code)
 {
     if (audio_dev)
         SDL_CloseAudioDevice(audio_dev);
+    if (audio_dump)
+        fclose(audio_dump);
     SDL_Quit();
     exit(code);
+}
+
+/* SDL must be shut down on the thread that owns it. Other threads ask the
+ * main loop to do it and then wait for the process to end. */
+void plat_quit(int code)
+{
+    fflush(stdout);
+    fflush(stderr);
+    if (pthread_equal(pthread_self(), main_thread) || !ev_quit)
+        quit_now(code);
+    SDL_Event e = {0};
+    e.type = ev_quit;
+    e.user.code = code;
+    SDL_PushEvent(&e);
+    for (;;)
+        pause();
 }
 
 void rt_exit_process(uint32_t code)
 {
     RT_INFO("ExitProcess(%u)", code);
-    fflush(stdout);
-    fflush(stderr);
     plat_quit((int)code);
-    for (;;) {}
 }
 
 /* ---------------------------------------------------------------- audio */
@@ -287,7 +308,10 @@ static int vk_from_name(const char *n)
 {
     static const struct { const char *name; int vk; } names[] = {
         {"RETURN", 0x0d}, {"ESCAPE", 0x1b}, {"SPACE", 0x20}, {"LEFT", 0x25}, {"UP", 0x26},
-        {"RIGHT", 0x27}, {"DOWN", 0x28}, {"F1", 0x70}, {"TAB", 0x09}, {"BACK", 0x08}};
+        {"RIGHT", 0x27}, {"DOWN", 0x28}, {"TAB", 0x09}, {"BACK", 0x08}, {"DELETE", 0x2e},
+        {"HOME", 0x24}, {"END", 0x23}, {"F1", 0x70}, {"F2", 0x71}, {"F3", 0x72}, {"F4", 0x73},
+        {"F5", 0x74}, {"F6", 0x75}, {"F7", 0x76}, {"F8", 0x77}, {"F9", 0x78}, {"F10", 0x79},
+        {"F11", 0x7a}, {"F12", 0x7b}};
     for (size_t i = 0; i < sizeof names / sizeof *names; i++)
         if (strcasecmp(n, names[i].name) == 0)
             return names[i].vk;
@@ -315,6 +339,16 @@ static void run_script(uint32_t now)
                      (vk >= 'A' && vk <= 'Z') ? vk + 32 : (vk >= '0' && vk <= '9') ? vk : 0;
             key_event(vk, true, ch);
             key_event(vk, false, 0);
+        } else if (strcmp(e->op, "type") == 0) {
+            /* Type a word: one key press per character (letters and digits). */
+            for (const char *p = e->name; *p; p++) {
+                int ch = (unsigned char)*p;
+                int vk = isalpha(ch) ? toupper(ch) : isdigit(ch) ? ch : ch == ' ' ? 0x20 : 0;
+                if (!vk)
+                    continue;
+                key_event(vk, true, ch);
+                key_event(vk, false, 0);
+            }
         } else if (strcmp(e->op, "dump") == 0) {
             last_dump = 0;
             dump_interval = 0;
@@ -357,8 +391,10 @@ void rt_platform_init(void)
     }
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0)
         rt_fatal("SDL_Init: %s", SDL_GetError());
-    ev_frame = SDL_RegisterEvents(2);
+    ev_frame = SDL_RegisterEvents(3);
     ev_window = ev_frame + 1;
+    ev_quit = ev_frame + 2;
+    main_thread = pthread_self();
     int scale = getenv("LULA_SCALE") ? atoi(getenv("LULA_SCALE")) : 2;
     if (scale < 1)
         scale = 1;
@@ -393,7 +429,9 @@ void rt_platform_run(void)
         uint32_t now = SDL_GetTicks();
         run_script(now);
         while (got) {
-            if (e.type == SDL_QUIT) {
+            if (e.type == ev_quit) {
+                quit_now(e.user.code);
+            } else if (e.type == SDL_QUIT) {
                 user32_input_key(-1, true, 0);    /* WM_CLOSE to the main window */
             } else if (e.type == SDL_MOUSEMOTION) {
                 mouse_x = e.motion.x;

@@ -53,7 +53,7 @@ def masked_rgb565(rgb, masks):
 @unittest.skipUnless(BINARY.is_file(), 'build the game first: cmake -S . -B build/game && cmake --build build/game')
 @unittest.skipUnless((ROOT / 'original/app/WET.EXE').is_file(), 'original game data not installed')
 class RecompiledGame(unittest.TestCase):
-    def run_game(self, seconds, script='', extra=()):
+    def run_game(self, seconds, script='', extra=(), save=None, env_extra=None):
         runs = ROOT / 'build' / 'test-runs'
         runs.mkdir(parents=True, exist_ok=True)
         temp = Path(tempfile.mkdtemp(prefix='lula-', dir=runs))
@@ -61,8 +61,9 @@ class RecompiledGame(unittest.TestCase):
         frames.mkdir()
         (temp / 'input.txt').write_text(script)
         env = dict(os.environ, LULA_HEADLESS='1', LULA_FRAMEDUMP=str(frames),
-                   LULA_FRAMEDUMP_MS='500', LULA_INPUT=str(temp / 'input.txt'))
-        proc = subprocess.Popen([str(BINARY), '--save', str(temp / 'save'), *extra, '--', '-novideo'],
+                   LULA_FRAMEDUMP_MS='500', LULA_INPUT=str(temp / 'input.txt'), **(env_extra or {}))
+        save_dir = save or temp / 'save'
+        proc = subprocess.Popen([str(BINARY), '--save', str(save_dir), *extra, '--', '-novideo'],
                                 env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         try:
             time.sleep(seconds)
@@ -110,6 +111,33 @@ class RecompiledGame(unittest.TestCase):
         result = subprocess.run([str(fncheck), '--iterations', '1500'], capture_output=True, timeout=600)
         self.assertEqual(result.returncode, 0, result.stdout.decode(errors='replace'))
 
+    def test_save_and_load_round_trip(self):
+        """Save from the in-game options (F2) and load it from the main menu."""
+        # The menu is up after 3-8 s depending on load; every step waits generously.
+        save_script = ('12000 move 505 88\n13000 click 505 88\n'      # New game
+                       '22000 key F2\n'                               # options
+                       '25000 move 305 212\n25500 click 305 212\n'   # Save game
+                       '28000 move 300 119\n28500 click 300 119\n'   # a slot
+                       '30500 move 263 228\n31000 click 263 228\n'   # Save
+                       '33500 type Roundtrip\n35000 key RETURN\n')   # name, OK
+        temp, frames, log = self.run_game(40, save_script, env_extra={'LULA_LOG': '2'})
+        self.assertNotIn('lula[trap]', log)
+        self.assertNotIn('lula[fatal]', log)
+        saves = list((temp / 'save' / 'DATA' / 'SAVE').glob('SAVEGAME.*'))
+        self.assertEqual(len(saves), 1, f'no save file written; run in {temp}')
+        self.assertIn(b'Roundtrip', saves[0].read_bytes()[:200])
+        load_script = ('12000 move 505 40\n13000 click 505 40\n'      # Load Game
+                       '16000 move 300 119\n16500 click 300 119\n'   # the slot
+                       '18500 move 263 228\n19000 click 263 228\n')  # Load Game
+        temp2, frames2, log2 = self.run_game(26, load_script, save=temp / 'save',
+                                              env_extra={'LULA_LOG': '2'})
+        self.assertNotIn('lula[trap]', log2)
+        self.assertNotIn('lula[fatal]', log2)
+        self.assertRegex(log2, r'DialogBoxParamA\(GAME_IO_DLG[^\n]*-> 1', f'load not confirmed; run in {temp2}')
+        self.assertTrue(frames2, f'no frame was presented; run in {temp2}')
+        last = masked_rgb565(read_ppm(frames2[-1]), MENU_LABELS)
+        self.assertNotEqual(last, MENU_SHA256, f'still in the main menu after loading; run in {temp2}')
+
     def test_replacement_graphics_from_mods_directory(self):
         """Edit the menu background with tools/assets.py and load it via --mods."""
         spec = importlib.util.spec_from_file_location('lula_assets', ROOT / 'tools/assets.py')
@@ -133,15 +161,17 @@ class RecompiledGame(unittest.TestCase):
         (mods / 'DATA' / 'DIALOG').mkdir(parents=True)
         (mods / 'DATA' / 'DIALOG' / 'DIA_BACK.TGP').write_bytes(
             assets.pack_ngs(assets.NGS(archive.version_word, tuple(entries))))
-        temp, frames, log = self.run_game(8, extra=('--mods', str(mods)))
+        temp, frames, log = self.run_game(12, extra=('--mods', str(mods)))
+        self.assertTrue(frames, f'no frame was presented; run in {temp}')
         rgb = read_ppm(frames[-1])
         green = sum(1 for i in range(0, len(rgb), 3) if rgb[i:i + 3] == b'\x00\xff\x00')
         self.assertEqual(green, 4000, f'replacement graphic not shown; frames in {temp}')
 
     def test_main_menu_matches_original(self):
-        temp, frames, log = self.run_game(8)
+        temp, frames, log = self.run_game(12)
         self.assertNotIn('lula[trap]', log)
         self.assertNotIn('lula[fatal]', log)
+        self.assertTrue(frames, f'no frame was presented; run in {temp}')
         hashes = [masked_rgb565(read_ppm(f), MENU_LABELS) for f in frames[-4:]]
         self.assertIn(MENU_SHA256, hashes, f'main menu differs from the original; frames in {temp}')
         # The original data is read-only: nothing may be written outside the save dir.

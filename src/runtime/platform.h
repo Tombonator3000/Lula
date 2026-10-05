@@ -16,7 +16,7 @@ void plat_get_mouse(int *x, int *y);
 /* Async key state: bit 15 = down, bit 0 = pressed since last query. */
 uint16_t plat_async_key_state(int vk);
 uint32_t plat_ticks_ms(void);
-void plat_quit(int code);
+__attribute__((noreturn)) void plat_quit(int code);
 
 /* Audio: the mixer callback runs on the audio thread and must not touch
  * guest code. */
