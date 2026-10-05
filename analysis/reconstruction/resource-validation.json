@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "date": "2026-10-05",
+  "baseline_commit": "70aae36735741f7ae3ebfd62657285fdc5ba51a9",
+  "scope": "independently reconstructed NGS/TBF resource module; no gameplay or renderer",
+  "checks": {
+    "native_tests": "PASS 7/7",
+    "asan_ubsan_tests": "PASS 7/7; no memory/undefined-behavior errors reported",
+    "original_tbf_images": "339 pixel-identical to Python reference",
+    "original_ngs_archives": "10 full indexes and representative payloads match Python",
+    "windows_x86_cross_build": "PASS; not run on Windows/Wine",
+    "original_files": "144/144 SHA-256 preserved",
+    "claude_communication": "NOT SENT; browser security policy unavailable",
+    "full_game_reconstruction": "NOT IMPLEMENTED"
+  },
+  "files": [
+    {
+      "path": "reconstruction/resources/lula_resources.c",
+      "size": 11869,
+      "sha256": "6b565200d03ca92ee58bed23baf142b6fd447e4912fb9b9c2c96acb91e811e16"
+    },
+    {
+      "path": "reconstruction/resources/lula_resources.h",
+      "size": 1970,
+      "sha256": "d64847d5912a77b005fcdbc50a6a78e014fe07ee3a690360a7939cac31d686f3"
+    },
+    {
+      "path": "reconstruction/resources/resource_cli.c",
+      "size": 3488,
+      "sha256": "37207932d7b0b28310140ca3ba721b45a32486593bef27ea6c71fa002a2e277b"
+    },
+    {
+      "path": "tests/test_native_resources.py",
+      "size": 11097,
+      "sha256": "7ffbc21d49ddadfd6b8b8b57f5e4e856c9befe5988ed163d1f363366a91b1240"
+    },
+    {
+      "path": "tools/build_reconstruction.sh",
+      "size": 3077,
+      "sha256": "e940438c2aa4727624d9462aa5538957c4268255f6ad909d4ed86ed7fc4a3d0c"
+    },
+    {
+      "path": "build/reconstruction/lula-resource-cli",
+      "size": 21504,
+      "sha256": "5af5aafad57a4230d12ef8414384b77f5331e13fc406cf546a474988cd515b72"
+    },
+    {
+      "path": "build/reconstruction/lula-resource-cli-sanitize",
+      "size": 138008,
+      "sha256": "42a79c52075fdfd659623748c46d7aa1a0cb7b86931a8463b8614bd6f32d114d"
+    },
+    {
+      "path": "build/reconstruction/lula-resource-cli.exe",
+      "size": 266779,
+      "sha256": "0e43738994b34fc701c77c2947761f511ce85353b708fd81d3dd54efa33da32d"
+    }
+  ]
+}
