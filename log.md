@@ -86,3 +86,13 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
 - Codex leverte oppgave 1 (fem ressursfunksjoner som lesbar C, PR #3, flettet inn i grenen). Flettet lokalt og kontrollert i et eget bygg (`build/merge`): `lula-fncheck` 7 funksjoner x 2000 tilstander bestått, Codex' filkontroll 6395 tilfeller uten avvik, 7 ende-til-ende-tester grønne, 144 originalfiler uendret.
 - Full testsuite før fletting: 28 tester grønne.
 - Startet en agent som gjør de 64 scenariene kjørbare fra en fersk klone (oppskrifter for lagrede spill, `tools/scenarios.py`, `tests/test_scenarios.py`).
+
+## 2026-10-06 00:50 UTC: Codex-gjennomgang av PR #2 håndtert, ny Codex-oppgave
+
+- Codex' automatiske gjennomgang hadde fire funn på en eldre versjon av PR #2. Svart på og løst alle fire:
+  - Timertråden kunne gi fra seg låsen midt i et tikk: allerede rettet i `64982c2` (tråden kjører med `rt_gil_set_no_yield`).
+  - Timeren tok igjen tapte tikk i en bølge etter korte stopp: rettet i `fb43f0f`, tapte tikk slås nå alltid sammen (spesifikasjonen R3). Målt: noe færre tikk under tung logging, uten betydning siden hvert tikk jobber ut fra avspillingsposisjonen.
+  - Kommandolinjen kunne sprenge spillets 260-bytes buffer og 20 argumentplasser: `lula` avviser nå for lange argumenter med en melding (`fb43f0f`).
+  - README-ordlyden: presisert hva den statiske rekompileringen er (maskinelt oversatt C pluss runtime, ikke lesbar kildekode) og hva som er testet.
+- Kontrollert i et eget worktree (`/home/user/lula-wt`, gjenskapt fra HEAD) så agentens pågående endringer ikke kom med: 7 ende-til-ende-tester grønne.
+- `docs/samarbeid-codex.md`: oppgave 1 markert ferdig, ny oppgave 4 er rekonstruksjon av blitterne (0x4458cc, 0x444d1d, 0x444b00 og flere), rangert etter antall kall i utforskningen.
