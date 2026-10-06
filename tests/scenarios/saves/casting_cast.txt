@@ -1,0 +1,63 @@
+# Load "ProdAll" (casting_base, slot 4, WET plot) -> Casting office.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 440 400
+22500 click 440 400
+# "Cast actors" (168..381, 85..204) -> DDF 22, callback 0x41cea2: one row "CastMovie" (state 1),
+# selected; the row is clicked once more (300,122). The clapper (258..314, 395..473) opens the
+# male/female strip (DDF 11, callback 0x41d0d4).
+25500 move 275 145
+26000 click 275 145
+28500 move 300 122
+29000 click 300 122
+30500 move 286 434
+31000 click 286 434
+# Male actors -> DDF 24 (callback 0x41d1c8) on the first hired actor, Thommy Session (527):
+# cast him (327,378: status 1 -> 2, appended to the cast list +0x1b4 of the movie), "next" (194,381)
+# finds no other hired actor, close (502,382).
+33500 move 187 245
+34000 click 187 245
+36500 move 327 378
+37000 click 327 378
+38500 move 194 381
+39000 click 194 381
+40500 move 502 382
+41000 click 502 382
+# Female actors -> DDF 23 on Cassandra Casablanca (17): cast her (328,378), close (504,380).
+43500 move 449 243
+44000 click 449 243
+46500 move 328 378
+47000 click 328 378
+48500 move 504 380
+49000 click 504 380
+# Close the strip (328,367) and the cast sheet (543,433), "To the other offices".
+51000 move 328 367
+51500 click 328 367
+53500 move 543 433
+54000 click 543 433
+56000 move 470 160
+56500 click 470 160
+# WET plot -> office building (room 5) -> broom cupboard (room 23, Lula's flat is rented) ->
+# "Cast Lula for movie" (505,405) -> STANDARD_LIST_BOX_DLG (proc 0x42036d) -> OK (115,243).
+60000 move 280 340
+60500 click 280 340
+64000 move 440 150
+64500 click 440 150
+68000 move 505 405
+68500 click 505 405
+71500 move 115 243
+72000 click 115 243
+# F2 -> Save game -> slot 4 'CastDone' (saved in room 23).
+75000 key F2
+77500 move 305 212
+78000 click 305 212
+80000 move 300 119
+80500 click 300 119
+82500 move 263 228
+83000 click 263 228
+85500 type CastDone
+87000 key RETURN

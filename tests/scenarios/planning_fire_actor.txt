@@ -1,0 +1,56 @@
+# seconds: 80
+# expects: planning_cast ('Finished': movie 0 "Lust in Space" planned, actor 527 and actress 17 hired and in its cast, slow clock) on the WET plot -> Casting office (room 21) -> Look at actors file opens the STAFF FILE/ACTORS chooser (DDF 16, 0x41ab24) -> actors -> card of "Thommy Session" (527, DDF 17, callback 0x41b2b4, "Is glad there's nothing to do.") -> fire (card control 5, 0x41b3b2): 0x41dd79 removes him from the cast of every movie, status 0, no other actor so the card closes -> actors again -> "You haven't got an actor" -> thumb -> actresses -> card of "Cassandra Casablanca" (17) -> thumb -> thumb of the chooser -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# save: planning_cast
+# note: "Finished" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: after the run slot 4 holds actor 527 with status 0 and +0x14 = 1, and movie 0 with cast list 17, 0, -1 and cast count 1 (0x41dd79 shifts the list, writes -1 behind it and decrements the count; checked by hand with --keep)
+# check: (?s)ms: click 440 400.*CreateFileA\(DATA\\ANI\\CAST_DET\.TAF, read
+# check: (?s)ms: click 187 253.*DrawTextA\("Thommy Session".*DrawTextA\("Is glad there's nothing to do\."
+# check: (?s)ms: click 252 384.*ms: click 187 253.*DrawTextA\("\s*You haven't got an actor\s*"
+# check: (?s)ms: click 470 250.*DrawTextA\("Cassandra Casablanca"
+# check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: You haven't got an actress
+# main menu -> Load Game -> Finished -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Casting office building -> room 21
+22000 move 440 400
+22500 click 440 400
+# Look at actors file (7..150 x 157..214) -> chooser
+25500 move 78 185
+26000 click 78 185
+# actors (chooser control 1) -> card of actor 527
+29000 move 187 253
+29500 click 187 253
+# fire (card control 5, 224..280 x 360..408)
+33000 move 252 384
+33500 click 252 384
+# actors again -> refusal -> thumb of the info box
+37000 move 187 253
+37500 click 187 253
+41000 move 340 300
+41500 click 340 300
+# actresses (chooser control 2) -> card of actress 17 -> thumb (control 0)
+45000 move 470 250
+45500 click 470 250
+49000 move 503 383
+49500 click 503 383
+# thumb of the chooser (control 0)
+53000 move 327 375
+53500 click 327 375
+# To the other offices -> WET plot
+57000 move 470 160
+57500 click 470 160
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+61000 key F2
+63500 move 305 212
+64000 click 305 212
+66000 move 300 119
+66500 click 300 119
+68500 move 263 228
+69000 click 263 228
+71500 type Fired
+73000 key RETURN

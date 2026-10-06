@@ -1,0 +1,75 @@
+# seconds: 100
+# expects: ProdAll (slow clock) on the WET plot -> Movie planning (room 22, writer, designer and assistant hired) -> Write screenplay opens the SCREENPLAY sheet (DDF 8, callback 0x41e45a) -> New opens STANDARD_GET_TXT_DLG "New movie title:" (0x41e912): "Abc" + RETURN is refused (3 characters or fewer keep the dialog open), "AbcGirls" + RETURN is taken -> Pick storyline opens STANDARD_LIST_BOX_DLG "Possible story lines:" (0x41ecf6) -> entry 3 -> OK shows "Sex Hackers - ..." -> V opens the "Movie title to be worked on:" list (0x41eaa7, "In planning") -> OK reloads the stored record into the sheet, so the unsaved storyline falls back to "Slow Bang 2 - ..." -> storyline 3 again -> thumbs up stores movie 0 -> Define the subject of the movie opens MOVIE CATEGORY (DDF 9, 0x41e800) -> Hardcore -> thumbs up -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# save: planning_s2
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot with the writer, designer and assistant hired
+# note: after the run slot 4 holds movie count 1, title "AbcGirls", storyline 3, category 100 (Hardcore), state 0, account 1500000 (checked by hand with --keep)
+# check: (?s)ms: click 420 350.*DrawTextA\("\s*Pick storyline\s*".*ms: click 190 146.*DialogBoxParamA\(STANDARD_GET_TXT_DLG\) -> 1
+# check: (?s)ms: key RETURN.*DrawTextA\("AbcGirls", rect 277,138
+# check: (?s)ms: click 115 243.*DrawTextA\("Sex Hackers - this is how programmers do it - complete perverts!!!"
+# check: (?s)ms: click 519 146.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1\n[^\n]*DrawTextA\("Slow Bang 2 - sex in slow motion
+# check: (?s)ms: click 400 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: DialogBoxParamA\(STANDARD_GET_TXT_DLG\) -> 0
+# reject: DrawTextA\("Abc", rect
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Movie planning building -> room 22
+22000 move 540 310
+22500 click 540 310
+# Write screenplay (311..500 x 298..408; hotspot 3 at 192..333 x 330..403 is tested first)
+25500 move 420 350
+26000 click 420 350
+# New (sheet control 5, 161..218 x 130..163) -> new title dialog
+29000 move 190 146
+29500 click 190 146
+# a title of 3 characters is refused, the dialog stays open
+32000 type Abc
+33500 key RETURN
+35500 type Girls
+37000 key RETURN
+# Pick storyline (control 8) -> list -> entry 3 -> OK
+40000 move 432 351
+40500 click 432 351
+43500 move 150 151
+44000 click 150 151
+46000 move 115 243
+46500 click 115 243
+# V (control 9) -> movie title list -> OK (reloads the stored record)
+49500 move 519 146
+50000 click 519 146
+53000 move 115 243
+53500 click 115 243
+# Pick storyline again -> entry 3 -> OK
+56500 move 432 351
+57000 click 432 351
+60000 move 150 151
+60500 click 150 151
+62500 move 115 243
+63000 click 115 243
+# thumbs up (control 0) stores the movie
+66000 move 139 375
+66500 click 139 375
+# Define the subject of the movie (329..456 x 206..276) -> Hardcore -> thumbs up
+69500 move 350 250
+70000 click 350 250
+73000 move 472 322
+73500 click 472 322
+76000 move 246 377
+76500 click 246 377
+# To the other offices -> WET plot
+79500 move 400 40
+80000 click 400 40
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+83500 key F2
+86000 move 305 212
+86500 click 305 212
+88500 move 300 119
+89000 click 300 119
+91000 move 263 228
+91500 click 263 228
+94000 type Screenplay
+95500 key RETURN

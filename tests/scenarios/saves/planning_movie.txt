@@ -1,0 +1,49 @@
+# planning_movie: plan one screenplay in room 22 and save on the WET plot as 'Planned'
+# main menu -> Load Game -> ProdAll (slot 4) -> Load (WET plot)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Movie planning building -> room 22
+22000 move 540 310
+22500 click 540 310
+# Write screenplay -> DDF 8 (FILMPLAN_DREHBUCH_DLG)
+25500 move 420 350
+26000 click 420 350
+# New -> STANDARD_GET_TXT_DLG -> title -> OK
+29000 move 190 146
+29500 click 190 146
+32000 type Lust in Space
+34000 key RETURN
+# Pick storyline -> STANDARD_LIST_BOX_DLG -> entry 3 "Sex Hackers" -> OK
+37000 move 432 351
+37500 click 432 351
+40500 move 150 151
+41000 click 150 151
+43000 move 115 243
+43500 click 115 243
+# thumbs up stores the movie
+46500 move 139 375
+47000 click 139 375
+# Define the subject of the movie -> DDF 9 (FILMPLAN_HARD_DLG) -> Soft -> thumbs up
+50000 move 350 250
+50500 click 350 250
+53500 move 315 322
+54000 click 315 322
+56500 move 246 377
+57000 click 246 377
+# To the other offices -> WET plot
+60000 move 400 40
+60500 click 400 40
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+64000 key F2
+66500 move 305 212
+67000 click 305 212
+69000 move 300 119
+69500 click 300 119
+71500 move 263 228
+72000 click 263 228
+74500 type Planned
+76000 key RETURN

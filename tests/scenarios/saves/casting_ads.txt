@@ -1,0 +1,51 @@
+# Load "ProdAll" (casting_base, slot 4, WET plot, 8:00, account 1500000) -> Casting office.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 440 400
+22500 click 440 400
+# "Place a job ad for actors" (233..308, 271..296) -> strip (DDF 11, callback 0x41aa3c).
+25500 move 270 283
+26000 click 270 283
+# "Male actors" -> actor ad sheet (DDF 13, callback 0x41ad9c). Sliders (value = 9 * pct / 100 of
+# the click position on the track): potency 7 at 360,325, figure 4 at 172,325, pay limit 8 at 527,325.
+# Thumbs up (423,376) places the ad: 1200 $ at once.
+29000 move 187 245
+29500 click 187 245
+32500 move 360 325
+33000 click 360 325
+35000 move 172 325
+35500 click 172 325
+37500 move 527 325
+38000 click 527 325
+40000 move 423 376
+40500 click 423 376
+# "Female actors" -> actress ad sheet (DDF 12, callback 0x41ac0c): experience 4 at 325,325,
+# looks 4 at 172,325, pay limit 8 at 527,325; thumbs up at 405,376.
+43500 move 449 243
+44000 click 449 243
+47000 move 325 325
+47500 click 325 325
+49500 move 172 325
+50000 click 172 325
+52000 move 527 325
+52500 click 527 325
+54500 move 405 376
+55000 click 405 376
+# Close the strip, "To the other offices" (back on the WET plot), F2 -> Save game -> slot 4 'CastAds'.
+58000 move 328 367
+58500 click 328 367
+61500 move 470 160
+62000 click 470 160
+66000 key F2
+68500 move 305 212
+69000 click 305 212
+71000 move 300 119
+71500 click 300 119
+73500 move 263 228
+74000 click 263 228
+76500 type CastAds
+78000 key RETURN

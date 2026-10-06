@@ -1,0 +1,47 @@
+# seconds: 66
+# expects: CastDone (casting_lula_busy: the save written by the game after casting Thommy Session, Cassandra Casablanca and Lula for "CastMovie", movie then patched to state 2 = in production) loads in Lula's flat (room 23) -> "Cast Lula for movie": a movie with the Lula flag +0x1b0 = 1 and state > 1 exists (0x41fe76) -> info box "Sorry, I can only act in ONE movie at a time!" -> thumbs up -> "To the office" -> "To the other WET buildings" -> Casting office -> "Cast actors" lists the state-2 movie -> clapper -> male actors -> Thommy Session "Has a part in this movie." (status 2) -> toggle again: taken out of the cast list (0x41d276 path, status 1) "Is glad there's nothing to do." -> close -> strip and cast sheet closed -> "To the other offices". No lula[warn]/trap.
+# save: casting_lula_busy
+# note: "CastDone" is the Load-dialog entry at 300,119 (slot 4); the save loads in room 23. The Lula flag and the cast list come from the game run of the recipe casting_cast (proc 0x42036d and callback 0x41d1c8), not from a patch.
+# check: (?s)ms: click 505 405.*DrawTextA\("\s*Sorry, I can only act in ONE movie at a time!\s*"
+# check: (?s)ms: click 275 145.*DrawTextA\("CastMovie"
+# check: (?s)ms: click 187 245.*DrawTextA\("Thommy Session".*DrawTextA\("Has a part in this movie\.".*ms: click 327 378.*DrawTextA\("Is glad there's nothing to do\."
+# check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: dialog STANDARD_LIST_BOX_DLG
+# main menu -> Load Game -> CastDone -> Load (Lula's flat, room 23)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Cast Lula for movie -> refusal -> thumbs up
+22000 move 505 405
+22500 click 505 405
+25500 move 340 305
+26000 click 340 305
+# To the office -> To the other WET buildings -> Casting office
+28500 move 80 130
+29000 click 80 130
+32500 move 560 110
+33000 click 560 110
+36500 move 440 400
+37000 click 440 400
+# Cast actors -> clapper -> male actors -> toggle Thommy Session out of the cast -> close
+40000 move 275 145
+40500 click 275 145
+43000 move 286 434
+43500 click 286 434
+46000 move 187 245
+46500 click 187 245
+49000 move 327 378
+49500 click 327 378
+51500 move 502 382
+52000 click 502 382
+# close the strip and the cast sheet, To the other offices
+54000 move 328 367
+54500 click 328 367
+56500 move 543 433
+57000 click 543 433
+59500 move 470 160
+60000 click 470 160
+63000 move 320 240

@@ -1,0 +1,52 @@
+# seconds: 60
+# expects: ProdAll (casting_base, one employee per job) -> Casting office -> "Look at staff file" (480..549, 288..359) -> strip DDF 20 (callback 0x41ba46, Perskart.TAF) -> tile 1 = job 0 lighting engineer -> staff card DDF 21 (callback 0x41bc4c, epilogue 0x41c194) of Jack Zasas (164): "200 $ per Day Normal pay", "Is glad there's nothing to do." (status 1) -> pay +100 (300) -> pay -100 twice (100) -> next / previous (no other lighting engineer) -> close -> scroll the strip right once -> tile 5 = job 5 -> card of Regina Lustweib (257), "Is occupying the available place right now." (status 2) -> close -> tile 1 (now job 1) -> Ramira Eagleye (149, casting director) -> close -> strip closed -> "To the other offices". No lula[warn]/trap.
+# save: casting_base
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4). Card buttons (DDF 21 + offset 80,60): close 503,381, pay -100 383,383, pay +100 316,383, fire 253,380, next 191,380, previous 135,380.
+# check: (?s)ms: click 145 240.*DrawTextA\("Jack Zasas".*DrawTextA\("200 \$ per Day Normal pay".*DrawTextA\("Is glad there's nothing to do\."
+# check: (?s)ms: click 316 383.*DrawTextA\(" Currently 300 \$ per Day".*ms: click 383 383.*ms: click 383 383.*DrawTextA\(" Currently 100 \$ per Day"
+# check: (?s)ms: click 485 240.*DrawTextA\("Regina Lustweib".*DrawTextA\("Is occupying the available place right now\."
+# check: (?s)ms: click 539 239.*ms: click 145 240.*DrawTextA\("Ramira Eagleye"
+# check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Casting office -> Look at staff file -> tile 1 (lighting engineer)
+22000 move 440 400
+22500 click 440 400
+25500 move 514 323
+26000 click 514 323
+28500 move 145 240
+29000 click 145 240
+# pay +100, -100, -100, next, previous, close
+31500 move 316 383
+32000 click 316 383
+33500 move 383 383
+34000 click 383 383
+35500 move 383 383
+36000 click 383 383
+37500 move 191 380
+38000 click 191 380
+39500 move 135 380
+40000 click 135 380
+41500 move 503 381
+42000 click 503 381
+# scroll right (arrow 539,239) -> tile 5 = job 5 -> close
+44000 move 539 239
+44500 click 539 239
+46000 move 485 240
+46500 click 485 240
+48500 move 503 381
+49000 click 503 381
+# tile 1 = job 1 after the scroll (casting director) -> close, close the strip, To the other offices
+50500 move 145 240
+51000 click 145 240
+53000 move 503 381
+53500 click 503 381
+55000 move 327 375
+55500 click 327 375
+57000 move 470 160
+57500 click 470 160

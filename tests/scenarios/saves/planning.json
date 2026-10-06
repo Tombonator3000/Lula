@@ -1,0 +1,129 @@
+{
+ "_comment": [
+  "Recipes of the stage-2 movie planning office (room 22), prefix planning.",
+  "Movie records: 10 x 0x344 bytes at 0x455aa1, count 0x457b49. +0 title (the planning code keeps a copy of all 10 titles at 0x483e2c + 100*i), +0x100 storyline index (string 604 + index), +0x104 movie category (0 family, 50 soft, 100 hardcore; 100 in a fresh record), +0x108 scene list (12 dwords, -1 = empty), +0x148 length in minutes (10 per scene), +0x14c state (0 in planning, 1 planning finished), +0x150 basic price per 10 minutes (1000 in a fresh record), +0x154 total basic price (scenes * price, deducted when planning is concluded).",
+  "Room 22 work copy of the current movie at 0x45d5f8 (same layout), current movie index 0x483e24, sheet title count 0x45d93c. Staff counts at setup (0x41f4d7): production designer (job 10) 0x484228, production assistant (job 9) 0x48422c, screenplay writer (job 3) 0x484230, all three present 0x484224. A count above 1 sets 0x4555f4, which draws the staff icon at 40,380 (click hotspot 0xff).",
+  "Staff table: record i at SAVEGAME file offset 0x7b8d + 40*i, written as the pseudo address 0x45d1ad + 40*i (+0 job, +4 status: 0 free, 1 hired and idle, 2 hired and working)."
+ ],
+ "planning_s2": {
+  "from": "prod_s2staff",
+  "note": "prod_s2staff (all production buildings rented, one employee per job: writer 208, production assistant 323 and production designer 343 working, actor 527 and actress 17 hired, account 1500000, 8:00, WET plot) with a slow clock (0x4556bc = 30, 31 timer calls per game minute instead of 4), so no hourly event (10:00 department reports, 13:00 sabotage roll 0x43070e) interrupts the planning scripts. Name and Load-dialog entry stay 'ProdAll' (300,119).",
+  "patch": {
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "account": 1500000,
+   "hour": 8,
+   "minute": 0,
+   "0x4556bc": 30,
+   "0x45f231": 2,
+   "0x460429": 2,
+   "0x460749": 2,
+   "0x457b49": 0
+  }
+ },
+ "planning_movie": {
+  "from": "planning_s2",
+  "note": "planning_s2 after the game planned one screenplay in room 22 (script planning_movie.txt): Write screenplay -> New -> title 'Lust in Space' -> Pick storyline -> 'Sex Hackers' (list entry 3, string 607) -> thumbs up; Define the subject of the movie -> 'Soft' -> thumbs up; back to the WET plot and saved as 'Planned' in slot 4 (Load-dialog entry 300,119). Clock patched back to 8:00. The check asserts movie count 1, the title's first dword ('Lust'), storyline 3, category 50, state 0, no scenes, basic price 1000 per 10 minutes and the untouched account.",
+  "script": "planning_movie.txt",
+  "seconds": 82,
+  "patch": {
+   "0x4556a8": 8,
+   "0x4556ac": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Planned",
+   "account": 1500000,
+   "0x457b49": 1,
+   "0x455aa1": 1953723724,
+   "0x455ba1": 3,
+   "0x455ba5": 50,
+   "0x455ba9": -1,
+   "0x455be9": 0,
+   "0x455bed": 0,
+   "0x455bf1": 1000,
+   "0x455bf5": 0
+  }
+ },
+ "planning_writers": {
+  "from": "planning_s2",
+  "note": "planning_s2 with a second screenplay writer and no production designer: writer 212 (job 3, level 6, 300 $ a day) hired and idle (status +4 = 1, what the hire code 0x41c9ad gives the second employee of a job) and designer 343 back to free (status 0), patched at the pseudo addresses 0x45d1ad + 40*i + 4. Room 22 setup (0x41f4d7) then counts 2 writers in 0x484230 and no designer in 0x484228; the count above 1 sets 0x4555f4, so the staff icon at 40,380 is drawn and clicking it gives hotspot 0xff (0x40423f), which opens the 'Assign staff' sheet (DDF 57, callback 0x41f574). Name and Load-dialog entry stay 'ProdAll' (300,119).",
+  "patch": {
+   "0x45f2d1": 1,
+   "0x460749": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "account": 1500000,
+   "0x45f2cd": 3,
+   "0x45f2d1": 1,
+   "0x45f231": 2,
+   "0x460745": 10,
+   "0x460749": 0,
+   "0x460429": 2,
+   "0x4556bc": 30
+  }
+ },
+ "planning_done": {
+  "from": "planning_movie",
+  "note": "planning_movie after the game finished the planning of movie 0 (script planning_done.txt): Work on storyboard -> film strip pictures 0, 1, 2 (3000 $) -> Conclude planning -> yes; back to the WET plot and saved as 'Finished' in slot 4 (Load-dialog entry 300,119). Clock patched back to 8:00. The check asserts state 1 (+0x14c), scenes 0, 1, 2 (+0x108), 30 minutes (+0x148), total basic price 3000 (+0x154) and the account 1500000 - 3000.",
+  "script": "planning_done.txt",
+  "seconds": 66,
+  "patch": {
+   "0x4556a8": 8,
+   "0x4556ac": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Finished",
+   "account": 1497000,
+   "0x457b49": 1,
+   "0x455aa1": 1953723724,
+   "0x455ba9": 0,
+   "0x455bad": 1,
+   "0x455bb1": 2,
+   "0x455bb5": -1,
+   "0x455be9": 30,
+   "0x455bed": 1,
+   "0x455bf5": 3000
+  }
+ },
+ "planning_cast": {
+  "from": "planning_done",
+  "note": "planning_done with actor 527 and actress 17 (both hired and idle in prod_s2staff) patched into the cast of movie 0: cast list +0x1b4 (0x455c55) = 527, 17 and cast count +0x2f4 (0x455d95) = 2. Firing an actor (casting office, Look at actors file, card control 5, 0x41b3b2) calls 0x41dd79, which removes the person from the cast of every movie. Name and Load-dialog entry stay 'Finished' (300,119).",
+  "patch": {
+   "0x455c55": 527,
+   "0x455c59": 17,
+   "0x455d95": 2
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Finished",
+   "account": 1497000,
+   "0x455bed": 1,
+   "0x455c55": 527,
+   "0x455c59": 17,
+   "0x455c5d": 0,
+   "0x455d95": 2,
+   "0x462405": 20,
+   "0x462409": 1,
+   "0x45d455": 21,
+   "0x45d459": 1
+  }
+ }
+}

@@ -1,0 +1,53 @@
+# seconds: 66
+# expects: ProdAll (casting_base) loads on the WET plot -> Casting office (room 21) -> "Place a job ad for actors" (233..308, 271..296) checks 1200 $ (0x40561d) and opens the strip DDF 11 "Male actors" / "Female actors" (callback 0x41aa3c) -> Male actors -> actor ad sheet DDF 13 (callback 0x41ad9c: job 20, cost 1200 $, texts 736+potency, 746+figure, 716+pay) -> the three sliders set potency 7 "professional, super-potent", figure 4 "average figure", pay 8 "exaggerated" -> thumbs up places the ad (account 1500000 -> 1498800) -> back on the strip -> Female actors -> actress ad sheet DDF 12 (callback 0x41ac0c: job 21, texts 706+experience, 726+looks, 716+pay) -> experience 4 "amateur and untalented", looks 4 "average", pay 8 -> thumbs up (account 1497600) -> strip closed -> "To the other offices" -> WET plot. No lula[warn]/trap.
+# save: casting_base
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4). Slider value = 9 * pct / 100 of the click position on the track (0x41603c); the ad table 0x457b4d (count 0x458255) and the 2400 $ are asserted by the recipe casting_ads, which runs the same clicks and saves.
+# check: (?s)ms: click 270 283.*DrawTextA\("\s*Male actors\s*"
+# check: (?s)ms: click 187 245.*DrawTextA\("\s*actors with\s*".*DrawTextA\("1200 \$"
+# check: (?s)ms: click 360 325.*DrawTextA\("professional, super-potent".*ms: click 172 325.*DrawTextA\("average figure".*ms: click 527 325.*DrawTextA\("exaggerated"
+# check: (?s)ms: click 449 243.*DrawTextA\("\s*actresses with\s*".*ms: click 325 325.*DrawTextA\("amateur and untalented".*ms: click 172 325.*DrawTextA\("average", rect
+# check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: The newspaper isn't taking any more ads
+# reject: Unfortunately you haven't got enough money
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Casting office building on the plot
+22000 move 440 400
+22500 click 440 400
+# Place a job ad for actors -> strip
+25500 move 270 283
+26000 click 270 283
+# Male actors -> actor ad sheet; sliders potency (259..379), figure (106..226), pay (414..534) at y 325
+29000 move 187 245
+29500 click 187 245
+32500 move 360 325
+33000 click 360 325
+35000 move 172 325
+35500 click 172 325
+37500 move 527 325
+38000 click 527 325
+# thumbs up: place the ad
+40000 move 423 376
+40500 click 423 376
+# Female actors -> actress ad sheet; experience, looks, pay
+43500 move 449 243
+44000 click 449 243
+47000 move 325 325
+47500 click 325 325
+49500 move 172 325
+50000 click 172 325
+52000 move 527 325
+52500 click 527 325
+# thumbs up: place the ad
+54500 move 405 376
+55000 click 405 376
+# close the strip (thumbs at 328,367), To the other offices
+58000 move 328 367
+58500 click 328 367
+61500 move 470 160
+62000 click 470 160

@@ -1,0 +1,37 @@
+# Load "CastAds" (casting_ads, slot 4, WET plot, 10:50, two ads one day old). The applicant draw
+# 0x41c19b runs at 11:00 while the player is on the plot (0x483d74 = 0) and fills the list 0x458259.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Casting office (the applicants hotspot 9 "Look at applications" exists only while 0x458281 != 0).
+25000 move 440 400
+25500 click 440 400
+# Look at applications (325..490, 379..476) -> DDF 19, callback 0x41c45c: first applicant Mario Neversatt.
+29000 move 407 427
+29500 click 407 427
+# Next applicant (190,380): Jo Vulkano. Casting/hire (327,380) -> 0x41c9ad: casting director at work,
+# so the level is rolled and the casting animation (CA_THERM.TAF, CAST_MCA.TAF) plays.
+32500 move 190 380
+33000 click 190 380
+35500 move 327 380
+36000 click 327 380
+# The sheet comes back with the first applicant (Mario Neversatt); reject him (251,380): +0x14 += 10,
+# status 0. Close the sheet (thumbs, 501,381), "To the other offices", F2 -> slot 4 'CastHire'.
+48000 move 251 380
+48500 click 251 380
+51000 move 501 381
+51500 click 501 381
+54000 move 470 160
+54500 click 470 160
+58000 key F2
+60500 move 305 212
+61000 click 305 212
+63000 move 300 119
+63500 click 300 119
+65500 move 263 228
+66000 click 263 228
+68500 type CastHire
+70000 key RETURN

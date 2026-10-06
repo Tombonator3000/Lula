@@ -1,0 +1,147 @@
+{
+ "_comment": [
+  "Recipes of the stage-2 casting office (room 21) and Lula's flat (room 23), prefix casting.",
+  "Movie records: 10 x 0x344 bytes at 0x455aa1, count 0x457b49; +0 title, +0x14c state (1 planning finished, 2 in production, 3 shot), +0x1b0 Lula cast (1), +0x1b4 cast list (person indices), +0x2f4 cast count.",
+  "Job ads: records of 0x24 bytes at 0x457b4d, count 0x458255 (the ad sheets copy 0x4553b8..0x4553db): +0 job (20 actor, 21 actress, 0-19 staff), +4 slider value A, +8 slider value B, +0xc highest pay class (0-9, pay limits 0x483d4c = 100, 200, 350, 500, 800, 1000, 1500, 2000, 3000, 4500 $ a day), +0x10/+0x14/+0x18 day, month, year placed, +0x20 cost.",
+  "Applicants: person indices at 0x458259 (10 dwords), count 0x458281. Staff table: record i at SAVEGAME file offset 0x7b8d + 40*i, written as the pseudo address 0x45d1ad + 40*i (+0 job, +4 status, +0xc level, +0x10 pay, +0x14 refusal counter)."
+ ],
+ "casting_base": {
+  "from": "prod_s2staff",
+  "note": "prod_s2staff (all production buildings rented, one employee per job, actor 527 and actress 17 hired and idle, account 1500000, 8:00, WET plot) plus Lula's flat rented (building 8 flag 0x455999 = 1, so the office broom cupboard leads to room 23, 0x40cf34) and one movie whose planning is finished: movie count 0x457b49 = 1, record 0 title 'CastMovie' and state 0x455bed = 1. 'Cast actors' (casting) and 'Cast Lula for movie' (room 23) list movies in state 1. Name and Load-dialog entry stay 'ProdAll' (300,119).",
+  "patch": {
+   "0x455999": 1,
+   "0x457b49": 1,
+   "0x455aa1": "CastMovie\u0000",
+   "0x455bed": 1,
+   "0x455c51": 0,
+   "0x455d95": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "account": 1500000,
+   "hour": 8,
+   "minute": 0,
+   "0x455999": 1,
+   "0x457b49": 1,
+   "0x455bed": 1,
+   "0x458255": 0,
+   "0x458281": 0,
+   "0x462409": 1,
+   "0x45d459": 1,
+   "0x45e8f9": 2
+  }
+ },
+ "casting_ads": {
+  "from": "casting_base",
+  "note": "casting_base after the game placed two job ads in the casting office (script casting_ads.txt): an actor ad (job 20, potency 7, figure 4, pay class up to 8; four free actors match: 519, 526, 533, 535) and an actress ad (job 21, experience 4, looks 4, pay class up to 8; 17 free actresses match), 1200 $ each, then saved on the WET plot as 'CastAds' in slot 4 (Load-dialog entry 300,119). Patched afterwards: both ads one day old (day field +0x10 = 0, 0x405314 counts 30-day months, so day 0 of month 1 is one day before 1-1-1997) and the clock at 10:50, so the stage-2 applicant draw 0x41c19b (odd hours h with 9 + 1 < h < 19 - 1, i.e. 11, 13, 15 and 17, only while the player is not in the casting office) runs about 2.5 s after loading.",
+  "script": "casting_ads.txt",
+  "seconds": 82,
+  "patch": {
+   "0x457b5d": 0,
+   "0x457b81": 0,
+   "0x4556a8": 10,
+   "0x4556ac": 50
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "CastAds",
+   "account": 1497600,
+   "hour": 10,
+   "minute": 50,
+   "0x458255": 2,
+   "0x457b4d": 20,
+   "0x457b51": 7,
+   "0x457b55": 4,
+   "0x457b59": 8,
+   "0x457b61": 1,
+   "0x457b65": 1997,
+   "0x457b6d": 1200,
+   "0x457b71": 21,
+   "0x457b75": 4,
+   "0x457b79": 4,
+   "0x457b7d": 8,
+   "0x457b91": 1200,
+   "0x458281": 0
+  }
+ },
+ "casting_hired": {
+  "from": "casting_ads",
+  "note": "casting_ads after the game drew the applicants and one was hired (script casting_hired.txt): loaded at 10:50 on the WET plot, the 11:00 draw 0x41c19b -> 0x41c25f (once per ad) filled the applicant list 0x458259 with 9 people (actors 519 Mario Neversatt and 526 Jo Vulkano, actresses 1, 20, 52, 60, 62, 82, 102; status 4 each, all matching their ad exactly). In the casting office 'Look at applications' -> next -> casting (0x41c9ad): Jo Vulkano hired (status 1; the working casting director 149 rolls the level, (4 + 7) / 2 + rand() % 7 capped at 9), then Mario Neversatt rejected (status 0, refusal counter +0x14 = 10). Saved on the WET plot as 'CastHire' in slot 4 (300,119); 7 actress applicants are left.",
+  "script": "casting_hired.txt",
+  "seconds": 74,
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "CastHire",
+   "account": 1497600,
+   "0x458281": 7,
+   "0x458255": 2,
+   "0x4623e1": 1,
+   "0x4622c9": 0,
+   "0x4622d9": 10,
+   "0x45d1d9": 4
+  }
+ },
+ "casting_cast": {
+  "from": "casting_base",
+  "note": "casting_base after the game cast the movie (script casting_cast.txt): 'Cast actors' (0x41cea2) -> clapper -> male/female strip (0x41d0d4) -> cast list (0x41d1c8): Thommy Session (527) and Cassandra Casablanca (17) cast (status 1 -> 2, cast list +0x1b4 = 527, 17, cast count +0x2f4 = 2); then office -> broom cupboard -> Lula's flat (room 23) -> 'Cast Lula for movie' -> STANDARD_LIST_BOX_DLG (proc 0x42036d) -> OK sets the Lula flag +0x1b0 of the selected state-1 movie. Saved in room 23 as 'CastDone' in slot 4 (300,119).",
+  "script": "casting_cast.txt",
+  "seconds": 91,
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 23,
+   "name": "CastDone",
+   "account": 1500000,
+   "0x455bed": 1,
+   "0x455c51": 1,
+   "0x455d95": 2,
+   "0x455c55": 527,
+   "0x455c59": 17,
+   "0x462409": 2,
+   "0x45d459": 2
+  }
+ },
+ "casting_lula_busy": {
+  "from": "casting_cast",
+  "note": "casting_cast with its movie patched to state 2 (in production, 0x455bed = 2). The Lula flag +0x1b0 = 1 written by the game in casting_cast stays, so 'Cast Lula for movie' in room 23 now answers string 803 (0x41fe76: a movie with Lula cast and state > 1). Loads straight into room 23 ('CastDone', 300,119).",
+  "patch": {
+   "0x455bed": 2
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 23,
+   "name": "CastDone",
+   "0x455bed": 2,
+   "0x455c51": 1
+  }
+ },
+ "casting_trained": {
+  "from": "casting_base",
+  "note": "casting_base after the actors file was used (script casting_trained.txt): card of Thommy Session (527) pay +100, +100, -100 (+0x10 = 2330), training 11 days by the slider (0x41b8ac: 11 x 300 $ = 3300 $ at once, status 3, date +0x18/+0x1c/+0x20 = 1-1-1997, days +0x24 = 11); Cassandra Casablanca (17) fired from her card (0x41dd79, status 0, +0x14 = 1). Saved on the WET plot as 'CastTrain' in slot 4 (300,119).",
+  "script": "casting_trained.txt",
+  "seconds": 83,
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "CastTrain",
+   "account": 1496700,
+   "0x462409": 3,
+   "0x462415": 2330,
+   "0x46241d": 1,
+   "0x462421": 1,
+   "0x462425": 1997,
+   "0x462429": 11,
+   "0x45d459": 0,
+   "0x45d469": 1
+  }
+ }
+}

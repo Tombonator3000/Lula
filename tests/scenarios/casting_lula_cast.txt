@@ -1,0 +1,38 @@
+# seconds: 58
+# expects: ProdAll (casting_base: Lula's flat rented, movie "CastMovie" with planning finished) loads on the WET plot -> office building (room 5, SEKR_ANI.TAF) -> broom cupboard: 0x455999 = 1 leads to Lula's flat (room 23, setup 0x41fa1a: LULA_ANI, LULA_BAR, LULA_SCH) -> "Cast Lula for movie" (483.., 387..): no movie has Lula and state > 1, a movie in state 1 exists -> STANDARD_LIST_BOX_DLG with proc 0x42036d (lists the state-1 movies, first one selected) -> OK: Lula flag +0x1b0 set on the selected movie, EndDialog 1 -> "Cast Lula for movie" again -> list again (the movie is still in state 1) -> Cancel: EndDialog 0 -> "To the office" -> broom cupboard -> Lula's flat again. No lula[warn]/trap.
+# save: casting_base
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4). List-box dialog: OK 115,243, Cancel 373,243. The recipe casting_cast saves after the same OK and asserts the Lula flag 0x455c51 = 1; casting_lula_busy.txt shows its effect.
+# check: (?s)ms: click 440 150.*CreateFileA\(DATA\\ANI\\LULA_ANI\.TAF, read.*CreateFileA\(DATA\\ANI\\LULA_SCH\.TAF, read
+# check: (?s)ms: click 505 405.*dialog STANDARD_LIST_BOX_DLG: 5 controls.*ms: click 115 243.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1
+# check: (?s)ms: click 373 243.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 0
+# check: (?s)ms: click 80 130.*CreateFileA\(DATA\\ANI\\SEKR_ANI\.TAF, read
+# reject: There's no movie in production yet
+# reject: Sorry, I can only act in ONE movie at a time
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building (216..359, 285..386) -> room 5; broom cupboard (403..483, 52..295) -> room 23
+22000 move 280 340
+22500 click 280 340
+26000 move 440 150
+26500 click 440 150
+# Cast Lula for movie -> list -> OK
+30000 move 505 405
+30500 click 505 405
+33500 move 115 243
+34000 click 115 243
+# again -> list -> Cancel
+37000 move 505 405
+37500 click 505 405
+40500 move 373 243
+41000 click 373 243
+# To the office -> broom cupboard
+44000 move 80 130
+44500 click 80 130
+48500 move 440 150
+49000 click 440 150
+52500 move 320 240

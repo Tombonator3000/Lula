@@ -1,0 +1,39 @@
+# seconds: 66
+# expects: CastAds (casting_ads: an actor ad and an actress ad, both one day old, clock 10:50) loads on the WET plot -> at 11:00 the stage-2 hourly code calls the applicant draw 0x41c19b, which calls 0x41c25f once per ad (the player is not in the casting office, 0x483d74 = 0) -> 9 applicants -> Casting office: hotspot 9 "Look at applications" (325..490, 379..476) exists because 0x458281 != 0 -> applications sheet DDF 19 (callback 0x41c45c, Perskart.TAF) shows Mario Neversatt, "890 $ per Day" -> previous (135,379) stays on him -> next (190,380): Jo Vulkano, "2000 $ per Day" -> casting button (327,380) -> hire 0x41c9ad: status 1, the working casting director rolls the level, male casting animation (CA_THERM.TAF, CAST_MCA.TAF) -> sheet again (8 left) on Mario Neversatt -> reject (251,380) -> next applicant, the first actress -> thumbs up (501,381) closes -> "To the other offices" -> WET plot. No lula[warn]/trap.
+# save: casting_ads
+# note: "CastAds" is the Load-dialog entry at 300,119 (slot 4). The recipe casting_hired runs the same hire and reject and asserts the result in the save (Jo Vulkano status 1, Mario Neversatt status 0 with refusal counter 10, 7 applicants left).
+# random: which matching people apply is rolled by 0x41c25f (rand() % 100 > 60 per match). The runner's fixed LULA_CLOCK seeds rand() the same in every run, so the list is always 519, 526, 1, 20, 52, 60, 62, 82, 102 here.
+# check: (?s)ms: click 407 427.*CreateFileA\(DATA\\ANI\\Perskart\.TAF, read.*DrawTextA\("Mario Neversatt".*DrawTextA\("890 \$ per Day"
+# check: (?s)ms: click 190 380.*DrawTextA\("Jo Vulkano".*DrawTextA\("2000 \$ per Day"
+# check: (?s)ms: click 327 380.*CreateFileA\(DATA\\ANI\\CA_THERM\.TAF, read.*CreateFileA\(DATA\\ANI\\CAST_MCA\.TAF, read
+# check: (?s)ms: click 251 380.*DrawTextA\("Belinda Blow"
+# check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: So long as you hang around here, there won't be any applications
+# main menu -> Load Game -> CastAds -> Load (WET plot, room 20, 10:50); 11:00 passes about 2.5 s later
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Casting office building on the plot
+25000 move 440 400
+25500 click 440 400
+# Look at applications -> first applicant; previous (no earlier one), next
+29000 move 407 427
+29500 click 407 427
+32000 move 135 379
+32500 click 135 379
+34500 move 190 380
+35000 click 190 380
+# casting / hire Jo Vulkano; the casting animation runs for a few seconds
+37500 move 327 380
+38000 click 327 380
+# reject Mario Neversatt, close the sheet, To the other offices
+50000 move 251 380
+50500 click 251 380
+53000 move 501 381
+53500 click 501 381
+56500 move 470 160
+57000 click 470 160
+61000 move 320 240
