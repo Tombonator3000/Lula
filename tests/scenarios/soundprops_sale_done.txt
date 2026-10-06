@@ -1,0 +1,36 @@
+# seconds: 58
+# expects: "SndDone" (soundprops_sounddone: movie 'Sound Test' shot, cut (+0x184 = 3) and with its sound track finished by the game, +0x198 = 3 set by 0x42ddff at 10:00 on day 4; '3 Mix 3000' in the sound studio, value 3; dubber 418 and sound engineer 447 level 6; 'Emil Copy 5000' in the copier) on the WET plot -> office building -> office (room 5) -> Laptop (DDF 54) -> "Put movies on sale": warehouse 0x40e3bf, copier 0x40e3ed, cutting 0x40e424 and sound 0x40e467 checks pass -> STANDARD_LIST_BOX_DLG -> OK -> "Sound Test is going to the sale" (214) -> 0x40e0de values the movie with 0x411a4c, which now also calls the sound quality 0x42dcee ((0 + 60 + 60) / 3 = 40) and the sound equipment value 0x42ddab (3 * 10 / 1 = 30) because +0x198 = 3, and hands it to 0x411bff (FILMB.TMP) and 0x411e13 -> thumb -> laptop thumb -> "To the other WET buildings". No lula[warn]/trap.
+# save: soundprops_sounddone
+# note: "SndDone" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: expected movie value from the code of 0x411a4c: +0x2fc = 60 + (40 + 60) / 2 = 110, +0x304 = 30, +0x308 = 0 (no cutting machine), +0x310 = 18 + 16 + 9 + 3 + 0 + 9 = 55, minus 5 (80 minutes, (80 / 10) * 3 = 24 > cast count - 1) = 50, so FILMB.TMP gets +0x11c = 50000 and +0x10c = -(50000 / 1000 / 4 + 100) = -112 (seen in the file after a --keep run; without the sound track the same movie would get 60 + (0 + 60) / 2 = 90, +0x304 = 0 and 44 * 1000 = 44000)
+# check: (?s)ms: click 390 210.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1
+# check: DrawTextA\("\s*Sound Test is going to the sale\s*"
+# check: (?s)ms: click 115 243.*CreateFileA\(DATA\\DATABASE\\FILMB\.TMP, write
+# check: (?s)ms: click 560 100.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: fully equipped|The movie is being cut|The sound track is being added|You haven't got any finished movies
+# main menu -> Load Game -> SndDone -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building (plot index 7, 216..359 x 285..386) -> room 5
+22000 move 290 340
+22500 click 290 340
+# Laptop -> DDF 54 -> "Put movies on sale" -> list dialog -> OK
+26000 move 277 260
+26500 click 277 260
+29500 move 390 210
+30000 click 390 210
+33000 move 115 243
+33500 click 115 243
+# info box -> thumb -> laptop thumb
+36500 move 340 305
+37000 click 340 305
+39500 move 320 300
+40000 click 320 300
+# "To the other WET buildings" -> WET plot
+43000 move 560 100
+43500 click 560 100
+48000 move 320 240

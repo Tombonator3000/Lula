@@ -1,0 +1,72 @@
+# seconds: 108
+# expects: 'Shooting' (studio_props_store: as studio_props, plus 24 toys in the sex toy store, one per props need, all free except "Super Dildo Neon" (used by studio 2), and the props assistant fired) on the WET plot -> 8:30: "For the next scene, we need a powerful vibrator!" (DREH_MSG_ANYWHERE_DLG) -> studio icon -> DREH_MSG_STUDIO_DLG -> thumb -> 0x4250fd: a free toy for need 5 is in the store, so DREH_TOY2_DLG (DDF 35, callback 0x4255c0) -> box tile (control 1): 0x425b4d opens the store sheet 0x406091 ("Use Sex toy", DDF 28): row 4 "Super Dildo Neon" (red, in use) -> Use: the sheet closes and 0x425b4d answers "That's already being used!" -> thumb -> sheet again -> row 1 "Flutschi Kato Sato" ("Lubricating cream") -> Use -> thumb -> "The director didn't ask for that. Do it anyway?" -> no -> sheet again -> row 6 "Arnie II Super Power" ("Vibrator") -> Use -> thumb: right toy, every free store toy of that kind is given to studio 1 (+0xc = 0) -> "Shooting is continuing!" -> thumb -> next 8:30 roll: "Thommy Session doesn't dare to drop his pants!" in the studio -> thumb -> file card -> "Actually take Thommy Session out of the cast?" -> yes: status 1, 0x42568e, "Thommy Session has lost the part!" -> thumb -> "There aren't enough actors to carry on shooting" -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# save: studio_props_store
+# note: "Shooting" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: the props wish and the actor problem after it come from rand(), seeded from the runner's fixed LULA_CLOCK (see studio_event_actor.txt)
+# note: DREH_TOY2_DLG tiles at y 240: sex shop 214, box 317, toilet 420; store sheet rows at x 150, y 168 + 15.5 per row, Use 168,341, thumb 292,342
+# note: the save written at the end (checked with --keep) holds store slot 5 (EQUIP.TAP 7) with +0xc = 0, slot 3 still with studio 2, the other slots free, account 1499730 (nothing bought), actor 527 in status 1, cast list [17]
+# check: (?s)DrawTextA\("For the next scene, we need a powerful vibrator!", rect 279,160,475,278.*ms: click 360 311.*DrawTextA\("For the next scene, we need a powerful vibrator!", rect 279,160,474,273
+# check: (?s)ms: click 317 240.*DrawTextA\("Use Sex toy".*ms: click 168 341.*DrawTextA\("That's already being used!"
+# check: (?s)ms: click 150 168.*DrawTextA\("Lubricating cream", rect 333,139,544,156.*ms: click 292 342.*DrawTextA\("The director didn't ask for that\. Do it anyway\?"
+# check: (?s)ms: click 150 245.*DrawTextA\("Vibrator", rect 333,139,544,156.*ms: click 292 342.*DrawTextA\("Shooting is continuing!"
+# check: (?s)DrawTextA\("Thommy Session doesn't dare to drop his pants!".*DrawTextA\("Actually take Thommy Session out of the cast\?".*DrawTextA\("Thommy Session has lost the part!".*DrawTextA\("There aren't enough actors to carry on shooting".*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# main menu -> Load Game -> Shooting -> Load (WET plot, 8:29)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# props wish on the plot -> studio icon -> studio sheet thumb -> DREH_TOY2_DLG
+24000 move 360 311
+24500 click 360 311
+28000 move 365 305
+28500 click 365 305
+# box -> row 4 (in use) -> Use -> "already being used" -> thumb
+32000 move 317 240
+32500 click 317 240
+35500 move 150 213
+36000 click 150 213
+37500 move 168 341
+38000 click 168 341
+41000 move 340 300
+41500 click 340 300
+# row 1 -> Use -> thumb -> "didn't ask" -> no
+44500 move 150 168
+45000 click 150 168
+46500 move 168 341
+47000 click 168 341
+49000 move 292 342
+49500 click 292 342
+52500 move 400 305
+53000 click 400 305
+# row 6 -> Use -> thumb -> "Shooting is continuing!" -> thumb
+56000 move 150 245
+56500 click 150 245
+58000 move 168 341
+58500 click 168 341
+60500 move 292 342
+61000 click 292 342
+64000 move 340 300
+64500 click 340 300
+# actor problem in the studio -> thumb -> file card -> yes -> thumb
+75000 move 365 305
+75500 click 365 305
+79000 move 511 240
+79500 click 511 240
+82500 move 318 305
+83000 click 318 305
+86000 move 340 300
+86500 click 340 300
+# To the other offices -> WET plot -> F2 save
+90000 move 320 40
+90500 click 320 40
+93500 key F2
+95500 move 305 212
+96000 click 305 212
+97500 move 300 119
+98000 click 300 119
+99500 move 263 228
+100000 click 263 228
+102000 type PropsStore
+103500 key RETURN

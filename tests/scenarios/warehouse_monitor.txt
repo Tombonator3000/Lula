@@ -1,0 +1,44 @@
+# seconds: 62
+# expects: prod_s2staff (all production buildings rented, warehousewoman 286 working, no movies on sale) loads on the WET plot -> Warehouse building (24..143, 249..337) -> room 25 (pre-call 0x42b518 with EDX = 1, setup 0x429bed, hotspots 0x429f5d; nothing is loaded because the monitor flag 0x484bb8 is 0) -> "Warehouse monitor" (420..509, 183..266): click handler 0x429d58 case 1 loads LAG_FLM.TAF (handle 0x484b88, frame count 0x484b94, position 427,197 in 0x484ba8/0x484bac) and sets 0x484bb8 = 1; the paint hook 0x42a04f and tick hook 0x42a08f animate it -> "To the other offices" with the monitor still on: leave function 0x429f26 frees LAG_FLM.TAF (0x484b88 = 0) but keeps 0x484bb8 = 1 -> Warehouse building again: the setup sees 0x484bb8 = 1 and 0x484b88 = 0 and loads LAG_FLM.TAF itself (the monitor runs at once) -> "Warehouse monitor" switches it off (case 1, 0x484bb8 = 0, sound 0x28 stopped) -> the two unlabelled hotspots 4 (334..409, 197..255) and 5 (503..566, 274..308) play the sounds 0x26 and 0x27 (cases 4 and 5) -> "Assign warehousewoman" (109..277, 57..293): 0x4057d2(7) counts Gerda Moller (286), so 0x40590d(7) opens her staff card (Perskart.TAF, 230 $ per day, status 2 "Is occupying the available place right now.") -> thumb -> "Process orders" (341..478, 263..395): a warehousewoman but no orders (0x485070 = 0) -> "You haven't got any orders!" (string 1209) -> thumb. No lula[warn]/trap.
+# save: prod_s2staff
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); prod_s2staff loads on the WET plot (room 20) at 8:00 on 1-1-1997
+# note: without a warehousewoman (prod_s2all) "Assign warehousewoman" and "Process orders" answer "You haven't got any staff in this department" instead (see prod_enter_warehouse)
+# check: (?s)ms: click 80 300(?:(?!ms: click).)*?CreateFileA\(DATA\\ANI\\LAG_FLM\.TAF, read
+# check: (?s)ms: click 464 224.*CreateFileA\(DATA\\ANI\\LAG_FLM\.TAF, read.*ms: click 440 80.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# check: (?s)ms: click 190 175.*CreateFileA\(DATA\\ANI\\Perskart\.TAF, read.*DrawTextA\("Gerda Moller".*DrawTextA\("Is occupying the available place right now\."
+# check: (?s)ms: click 410 330.*DrawTextA\("You haven't got any orders!"
+# reject: You haven't got any staff in this department
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Warehouse building, monitor on, leave with the monitor on
+22000 move 80 300
+22500 click 80 300
+25500 move 464 224
+26000 click 464 224
+29000 move 440 80
+29500 click 440 80
+# Warehouse building again: the setup loads LAG_FLM.TAF; monitor off
+33000 move 80 300
+33500 click 80 300
+37000 move 464 224
+37500 click 464 224
+# unlabelled hotspots 4 and 5 (sounds 0x26 and 0x27)
+40500 move 370 225
+41000 click 370 225
+43500 move 535 290
+44000 click 535 290
+# Assign warehousewoman -> staff card of Gerda Moller -> thumb
+46500 move 190 175
+47000 click 190 175
+50500 move 500 380
+51000 click 500 380
+# Process orders -> "You haven't got any orders!" -> thumb
+54000 move 410 330
+54500 click 410 330
+57500 move 340 300
+58000 click 340 300

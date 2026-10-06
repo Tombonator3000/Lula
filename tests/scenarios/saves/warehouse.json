@@ -1,0 +1,106 @@
+{
+ "_comment": [
+  "Recipes of the warehouse area (prefix warehouse): stage-2 warehouse (room 25) and recreation room (room 28).",
+  "The warehouse sells movies that were put on sale at the office laptop. The sale (0x40dfd8) needs 0x40e3bf (warehouse building 6 rented, flag 0x455949 = 1, and a warehousewoman, job 7, with status 1/2/3), 0x40e3ed (copier building 3 rented, 0x4558d1 = 1, a copying girl, job 5, and a copying machine, count 0x459329 > 0), a movie in state 3 (+0x14c) that is not being cut (+0x184 != 1) and not being dubbed (+0x198 != 1).",
+  "The sale writes a 0x128-byte record to DATA/DATABASE/FILMB.TMP (0x411bff: +0 title, +0x100 date, +0x10c = -(100 + max(1, value/4000)), +0x11c = value (+30% when rand()%3*50 equals the category +0x104), +0x120 = +0x11c/2, +0x124 = +0x120/2) and removes the movie record (0x411e13). The save copies FILMB.TMP to FILMB.  N; loading copies it back.",
+  "Movie value 0x411a4c for these patches (uncut, no sound, quality values +0x2f8/+0x2fc/+0x300/+0x30c = 60, 80 minutes, no cast): 30%*60 + 15%*60 + 15%*60 + 15%*60 = 45, minus 5 = 40, times 1000 = 40000, so +0x10c = -110 and +0x11c = 40000 or 52000."
+ ],
+ "warehouse_base": {
+  "from": "prod_s2staff",
+  "note": "prod_s2staff (all production buildings rented, one employee per job: warehousewoman 286 and copying girl 257 working, account 1500000, 8:00 on 1-1-1997, WET plot, 'ProdAll' at 300,119) plus one shot movie and one copying machine, patched: movie count 0x457b49 = 1, record 0 'Warehouse Hit', 80 minutes (+0x148), state 3 (+0x14c), not cut (+0x184 = 0), no sound (+0x198 = 0), quality values +0x2f8/+0x2fc/+0x300/+0x30c = 60; copier slot 0 (0x459289) = (29 'Emil Copy 5000', condition 100, value 2, -1), the slot the game itself writes when it buys that machine (see cutcopy_copier), count 0x459329 = 1. Slow clock (0x4556bc = 30) so the sale script is not interrupted.",
+  "patch": {
+   "0x457b49": 1,
+   "0x455aa1": "Warehouse Hit\u0000",
+   "0x455be9": 80,
+   "0x455bed": 3,
+   "0x455c25": 0,
+   "0x455c39": 0,
+   "0x455d99": 60,
+   "0x455d9d": 60,
+   "0x455da1": 60,
+   "0x455dad": 60,
+   "0x459289": 29,
+   "0x45928d": 100,
+   "0x459291": 2,
+   "0x459295": -1,
+   "0x459329": 1,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "account": 1500000,
+   "0x457b49": 1,
+   "0x455bed": 3,
+   "0x459329": 1,
+   "0x459289": 29,
+   "0x455949": 1,
+   "0x4558d1": 1,
+   "0x45fe5d": 7,
+   "0x45fe61": 2,
+   "0x45f9d5": 5,
+   "0x45f9d9": 2
+  }
+ },
+ "warehouse_sale": {
+  "from": "warehouse_base",
+  "note": "warehouse_base after the game put the movie on sale at the office laptop (script warehouse_sale.txt): Laptop -> 'Put movies on sale' -> STANDARD_LIST_BOX_DLG -> OK -> 'Warehouse Hit is going to the sale' -> 0x411bff writes the FILMB.TMP record and 0x411e13 removes movie record 0 (count 0x457b49 = 0, record cleared, +0x104 = 100 and +0x150 = 1000 at 0x411ea9); back on the WET plot and saved as 'OnSale' in slot 4 (Load-dialog entry 300,119), which also writes DATA/DATABASE/FILMB.  4. The sale costs nothing (account stays 1500000).",
+  "script": "warehouse_sale.txt",
+  "seconds": 66,
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "OnSale",
+   "day": 1,
+   "account": 1500000,
+   "0x457b49": 0,
+   "0x455bed": 0,
+   "0x455ba5": 100,
+   "0x459329": 1
+  }
+ },
+ "warehouse_eve": {
+  "from": "warehouse_sale",
+  "note": "warehouse_sale with the clock at 19:50 on 1-1-1997 and the normal speed (0x4556bc = 3, 14.4 s per game hour), so the day end (19:59 -> 9:00 on 1-2-1997) comes a few seconds after loading. At the day end 0x404a33 calls 0x42a1ef because 0x40e3bf and 0x40e3ed pass; it reads FILMB.TMP and makes the warehouse list (0x484bbc, count 0x484d4c) from the record of 'Warehouse Hit'; from then on the hourly dispatcher 0x4050c1 calls 0x42a0ac, which draws orders.",
+  "patch": {
+   "0x4556a8": 19,
+   "0x4556ac": 50,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "OnSale",
+   "day": 1,
+   "hour": 19,
+   "minute": 50,
+   "0x457b49": 0,
+   "0x4556bc": 3
+  }
+ },
+ "warehouse_leisure": {
+  "from": "prod_s2all",
+  "note": "prod_s2all after the game bought and sold leisure equipment in the recreation room (script warehouse_leisure.txt): 'Buy equipment' -> 0x406121(category 6, slots 0x459475, 20 slots) -> bought row 5 'Pink Plush' (1289 $) and row 1 'Lay On Me' (2550 $), sold 'Pink Plush' back for 1160 $ (1289 * 90 / 100, condition 100); saved on the WET plot as 'Leisure' in slot 4 (Load-dialog entry 300,119). Account 1500000 - 1289 - 2550 + 1160 = 1497321. The sale removes the slot and moves the rest up, so slot 0 (0x459475) = (38 'Lay On Me', condition 100, category 6, -1) and the count 0x4595b5 = 1.",
+  "script": "warehouse_leisure.txt",
+  "seconds": 72,
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Leisure",
+   "account": 1497321,
+   "0x459475": 38,
+   "0x459479": 100,
+   "0x45947d": 6,
+   "0x459481": -1,
+   "0x459485": -1,
+   "0x4595b5": 1
+  }
+ }
+}

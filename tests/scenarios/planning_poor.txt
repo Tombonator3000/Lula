@@ -1,0 +1,44 @@
+# seconds: 66
+# expects: 'Planned' with nine movie records in use and only 500 $ to spend (account -69500, credit line 70000; slow clock) on the WET plot -> Movie planning (room 22) -> Write screenplay -> New -> "Tenth Movie" -> RETURN -> "Honey! You're really creative, but it's better to make one whole movie than dream about 9!" (count >= 9, 0x41e534) -> thumb -> toilet -> Work on storyboard -> first film strip picture (1000 $) -> "Unfortunately you haven't got enough money!" (0x40561d) -> thumb -> thumbs down (control 1) -> To the other offices. No lula[warn]/trap.
+# save: planning_poor
+# note: "Planned" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# check: (?s)ms: click 190 146.*DialogBoxParamA\(STANDARD_GET_TXT_DLG\) -> 1.*DrawTextA\("\s*Honey! You're really creative, but it's better to make one whole movie than dream about 9!\s*"
+# check: (?s)ms: click 80 190.*CreateFileA\(DATA\\ANI\\STORYFUC\.TAF, read.*DrawTextA\("Lust in Space", rect 87,38
+# check: (?s)ms: click 592 41.*DrawTextA\("\s*Unfortunately you haven't got enough money!\s*"
+# check: (?s)ms: click 400 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: DrawTextA\("1000 \$"
+# reject: DrawTextA\("Tenth Movie"
+# main menu -> Load Game -> Planned -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Movie planning building -> room 22
+22000 move 540 310
+22500 click 540 310
+# Write screenplay -> New -> title -> RETURN -> refusal -> thumb -> toilet
+25500 move 420 350
+26000 click 420 350
+29000 move 190 146
+29500 click 190 146
+32000 type Tenth Movie
+33500 key RETURN
+36500 move 340 300
+37000 click 340 300
+40000 move 231 373
+40500 click 231 373
+# Work on storyboard -> first picture -> not enough money -> thumb -> thumbs down (control 1, 396..450 x 370..423)
+43500 move 80 190
+44000 click 80 190
+47000 move 592 41
+47500 click 592 41
+50500 move 340 300
+51000 click 340 300
+54000 move 423 396
+54500 click 423 396
+# To the other offices -> WET plot
+57500 move 400 40
+58000 click 400 40
+61500 move 320 240

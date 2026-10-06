@@ -1,0 +1,63 @@
+# movie_planned: plan movie 0 'Hot Sauna' in room 22 from screenplay to concluded storyboard, save on the WET plot as 'Planned'
+# main menu -> Load Game -> ProdAll (slot 4) -> Load (WET plot)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Movie planning building -> room 22
+22000 move 540 310
+22500 click 540 310
+# Write screenplay -> DDF 8 (FILMPLAN_DREHBUCH_DLG) -> New -> STANDARD_GET_TXT_DLG -> title -> RETURN
+25500 move 420 350
+26000 click 420 350
+29000 move 190 146
+29500 click 190 146
+32000 type Hot Sauna
+34000 key RETURN
+# Pick storyline -> STANDARD_LIST_BOX_DLG -> entry 5 -> OK; thumbs up stores the movie
+37000 move 432 351
+37500 click 432 351
+40500 move 150 177
+41000 click 150 177
+43000 move 115 243
+43500 click 115 243
+46500 move 139 375
+47000 click 139 375
+# Define the subject of the movie -> DDF 9 -> Hardcore -> thumbs up
+50000 move 350 250
+50500 click 350 250
+53500 move 472 322
+54000 click 472 322
+56500 move 246 377
+57000 click 246 377
+# Work on storyboard -> DDF 10 -> film strip pictures 0, 1, 2, 3 (4 scenes, 40 minutes, 4000 $)
+60000 move 80 190
+60500 click 80 190
+64000 move 592 41
+64500 click 592 41
+66500 move 592 90
+67000 click 592 90
+69000 move 592 137
+69500 click 592 137
+71500 move 592 185
+72000 click 592 185
+# Conclude planning -> "Finish anyway??" -> yes
+75000 move 454 454
+75500 click 454 454
+78500 move 318 305
+79000 click 318 305
+# To the other offices -> WET plot
+82500 move 400 40
+83000 click 400 40
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+87000 key F2
+89500 move 305 212
+90000 click 305 212
+92000 move 300 119
+92500 click 300 119
+94500 move 263 228
+95000 click 263 228
+97500 type Planned
+99000 key RETURN

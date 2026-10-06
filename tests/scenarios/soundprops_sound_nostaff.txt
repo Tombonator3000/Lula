@@ -1,0 +1,40 @@
+# seconds: 52
+# expects: prod_s2all (all production buildings rented, nobody hired) on the WET plot -> Sound studio (room 27): the setup 0x42d711 loads neither TON_MUS.TAF (no sound engineer, job 18: 0x48598c = 0) nor TON_SPK.TAF (no dubber, job 16: 0x4858e0 = 0) -> "Add sound track to film": 0x4057d2(18) = 0 -> "You haven't got any staff in this department" (938, via 0x4058c8) -> thumb -> "Assign (male or female) dubber": 0x4057d2(16) = 0 -> the same refusal -> thumb -> "Assign musician/sound engineer": 0x4057d2(18) = 0 -> the same refusal -> thumb -> "To the other offices". No lula[warn]/trap.
+# save: prod_s2all
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: the setup 0x42d711 always loads the dubbing monitor sound effect 0x2a (0x40855e at 0x42d851, the only loader of 0x2a; sound.tap entry 0x2a has 132410 data bytes), so that sound buffer proves room 27 was entered, since no TON_*.TAF is loaded without staff
+# check: (?s)script 22500 ms: click 460 120(?:(?!script 25500).)*IDirectSound::CreateSoundBuffer\(flags=40e0, 132410 bytes
+# check: (?s)script 26000 ms: click 280 280(?:(?!script 28500).)*DrawTextA\("\s*You haven't got any staff in this department\s*"
+# check: (?s)script 31500 ms: click 230 100(?:(?!script 34000).)*DrawTextA\("\s*You haven't got any staff in this department\s*"
+# check: (?s)script 37000 ms: click 470 280(?:(?!script 39500).)*DrawTextA\("\s*You haven't got any staff in this department\s*"
+# check: (?s)ms: click 80 400.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: TON_MUS\.TAF|TON_SPK\.TAF|Perskart\.TAF|Films which need
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Sound studio building
+22000 move 460 120
+22500 click 460 120
+# Add sound track to film -> refusal -> thumb
+25500 move 280 280
+26000 click 280 280
+28500 move 340 300
+29000 click 340 300
+# Assign dubber -> refusal -> thumb
+31000 move 230 100
+31500 click 230 100
+34000 move 340 300
+34500 click 340 300
+# Assign musician/sound engineer -> refusal -> thumb
+36500 move 470 280
+37000 click 470 280
+39500 move 340 300
+40000 click 340 300
+# To the other offices -> WET plot
+42500 move 80 400
+43000 click 80 400
+47000 move 320 240

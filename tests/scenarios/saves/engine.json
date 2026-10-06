@@ -1,0 +1,68 @@
+{
+ "_comment": [
+  "Recipes of the engine area (prefix engine): shared game services and libraries.",
+  "Stage-1 motel record at 0x45573c (hourly hook 0x408a87, day check 0x408dea): +0x4 rent hours left (0x455740), +0xc rent reminder flag (0x455748), +0x10 evicted flag (0x45574c, set by 0x408a87 when the rent hours reach 0), +0x14 owner told the cops (0x455750, set by the reception 0x430a52), +0x24 brawl countdown (0x455760), +0x28 brawl count (0x455764), +0x2c brawl complaint flag (0x455768), byte +0x30 (0x45576c)."
+ ],
+ "engine_s1evict": {
+  "from": "s1eq",
+  "slot": 2,
+  "note": "s1eq (slot 2 'Equipped', stage-1 motel room at 12:10, account 19718, inventory: Small Spotlight category 0, Castor AX 80 category 1, Furioso Color film category 9) with the motel record patched: evicted flag +0x10 (0x45574c) = 1 and 'owner told the cops' +0x14 (0x455750) = 1. The motel room tick passes AL = 3 to the day check 0x408dea, which skips the eviction there (AL 2 and 3 are exempt); the motel exterior (AL = 1) and the town (AL = 0) run it.",
+  "patch": {
+   "0x45574c": 1,
+   "0x455750": 1
+  },
+  "check": {
+   "slot": 2,
+   "stage": 1,
+   "room": 5,
+   "name": "Equipped",
+   "0x45574c": 1,
+   "0x455750": 1,
+   "0x455829": 0
+  }
+ },
+ "engine_s1dev": {
+  "from": "s1eq",
+  "note": "s1eq after the game did a photo session in the motel room and handed the film in for development at the Video store (script engine_s1dev.txt): 'Session 1' (category 0x65, kind +0x54 = 0) gets +0x5c = 17 hours and owner +0x60 = 0 (at the store) from the develop sheet of 0x42cee6; one hourly hook 0x408a87 has run before the save (+0x5c = 16); saved in the motel room as 'Develop' in slot 3 (Load-dialog entry 300,107). Then patched: rent hours 0x455740 = 200 (no rent reminder or eviction while the film develops), clock Monday 12:00 and the fastest clock 0x4556bc = 0, 0x4556c0 = 0 (one game minute per 60 ms tick, 3.6 s per game hour). From 12:00 the hourly hook runs at 13..23, at the day change to 7:00 and then every hour, so the photos are developed by 12:00 on Tuesday (the stage-1 day runs from 7:00 to the closing hour 23, [0x4555d0] / [0x4555d4]).",
+  "script": "engine_s1dev.txt",
+  "seconds": 104,
+  "slot": 3,
+  "patch": {
+   "0x455740": 200,
+   "0x4556a8": 12,
+   "0x4556ac": 0,
+   "0x4556bc": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 3,
+   "stage": 1,
+   "room": 5,
+   "name": "Develop",
+   "hour": 12,
+   "0x455740": 200,
+   "0x4556bc": 0
+  }
+ },
+ "engine_s1photos": {
+  "from": "engine_s1dev",
+  "note": "engine_s1dev loaded and left running in the motel room until the film was developed (script engine_s1photos.txt): the day-end box at midnight (about 61 s) is closed with its thumb, and by Tuesday 12:00 (about 80 s) the hourly hook 0x408a87 has turned 'Session 1' into developed photos (kind +0x54 = 1, +0x58 = 20, still owner 0 = at the Video store, which then registers the 'Finished photos' hotspot 2, 515..631 x 387..474); saved at about 108 s (Tuesday evening, before the next midnight at about 125 s) in the motel room as 'Photos' in slot 4 (Load-dialog entry 300,119). Then patched to Tuesday 10:00 (all places open) with the normal clock 0x4556bc = 3, 0x4556c0 = 0. The inventory (STF1DAT.  4) then holds Small Spotlight, Castor AX 80 and 'Session 1' (category 0x65, kind 1, owner 0).",
+  "script": "engine_s1photos.txt",
+  "seconds": 130,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 1,
+   "room": 5,
+   "name": "Photos",
+   "day": 2,
+   "hour": 10,
+   "0x4556bc": 3
+  }
+ }
+}

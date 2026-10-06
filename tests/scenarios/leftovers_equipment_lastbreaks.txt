@@ -1,0 +1,17 @@
+# seconds: 40
+# expects: stage-2 save "ProdAll" patched to Tuesday 1-2-1997 8:58 with only Lay On Me (0 %) in the recreation room -> 9:00: 0x40e4a4 -> 0x40ffa6 -> 0x4100a7 breaks it and 0x410194 clears slot 0 to -1 -> the message is built from slot 0 after the removal, so the original code reads the category of EQUIP.TAP record -1 (0x18 bytes before the table [0x455560], outside it): with this runtime's heap layout that dword is 1 and the box says "Something's gone wrong with your Camera equipment." although a leisure item broke -> thumb.
+# save: leftovers_s2wear1
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4)
+# note: original-code defect (out-of-bounds read at 0x41013f), not a runtime fault; the category word depends on what precedes the catalog in the heap, so the check accepts any name
+# check: DrawTextA\("Something's gone wrong with your [^"]* equipment\."
+# check: (?s)Something's gone wrong.*script 24500 ms: click 330 300
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# the info box comes about 1 s after loading -> thumb
+24000 move 330 300
+24500 click 330 300
+30000 move 320 240

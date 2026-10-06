@@ -1,0 +1,62 @@
+# seconds: 80
+# expects: 'Studio' (studio_ready: studio 1 has its lighting engineer, cameraman and director working, a spotlight and a camera; movie 0 "Studio Heat" planned with actor 527 and actress 17 cast, slow clock) on the WET plot -> Studio 1 (room 24): with crew, equipment and a planned movie the setup check 0x423e61 sets 0x484848[0] = 1, so the paint hook 0x42388e draws the film strip "Select Film" and the START clapper and the hotspots 6 and 7 work -> "Assign director" still opens the director's card (Bernie Pornolando, "Is occupying the available place right now. in STUDIO 1") -> thumb -> film strip (hotspot 6, 0x423640) opens STANDARD_LIST_BOX_DLG with dialog procedure 0x4248dc: headline "Available titles:", column "In production", one row "Studio Heat" (movies in state 1) -> row -> OK: studio record +0x34 = 0, the strip shows "Studio Heat" -> START (hotspot 7, 0x423521): 0x423fc1(1) counts 2 cast actors -> DREH_REGI_TIME_DLG (DDF 31, callback 0x424b50): "The director recommends 3 days of shooting" (30 minutes / 10) -> "Change filmtime" -> DREH_SET_TIME_DLG (DDF 32, callback 0x424d38): "Days of shooting set at 3" -> + + (5) -> - - - - (1) -> thumb -> "Days of shooting set at 1" -> thumb: 1 day is less than recommended, so the director's frustration +0x2c goes to 1; hours left +0x38 = 10, movie state 2, the shooting animation starts with "Remaining:" and "10 h" at the bottom left (TextOutA, not in this log) and only the exit hotspot stays active ([0x45d4d0] = 1): "Assign director" no longer opens the card -> "To the other offices" -> WET plot. No lula[warn]/trap.
+# save: studio_ready
+# note: "Studio" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: DREH_SET_TIME_DLG sits at the bottom of the screen: + clock 215,405, thumb 320,405, - clock 421,405
+# note: the state the run leaves behind (movie state 2, +0x38 = 10, +0x2c = 1) is what the studio_shoot recipe saves and asserts
+# check: (?s)ms: click 320 290.*CreateFileA\(DATA\\ANI\\Perskart\.TAF, read.*DrawTextA\("Is occupying the available place right now\. in STUDIO 1".*ms: click 330 438
+# check: (?s)ms: click 330 438.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1.*DrawTextA\("Studio Heat", rect 140,430,520,448
+# check: (?s)ms: click 573 434.*DrawTextA\("The director recommends 3 days of shooting"
+# check: (?s)ms: click 335 316.*DrawTextA\("Days of shooting set at 3".*ms: click 320 405.*DrawTextA\("Days of shooting set at 1"
+# check: (?s)ms: click 438 297.*ms: click 320 290\n(?:(?!lula\[info\] script )[^\n]*\n)*?lula\[trace\] DrawTextA\("STUDIO 1".*ms: click 320 40\b.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: (?s)ms: click 438 297.*Perskart\.TAF
+# note: the last check and the two rejects together show the effect of the start: the second "Assign director" click lands in studio 1 ("STUDIO 1" drawn in its step) with the days sheet closed (no "Change filmtime" from 66000 ms on), and still no card opens
+# reject: (?s)66000 ms: move 320 290.*Change filmtime
+# main menu -> Load Game -> Studio -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Studio 1 building
+22000 move 230 250
+22500 click 230 250
+# Assign director -> card -> thumb
+26000 move 320 290
+26500 click 320 290
+29500 move 500 380
+30000 click 500 380
+# film strip "Select Film" -> list dialog -> row "Studio Heat" -> OK
+33000 move 330 438
+33500 click 330 438
+36000 move 100 112
+36500 click 100 112
+38000 move 115 243
+38500 click 115 243
+# START clapper -> days sheet -> Change filmtime
+41500 move 573 434
+42000 click 573 434
+45000 move 335 316
+45500 click 335 316
+# + twice, - four times, thumb
+48000 move 215 405
+48500 click 215 405
+50000 click 215 405
+51500 move 421 405
+52000 click 421 405
+53500 click 421 405
+55000 click 421 405
+56500 click 421 405
+58500 move 320 405
+59000 click 320 405
+# thumb of the days sheet: shooting starts
+62000 move 438 297
+62500 click 438 297
+# Assign director: no reaction while shooting
+66000 move 320 290
+66500 click 320 290
+# To the other offices
+70000 move 320 40
+70500 click 320 40
+74000 move 320 240

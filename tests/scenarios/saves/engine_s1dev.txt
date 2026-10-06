@@ -1,0 +1,56 @@
+# Load "Equipped" (slot 2, motel room, 12:10, Small Spotlight + Castor AX 80 camera + Furioso Color film)
+# -> click Lula (pose) -> Camera on tripod -> session sheet -> camera toggle -> thumbs up (photo session,
+# about 3 game hours; the film becomes 'Session 1', category 0x65, kind +0x54 = 0)
+# -> To the motel -> To the town -> Video store -> Accessories (52..463, 239..359) -> "Have films developed"
+# (DDF 40 with the develop callback of 0x42cee6, flags 0) -> 'Session 1' in the right list ("Completed films:")
+# -> "To development" (control 29, 0x408242: moves it to "Films in development:", 17 hours) -> thumb
+# -> thumb of the accessory menu -> To the town -> Motel -> motel room -> F2 -> Save game -> slot 3 (300,107) "Develop".
+12000 move 505 40
+12500 click 505 40
+15000 move 300 94
+15500 click 300 94
+17000 move 263 228
+17500 click 263 228
+22000 move 189 286
+22500 click 189 286
+25500 move 476 250
+26000 click 476 250
+29000 move 450 208
+29500 click 450 208
+31500 move 270 340
+32000 click 270 340
+40000 move 570 200
+40500 click 570 200
+44000 move 30 300
+44500 click 30 300
+48000 move 560 200
+48500 click 560 200
+52000 move 250 300
+52500 click 250 300
+55500 move 500 100
+56000 click 500 100
+59000 move 450 166
+59500 click 450 166
+61500 move 446 342
+62000 click 446 342
+64500 move 578 342
+65000 click 578 342
+68000 move 380 375
+68500 click 380 375
+72000 move 140 440
+72500 click 140 440
+76000 move 77 145
+76500 click 77 145
+80000 move 455 180
+80500 click 455 180
+85000 key F2
+87500 move 305 212
+88000 click 305 212
+90500 move 300 107
+91000 click 300 107
+92500 move 263 228
+93000 click 263 228
+95000 type Develop
+96500 key RETURN
+99000 move 328 368
+99500 click 328 368

@@ -1,0 +1,37 @@
+# seconds: 66
+# expects: stage-2 save "ProdAll" patched to Tuesday 1-2-1997 8:58 with Pink Plush (100 %) and Lay On Me (0 %) in the recreation room -> on loading the clock reaches 9:00: the hourly dispatcher calls 0x40e4a4, which ends in the wear roll 0x40ffa6 -> 0x4100a7 for every equipment array; the 0 % item breaks (rand() % 100 >= 0) and 0x410194 shifts the array down and clears the last slot -> info box "Something's gone wrong with your Leisure equipment equipment." (string 220 with the category name 945 of the first remaining slot) -> thumb -> recreation room -> Buy equipment: the sell list holds only "1 Pink Plush 1160$ 100" (1289 * 90 / 100) -> left thumb -> F2 -> Save game -> slot 4 "Worn" (the kept save then has 0x4595b5 = 1, slot 0 = Pink Plush, slot 1 = -1 -1 -1 -1).
+# save: leftovers_s2wear
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the list rows are drawn with the game's own font (not traced)
+# random: the same 9:00 call first rolls rand() % 100 > 90 for the "full of trash" box (string 217, video SCHMUTZ.cut); with the runner's fixed clock it has not come up
+# check: DrawTextA\("Something's gone wrong with your Leisure equipment equipment\."
+# check: (?s)script 32500 ms: click 530 330.*DrawTextA\("Sell Leisure equipment"
+# check: CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: Your buildings are full of trash
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# the info box comes about 1 s after loading (2 game minutes) -> thumb
+24000 move 330 300
+24500 click 330 300
+# Recreation room (523..635, 385..472) -> Buy equipment (421..640, 221..433)
+28000 move 580 440
+28500 click 580 440
+32000 move 530 330
+32500 click 530 330
+36500 move 292 342
+37000 click 292 342
+40000 key F2
+42500 move 305 212
+43000 click 305 212
+45500 move 300 119
+46000 click 300 119
+47500 move 263 228
+48000 click 263 228
+50000 type Worn
+51500 key RETURN
+54000 move 328 368
+54500 click 328 368
+58000 move 320 240

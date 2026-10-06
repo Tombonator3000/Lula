@@ -5,7 +5,7 @@
 # random: which matching people apply is rolled by 0x41c25f (rand() % 100 > 60 per match). The runner's fixed LULA_CLOCK seeds rand() the same in every run, so the list is always 519, 526, 1, 20, 52, 60, 62, 82, 102 here.
 # check: (?s)ms: click 407 427.*CreateFileA\(DATA\\ANI\\Perskart\.TAF, read.*DrawTextA\("Mario Neversatt".*DrawTextA\("890 \$ per Day"
 # check: (?s)ms: click 190 380.*DrawTextA\("Jo Vulkano".*DrawTextA\("2000 \$ per Day"
-# check: (?s)ms: click 327 380.*CreateFileA\(DATA\\ANI\\CA_THERM\.TAF, read.*CreateFileA\(DATA\\ANI\\CAST_MCA\.TAF, read
+# check: (?s)ms: click 327 380.*CreateFileA\(DATA\\ANI\\CA_THERM\.TAF, read.*CreateFileA\(DATA\\ANI\\CAST_MCA\.TAF, read.*DrawTextA\("Mario Neversatt"
 # check: (?s)ms: click 251 380.*DrawTextA\("Belinda Blow"
 # check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
 # reject: So long as you hang around here, there won't be any applications

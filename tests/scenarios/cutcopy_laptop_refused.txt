@@ -1,0 +1,62 @@
+# seconds: 96
+# expects: "Cutting" (cutcopy_cutting: movie 'Raw Footage' shot and being cut, +0x184 = 1; copier rented with copying girl Regina Lustweib working but no copying machine; warehouse with a warehousewoman) on the WET plot -> office building -> office (room 5) -> Laptop (DDF 54) -> "Put movies on sale" -> 0x40e3ed is false because the copier slot count 0x459329 is 0: "You haven't got a fully equipped copier" (215) -> thumbs -> "To the other WET buildings" -> Copier (room 30) -> "Buy copying machines" -> 'Emil Copy 5000' -> Buy (count 0x459329 = 1) -> left thumb -> "To the other offices" -> office building -> Laptop -> "Put movies on sale" -> the copier and warehouse checks now pass, but 0x40e424 finds no shot movie that is not being cut: "The movie is being cut!" (218) -> thumbs. No lula[warn]/trap.
+# save: cutcopy_cutting
+# note: "Cutting" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: order of the refusals in the laptop callback (0x40e114): copier 215, warehouse 216, cutting 218, sound 219
+# check: (?s)ms: click 390 210.*DrawTextA\("\s*You haven't got a fully equipped copier\s*"
+# check: (?s)ms: click 560 175.*DrawTextA\("Buy Copying machine".*ms: click 168 341.*DrawTextA\("5000 copies/day copying machine", rect 333,
+# check: (?s)ms: click 168 341.*ms: click 390 210.*DrawTextA\("\s*The movie is being cut!\s*"
+# check: (?s)ms: click 560 100.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: (?s)ms: click 168 341.*fully equipped copier
+# reject: DialogBoxParamA\(STANDARD_LIST_BOX_DLG\)
+# main menu -> Load Game -> Cutting -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building (plot index 7, 216..359 x 285..386) -> room 5
+22000 move 290 340
+22500 click 290 340
+# Laptop -> DDF 54 -> "Put movies on sale" -> refusal -> thumb -> laptop thumb
+26000 move 277 260
+26500 click 277 260
+29500 move 390 210
+30000 click 390 210
+33000 move 340 305
+33500 click 340 305
+36000 move 320 300
+36500 click 320 300
+# "To the other WET buildings" -> WET plot
+39500 move 560 100
+40000 click 560 100
+# Copier building -> "Buy copying machines" -> row 1 'Emil Copy 5000' 10000 $ -> Buy -> left thumb
+44000 move 560 175
+44500 click 560 175
+48000 move 100 290
+48500 click 100 290
+51500 move 150 168
+52000 click 150 168
+53500 move 168 341
+54000 click 168 341
+56000 move 292 342
+56500 click 292 342
+# "To the other offices" -> WET plot -> office building
+59500 move 320 30
+60000 click 320 30
+64000 move 290 340
+64500 click 290 340
+# Laptop -> "Put movies on sale" -> refusal -> thumb -> laptop thumb
+68500 move 277 260
+69000 click 277 260
+72000 move 390 210
+72500 click 390 210
+75500 move 340 305
+76000 click 340 305
+78500 move 320 300
+79000 click 320 300
+# "To the other WET buildings" -> WET plot
+82000 move 560 100
+82500 click 560 100
+87000 move 320 240

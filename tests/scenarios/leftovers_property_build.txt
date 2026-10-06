@@ -1,0 +1,33 @@
+# seconds: 56
+# expects: stage-3 save "Mansion3b" (office, Tuesday 2-1-1997, account 1650000) -> To the property (room 20 stage 3, LAGE_ST3) -> Expand site -> "Extend mansion:" -> pool -> yes/no "The work will cost $20000. Start building work?" -> thumb: account 1650000 -> 1630000, pool state 0x45d13d = 1, start date 0x45d151 = today -> info box "The building work will take about 7 days." -> thumb -> Extend thumbs up -> the property paint 0x419455 now calls 0x419e97 for the pool: a framed half-size pool picture with "7 days remaining" (total 0x483c94 = 7 minus 0x405314(start date) = 0; drawn with the game's own font, not traced) -> To the office (OFFICE3.TAF).
+# save: s3b
+# note: "Mansion3b" is the Load-dialog entry at 300,107 (slot 3)
+# check: CreateFileA\(DATA\\ANI\\LAGE_ST3\.TAF, read
+# check: DrawTextA\("The work will cost \$20000\. Start building work\?"
+# check: (?s)script 33500 ms: click 320 300.*DrawTextA\("The building work will take about 7 days\."
+# check: (?s)script 47500 ms: click 180 120.*CreateFileA\(DATA\\ANI\\OFFICE3\.TAF
+# reject: haven't got enough money
+12000 move 505 40
+12500 click 505 40
+15000 move 300 107
+15500 click 300 107
+17000 move 263 228
+17500 click 263 228
+# To the property (233..413, 0..269) -> Expand site (crane button) -> pool
+22000 move 323 130
+22500 click 323 130
+26000 move 510 436
+26500 click 510 436
+29000 move 220 220
+29500 click 220 220
+# yes/no box: thumb (yes) -> info box thumb -> Extend thumbs up
+33000 move 320 300
+33500 click 320 300
+37000 move 344 312
+37500 click 344 312
+40500 move 450 330
+41000 click 450 330
+# the construction site with its sign is painted now; then To the office (35..328, 42..193)
+47000 move 180 120
+47500 click 180 120
+52000 move 320 240

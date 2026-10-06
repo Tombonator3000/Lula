@@ -1,0 +1,55 @@
+# seconds: 68
+# expects: cutcopy_base (copying girl 257 working, no copying machine) on the WET plot -> Copier (room 30, setup 0x428f1f) -> the unlabelled hotspot 1 (308..390 x 157..215) loads COPY_RAT.TAF (click handler 0x42906c case 1) -> "Copying monitor" (479..559 x 226..306) loads COPY_FLM.TAF (case 2, flag 0x484b70 = 1) -> "To the other offices" (leave 0x428eec -> 0x42924f frees both TAF handles) -> Copier again: setup 0x428f1f reloads COPY_FLM.TAF because the monitor flag stayed on -> monitor off -> "Hire copying girl" opens the staff card of the copying girl (0x40590d(5)) -> thumb -> "Buy copying machines" -> sheet "Buy Copying machine" (0x406121, category 2, slots 0x459289) -> row 1 -> Buy -> left thumb -> "To the other offices" -> WET plot. No lula[warn]/trap.
+# save: cutcopy_base
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: the account and slot written by the same purchase are asserted by the recipe cutcopy_copier
+# check: (?s)ms: click 350 185.*CreateFileA\(DATA\\ANI\\COPY_RAT\.TAF, read.*ms: click 519 266.*CreateFileA\(DATA\\ANI\\COPY_FLM\.TAF, read
+# check: (?s)script 36500 ms: click 560 175(?:(?!script 39500).)*CreateFileA\(DATA\\ANI\\COPY_FLM\.TAF, read
+# check: (?s)ms: click 300 300.*DrawTextA\("Regina Lustweib".*DrawTextA\("Is occupying the available place right now\."
+# check: (?s)ms: click 168 341.*DrawTextA\("5000 copies/day copying machine", rect 333,
+# check: (?s)script 59500 ms: click 320 30.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: (?s)script 22500 ms: click 560 175(?:(?!script 25500).)*COPY_FLM
+# reject: (?s)script 40000 ms: click 519 266(?:(?!script 42500).)*COPY_FLM
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Copier building (491..598, 129..192)
+22000 move 560 175
+22500 click 560 175
+# hotspot 1 (no label) -> COPY_RAT.TAF
+25500 move 350 185
+26000 click 350 185
+# "Copying monitor" -> COPY_FLM.TAF
+29000 move 519 266
+29500 click 519 266
+# "To the other offices" (hotspot 0, 0..640 x 0..66) -> WET plot
+32000 move 320 30
+32500 click 320 30
+# Copier again: the monitor is still on
+36000 move 560 175
+36500 click 560 175
+# monitor off
+39500 move 519 266
+40000 click 519 266
+# "Hire copying girl" (hotspot 3, 256..474 x 70..354) -> staff card -> thumb
+42500 move 300 300
+43000 click 300 300
+45500 move 500 380
+46000 click 500 380
+# "Buy copying machines" (hotspot 4, 0..210 x 194..389) -> row 1 -> Buy -> left thumb
+48500 move 100 290
+49000 click 100 290
+51500 move 150 168
+52000 click 150 168
+53500 move 168 341
+54000 click 168 341
+56000 move 292 342
+56500 click 292 342
+# "To the other offices" -> WET plot
+59000 move 320 30
+59500 click 320 30
+63000 move 320 240

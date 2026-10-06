@@ -1,0 +1,58 @@
+# seconds: 95
+# expects: stage-1 save 'Photos' (motel room, Tuesday 10:00, account 19718, 'Session 1' developed: category 0x65, kind 1, at the Video store) -> To the motel -> To the town -> Video store: "Finished photos" hotspot (515..631, 387..474) -> DDF 42 (callback 0x42d45b): price 20 $ (+0x58) -> thumb pays and hands the photos to the player (owner +0x60 = 2) -> info box "$20 was deducted from your account" -> thumb -> To the town -> Distributor -> Photos: 0x412558 finds the photos and opens DDF 66 (callback 0x412b68, its init moves them out of the inventory with 0x407bbd) -> row 0 selected (kind 1 is selectable) -> "fixed price" radio (control 2, 0x412c7d) -> thumb (control 4): offer sheet DDF 52 (callback 0x412f0c) "I'm giving you $600 - although you would have got more in royalties" (quality +0x64 = 1: 1 * 6000 / 10) -> thumb: 0x407b9f(list, row 0) drops the photos from the sale list and the account gets +600 (19718 - 20 + 600 = 20298) -> the empty list sheet closes -> Photos again: nothing left to sell, info box 5209 "You ain't got photos!" -> thumb -> To the town.
+# save: engine_s1photos
+# note: "Photos" is the Load-dialog entry at 300,119 (slot 4)
+# note: the account is drawn with the game's own font (not traced): 19718 before, 19698 after the 20 $ for the photos, 20298 after the sale (seen in frames)
+# note: DDF 42 sits at screen offset (141,75), DDF 66 at (0,-9), DDF 52 at (141,127)
+# check: CreateFileA\(DATA\\ANI\\VER_ANI1\.TAF, read
+# check: (?s)DrawTextA\("Your photos are ready.*DrawTextA\("\$20 was deducted from your account"
+# check: DrawTextA\("Session 1", rect 219,140,595,160
+# check: (?s)DrawTextA\("I'm giving you \$600 - although you would have got more in royalties".*DrawTextA\("You ain't got photos!"
+# reject: (?s)You ain't got photos.*I'm giving you
+12000 move 505 40
+12500 click 505 40
+15000 move 300 119
+15500 click 300 119
+17000 move 263 228
+17500 click 263 228
+# motel room -> To the motel (526..613, 55..285) -> To the town -> Video store (497..627, 124..285)
+21500 move 570 200
+22000 click 570 200
+25500 move 30 300
+26000 click 30 300
+29500 move 560 200
+30000 click 560 200
+# Finished photos (515..631, 387..474) -> DDF 42 thumb (control 3: 158..224 x 302..372)
+33500 move 570 430
+34000 click 570 430
+37000 move 190 337
+37500 click 190 337
+# info box "$20 was deducted" -> thumb
+40500 move 344 312
+41000 click 344 312
+# To the town (0..283, 395..479) -> Distributor (382..477, 69..151) -> Photos (210..347, 209..267)
+44000 move 140 440
+44500 click 140 440
+48000 move 430 110
+48500 click 430 110
+52000 move 278 238
+52500 click 278 238
+# DDF 66: row 0 (219..595 x 140..160), fixed-price radio (439..465 x 41..67), thumb (control 4: 344..409 x 331..399)
+55500 move 300 150
+56000 click 300 150
+57500 move 452 54
+58000 click 452 54
+59500 move 377 365
+60000 click 377 365
+# DDF 52 offer: thumb (control 1: 306..372 x 269..335)
+63000 move 339 302
+63500 click 339 302
+# Photos again: the sold photos are gone, so 0x412558 shows info box 5209 "You ain't got photos!" -> thumb
+67500 move 278 238
+68000 click 278 238
+71500 move 344 312
+72000 click 344 312
+# To the town (0..292, 398..479)
+75500 move 140 440
+76000 click 140 440
+79500 move 300 300

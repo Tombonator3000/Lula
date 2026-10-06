@@ -1,0 +1,31 @@
+# seconds: 50
+# expects: "SndDay3" (soundprops_day3: movie 'Sound Test' shot and cut, sound track started on 1-1-1997 for 2 days, still +0x198 = 1 after the 10:00 check of 0x42ddff on day 3 because 3 - 1 = 2 is not > 2) on the WET plot -> office building -> office (room 5) -> Laptop (DDF 54) -> "Put movies on sale": the sound check 0x40e467 finds no shot movie whose sound state is not 1 -> "The sound track is being added!" (219) instead of the list dialog -> thumb -> laptop thumb -> "To the other WET buildings". No lula[warn]/trap.
+# save: soundprops_day3
+# note: "SndDay3" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# check: (?s)ms: click 277 260.*DrawTextA\("\s*Put movies on sale\s*"
+# check: (?s)ms: click 390 210.*DrawTextA\("\s*The sound track is being added!\s*"
+# check: (?s)ms: click 277 260.*ms: click 560 100.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: STANDARD_LIST_BOX_DLG|is going to the sale|fully equipped|The movie is being cut|FILMB\.TMP, write
+# main menu -> Load Game -> SndDay3 -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building (plot index 7, 216..359 x 285..386) -> room 5
+22000 move 290 340
+22500 click 290 340
+# Laptop -> DDF 54 -> "Put movies on sale" -> info box -> thumb -> laptop thumb
+26000 move 277 260
+26500 click 277 260
+29500 move 390 210
+30000 click 390 210
+33000 move 340 305
+33500 click 340 305
+36000 move 320 300
+36500 click 320 300
+# "To the other WET buildings" -> WET plot
+39500 move 560 100
+40000 click 560 100
+44500 move 320 240

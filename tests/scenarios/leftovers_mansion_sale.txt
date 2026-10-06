@@ -1,0 +1,45 @@
+# seconds: 74
+# expects: stage-3 save "Mansion" (lady realtor's office; Mansion 'Like It' bought with the buy-back guarantee, 0x45d105 = 1, account 1565000; pool finished, 0x45d13d = 3) -> Look for mansion -> Mansion 'Like It' -> Look at what's offered: the own mansion with no lease date and the guarantee flag goes to the sale offer of 0x416a10 (no 30 % roll): price 850000 (0x483ad8) + 0x417a18() (the values 0x450f70 of finished extensions: pool 20000) = 870000, minus rand() % 35 percent -> yes/no "The lady realtor offers you $861300 for the property. Accept the offer?" (1 % off with the runner's fixed LULA_CLOCK) -> thumb: account + offer (kept save: 1565000 + 861300 = 2426300), extension states 0x45d13d.. = 0, 0x45d0f9 = 0, 0x45d105 = 0 -> Look at what's offered again: no mansion any more, so the rent/buy offer sheet (DDF 0x47, 0x417362) opens -> its thumb -> To the office -> F2 -> Save game -> slot 4 "Sold".
+# save: leftovers_s3mansion
+# note: "Mansion" is the Load-dialog entry at 300,119 (slot 4)
+# random: the deduction is rand() % 35 percent of 870000; the amount is 870000 - k * 8700 for k = 0..34
+# check: DrawTextA\("The lady realtor offers you \$(870000|8[0-6]\d{4}|[67]\d{5}|5[7-9]\d{4}) for the property\. Accept the offer\?"
+# check: (?s)script 32500 ms: click 320 300.*script 36500 ms: click 320 250.*DrawTextA\("Buy price:".*DrawTextA\("850000 \$"
+# check: CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: The lady realtor isn't interested right now
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Look for mansion (256..350, 221..390) -> Mansion 'Like It' (15..320, 33..197) -> Look at what's offered (120..520, 90..390)
+21000 move 300 300
+21500 click 300 300
+25000 move 160 110
+25500 click 160 110
+29000 move 320 250
+29500 click 320 250
+# the offer: thumb (yes)
+32000 move 320 300
+32500 click 320 300
+# Look at what's offered again: the rent/buy sheet -> its thumb
+36000 move 320 250
+36500 click 320 250
+39500 move 447 330
+40000 click 447 330
+# To the office (0..640, 0..55) -> the realtor's office -> F2 -> Save game -> slot 4 "Sold"
+43000 move 320 20
+43500 click 320 20
+47000 key F2
+49500 move 305 212
+50000 click 305 212
+52500 move 300 119
+53000 click 300 119
+54500 move 263 228
+55000 click 263 228
+57000 type Sold
+58500 key RETURN
+61000 move 328 368
+61500 click 328 368
+65000 move 320 240

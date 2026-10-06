@@ -1,0 +1,59 @@
+# seconds: 76
+# expects: cutcopy_base (cutter Kerstin Loisi 193 working, movie 'Raw Footage' shot, 80 minutes, not cut, no cutting equipment) on the WET plot -> Cutting department (room 29, setup 0x4283d5) -> "Cut films" without equipment: "You haven't got any equipment yet!" (997, count 0x4584bd = 0) -> thumb -> "Buy equipment" -> 'Cut and Go' 1000 $ -> Buy -> left thumb -> "Cut films" opens DDF 60 (callback 0x428c1d): "Produced films:", "Monday der 1.1.1997" (format "%s der %d.%d.%d"), entry 1 'Raw Footage' (state 3, cutting state 0) -> click it: "Cutting the film will take 2 day(s)" ((80 / 10) >> 2 = 2) -> thumb -> sheet thumb -> "Cut films" again: the movie (cutting state now 1) is no longer listed -> sheet thumb -> "Assign cutter" -> staff card of Kerstin Loisi ("Is occupying the available place right now.") -> thumb -> "To the other offices" -> WET plot. No lula[warn]/trap.
+# save: cutcopy_base
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: the sheet is reopened, not left open: the check on "Produced films:" needs the move step at 54000 to draw no sheet text, so the reject on 'Raw Footage' is judged on a fresh init of 0x428c1d
+# note: the state written by the same clicks is asserted by the recipe cutcopy_cutting (cutting state +0x184 = 1, start date 1-1-1997, +0x194 = 2 days, account 1499000, slot (26, 100, 2, -1))
+# check: (?s)ms: click 280 200.*DrawTextA\("\s*You haven't got any equipment yet!\s*"
+# check: (?s)ms: click 168 341.*ms: click 280 200.*DrawTextA\("Monday der 1\.1\.1997".*DrawTextA\("Raw Footage"
+# check: (?s)ms: click 120 98.*DrawTextA\("Cutting the film will take 2 day\(s\)"
+# check: (?s)script 54000 ms: move 280 200(?:(?!Produced films)(?!script 54500).)*script 54500 ms: click 280 200(?:(?!script 57000).)*DrawTextA\("Produced films:"
+# check: (?s)ms: click 75 130.*DrawTextA\("Kerstin Loisi".*DrawTextA\("Is occupying the available place right now\.".*ms: click 160 400.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: (?s)script 54500 ms: click 280 200(?:(?!script 57500).)*DrawTextA\("Raw Footage"
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Cutting department building (297..404, 92..155)
+22000 move 350 120
+22500 click 350 120
+# "Cut films" (hotspot 7, 211..360 x 75..296) without equipment -> info box -> thumb
+25500 move 280 200
+26000 click 280 200
+28500 move 340 300
+29000 click 340 300
+# "Buy equipment" (hotspot 6) -> row 1 'Cut and Go' 1000 $ -> Buy -> left thumb
+31500 move 550 370
+32000 click 550 370
+34500 move 150 168
+35000 click 150 168
+36500 move 168 341
+37000 click 168 341
+39000 move 292 342
+39500 click 292 342
+# "Cut films" -> DDF 60 -> entry 1 (control 13, 'Raw Footage') -> info box -> thumb -> sheet thumb
+42000 move 280 200
+42500 click 280 200
+45000 move 120 98
+45500 click 120 98
+48000 move 340 300
+48500 click 340 300
+51000 move 595 440
+51500 click 595 440
+# "Cut films" again: the movie being cut is hidden -> sheet thumb
+54000 move 280 200
+54500 click 280 200
+57000 move 595 440
+57500 click 595 440
+# "Assign cutter" (hotspot 5, 0..154 x 19..243) -> staff card (0x40590d(2)) -> thumb
+60000 move 75 130
+60500 click 75 130
+63000 move 500 380
+63500 click 500 380
+# "To the other offices" (hotspot 4, 0..330 x 285..480) -> WET plot
+66000 move 160 400
+66500 click 160 400
+71000 move 320 240

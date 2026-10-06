@@ -1,0 +1,48 @@
+# seconds: 78
+# expects: stage-2 save "Shooting" (movie 0 'Studio Heat' being shot in studio 1; deal date of studio 1 patched to 1-12-1996) -> office building -> office -> To the overview -> Realtor -> Look at real estate (room 20 in realtor mode) -> studio 1 on the plot -> DDF 5 (0x418aa0) "Movie studio", "Present rental : 120 $" (3600 / 30) -> Cancel lease: 35 days >= 30, so the rented flag 0x4558f9 = 0 and 0x418fc4(4) resets studio record 0x458289 (movie 0 back to state 1, shooting progress 0, cast list entries -1, working crew and cast status 2 -> 1, camera/lighting slots and crew -1, the rest of the 0x40 bytes 0) -> the sheet closes, the building leaves the plot and "movie studio" joins the film strip -> its tile opens the DDF 4 offer (Month rental 3600, Day rental 120, Buy price 180000) -> thumb -> F2 -> Save game -> slot 4 "Cancelled".
+# save: leftovers_s2lease
+# note: "Shooting" is the Load-dialog entry at 300,119 (slot 4)
+# note: kept save after a run: 0x4558f9 = 0, 0x455bed = 1, 0x455c1d = 0, 0x455c55/0x455c59 = -1 (count 0x455d95 stays 2), 0x458289 = -1, 0x458299 = -1, 0x4582a9..0x4582b1 = -1, 0x4582bd = -1, 0x4582c1 = 0, 0x4582c5 = 0; staff 164, 230, 377, 527, 17 status 1; account unchanged 1499730 (the bought camera and spotlight are gone without a refund)
+# check: (?s)script 38500 ms: click 230 250.*DrawTextA\("Present rental   :".*DrawTextA\("120 \$"
+# check: DrawTextA\("           Cancel lease        "
+# check: CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# check: (?s)script 46500 ms: click 66 45.*DrawTextA\("Month rental :".*DrawTextA\("3600"
+# note: until room 20 is set up again its plot hotspot for building 4 stays registered (0x418489 runs only at setup), so a click on the empty place opens DDF 5 for the cancelled studio again (original behaviour)
+# reject: You can't cancel till next month
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# WET plot: office building (216..359, 285..386) -> office -> To the overview -> Realtor -> Look at real estate (realtor mode)
+22000 move 290 330
+22500 click 290 330
+26000 move 150 40
+26500 click 150 40
+30000 move 400 200
+30500 click 400 200
+34000 move 100 370
+34500 click 100 370
+# studio 1 (building 4: 163..294, 195..290) -> DDF 5 -> Cancel lease
+38000 move 230 250
+38500 click 230 250
+42000 move 310 231
+42500 click 310 231
+# the film strip now starts with "movie studio": its tile opens the DDF 4 offer sheet (rent or buy again)
+46000 move 66 45
+46500 click 66 45
+49500 move 430 240
+50000 click 430 240
+53000 key F2
+55500 move 305 212
+56000 click 305 212
+58500 move 300 119
+59000 click 300 119
+60500 move 263 228
+61000 click 263 228
+63000 type Cancelled
+64500 key RETURN
+67000 move 328 368
+67500 click 328 368
+71000 move 320 240

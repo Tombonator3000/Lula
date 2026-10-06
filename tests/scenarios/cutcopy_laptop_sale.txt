@@ -1,0 +1,35 @@
+# seconds: 62
+# expects: "Copier" (cutcopy_copier: movie 'Raw Footage' shot and cut by the game, +0x184 = 3; 'Emil Copy 5000' in the copier, copying girl and warehousewoman working; cutter Kerstin Loisi level 6; one 'Cut and Go', value 2) on the WET plot -> office building -> office (room 5) -> Laptop (DDF 54) -> "Put movies on sale": all four checks pass (0x40e3bf warehouse, 0x40e3ed copier, 0x40e424 cutting, 0x40e467 sound) -> STANDARD_LIST_BOX_DLG -> OK -> "Raw Footage is going to the sale" (214) -> 0x40e0de values the movie with 0x411a4c, which calls 0x428b83 and 0x428bc9 because the movie is cut, and hands it to 0x411bff (FILMB.TMP) and 0x411e13 -> thumbs -> laptop thumb (320,300) -> "To the other WET buildings". No lula[warn]/trap.
+# save: cutcopy_copier
+# note: "Copier" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# check: (?s)ms: click 390 210.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1
+# check: DrawTextA\("\s*Raw Footage is going to the sale\s*"
+# check: (?s)ms: click 115 243.*CreateFileA\(DATA\\DATABASE\\FILMB\.TMP, write
+# check: (?s)ms: click 560 100.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: fully equipped|The movie is being cut|The sound track is being added|You haven't got any finished movies
+# main menu -> Load Game -> Copier -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building (plot index 7, 216..359 x 285..386) -> room 5
+22000 move 290 340
+22500 click 290 340
+# Laptop -> DDF 54 -> "Put movies on sale" -> list dialog -> OK
+26000 move 277 260
+26500 click 277 260
+29500 move 390 210
+30000 click 390 210
+33000 move 115 243
+33500 click 115 243
+# info box -> thumb -> laptop thumb
+36500 move 340 305
+37000 click 340 305
+39500 move 320 300
+40000 click 320 300
+# "To the other WET buildings" -> WET plot
+43000 move 560 100
+43500 click 560 100
+48000 move 320 240

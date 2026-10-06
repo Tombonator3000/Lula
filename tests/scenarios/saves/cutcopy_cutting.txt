@@ -1,0 +1,43 @@
+# Load "ProdAll" (cutcopy_base, slot 4, WET plot) -> Cutting department building (297..404, 92..155) -> room 29.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 350 120
+22500 click 350 120
+# "Buy equipment" (hotspot 6, 466..640 x 289..455) -> sheet "Buy Video editing machine" (0x406121,
+# category 3, slots 0x45841d) -> row 1 "Cut and Go" 1000 $ -> Buy -> left thumb.
+26000 move 550 370
+26500 click 550 370
+29500 move 150 168
+30000 click 150 168
+31500 move 168 341
+32000 click 168 341
+34000 move 292 342
+34500 click 292 342
+# "Cut films" (hotspot 7, 211..360 x 75..296) -> DDF 60 (callback 0x428c1d) "Produced films:" ->
+# entry 1 "Raw Footage" (control 13) -> info box "Cutting the film will take 2 day(s)"
+# (80 minutes: (80 / 10) >> 2 = 2) -> thumb -> sheet thumb (595,440).
+37500 move 280 200
+38000 click 280 200
+41000 move 120 98
+41500 click 120 98
+44000 move 340 300
+44500 click 340 300
+47000 move 595 440
+47500 click 595 440
+# "To the other offices" (hotspot 4, 0..330 x 285..480) -> WET plot, then F2 -> Save game -> slot 4 ->
+# Save -> name -> RETURN.
+50500 move 160 400
+51000 click 160 400
+55000 key F2
+57500 move 305 212
+58000 click 305 212
+60000 move 300 119
+60500 click 300 119
+62500 move 263 228
+63000 click 263 228
+65500 type Cutting
+67000 key RETURN

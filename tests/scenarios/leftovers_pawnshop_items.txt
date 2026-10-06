@@ -1,0 +1,44 @@
+# seconds: 72
+# expects: stage-1 save "Film" (10:00; Small Spotlight, Castor AX 80, Session 1, Super Dildo Neon) -> To the motel -> To the town -> Pawnstore -> The owner -> pawn sheet (DDF 0x40, callback 0x414318): its init 0x4148ac moves the category 0, 1 and 0x64 items (spotlight, camera) into the "Pawnstore things" list, and every paint asks 0x414bb8 for each entry's icon (category 0 -> icon 5, category 1 kind 0 -> icon 1).
+# save: leftovers_s1film
+# note: "Film" is the Load-dialog entry at 300,107 (slot 3)
+# note: the HUD then reads "Account: 19683" = 19668 + 75 - 120 + 60 (seen in a frame dump; the HUD text is not traced)
+# check: CreateFileA\(DATA\\ANI\\BUTCH\.TAF, read
+# check: (?s)script 39500 ms: click 435 175.*DrawTextA\("75 \$"
+# check: DrawTextA\("\$120 was deducted from your account"
+# check: (?s)script 56000 ms: click 365 175.*DrawTextA\("60 \$"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 107
+15500 click 300 107
+17500 move 263 228
+18000 click 263 228
+22000 move 570 200
+22500 click 570 200
+26000 move 30 300
+26500 click 30 300
+30000 move 60 300
+30500 click 60 300
+34000 move 420 190
+34500 click 420 190
+# Your things: the camera (second icon) -> Pawn: 0x45e3a8 = 150 * 50 / 100 = 75 $ is paid out
+39000 move 435 175
+39500 click 435 175
+42000 move 298 368
+42500 click 298 368
+# Pawnstore things: the camera (now kind +0x60 = 1, drawn through the 0x4146e0 call of 0x414bb8) -> Buy back for 150 * 80 / 100 = 120 $
+45500 move 110 175
+46000 click 110 175
+48500 move 298 399
+49000 click 298 399
+# info box "$120 was deducted from your account" (0x408a3a; the sheet is hidden while it shows) -> thumb
+52000 move 344 312
+52500 click 344 312
+# Your things: the spotlight -> Pawn (120 * 50 / 100 = 60 $), then the thumb closes the sheet
+55500 move 365 175
+56000 click 365 175
+58500 move 298 368
+59000 click 298 368
+62000 move 572 380
+62500 click 572 380
+66000 move 320 240

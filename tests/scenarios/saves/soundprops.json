@@ -1,0 +1,319 @@
+{
+ "_comment": [
+  "Recipes of the stage-2 sound studio (room 27) and props (room 32) area (prefix soundprops).",
+  "Movie records: 10 x 0x344 bytes at 0x455aa1, count 0x457b49. +0x148 minutes, +0x14c state (3 = shot), +0x184 cutting state (3 = cut), +0x198 sound state (0 none, 1 being added, 3 done), +0x19c sound track (0x13..0x1c, the sound id chosen in DDF 70), +0x1a0/+0x1a4/+0x1a8 day, month, year the sound track was started, +0x1ac sound days ((minutes / 10) >> 2, at least 1).",
+  "Sound equipment: 10 slots of 16 bytes at 0x458379 (+0 EQUIP.TAP index, +4 condition, +8 value, +0xc -1), count 0x458419."
+ ],
+ "soundprops_base": {
+  "from": "prod_s2staff",
+  "note": "prod_s2staff (all production buildings rented, one employee per job: dubber 418 and sound engineer 447 working, both level 6; cutter 193 level 6; copying girl 257 and warehousewoman 286 working; account 1500000, 8:00 on 1-1-1997, WET plot, 'ProdAll' at 300,119) plus one shot and cut movie without sound and one copying machine, patched: movie count 0x457b49 = 1, record 0 'Sound Test', 80 minutes (+0x148), state 3 (+0x14c), cut (+0x184 = 3), no sound (+0x198 = 0), quality values +0x2f8/+0x2fc/+0x300/+0x30c = 60; copier slot 0 (0x459289) = (29 'Emil Copy 5000', condition 100, value 2, -1), count 0x459329 = 1 (what the game writes when it buys that machine, see cutcopy_copier), so the office laptop can put the movie on sale. Slow clock (0x4556bc = 30, 31 timer calls per game minute) so that no hourly event interrupts the scripts.",
+  "patch": {
+   "0x457b49": 1,
+   "0x455aa1": "Sound Test\u0000",
+   "0x455be9": 80,
+   "0x455bed": 3,
+   "0x455c25": 3,
+   "0x455c39": 0,
+   "0x455d99": 60,
+   "0x455d9d": 60,
+   "0x455da1": 60,
+   "0x455dad": 60,
+   "0x459289": 29,
+   "0x45928d": 100,
+   "0x459291": 2,
+   "0x459295": -1,
+   "0x459329": 1,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "account": 1500000,
+   "hour": 8,
+   "minute": 0,
+   "0x457b49": 1,
+   "0x455be9": 80,
+   "0x455bed": 3,
+   "0x455c25": 3,
+   "0x455c39": 0,
+   "0x458419": 0,
+   "0x459329": 1,
+   "0x4558a9": 1,
+   "0x4612fd": 16,
+   "0x461301": 2,
+   "0x461785": 18,
+   "0x461789": 2
+  }
+ },
+ "soundprops_mixing": {
+  "from": "soundprops_base",
+  "note": "soundprops_base after the game bought sound equipment and started the sound track of the movie (script soundprops_mixing.txt): in room 27 'Buy equipment' -> '3 Mix 3000' (1200 $) -> Buy; 'Add sound track to film' (DDF 60, callback 0x42de52) -> 'Sound Test' -> DDF 70 (callback 0x42e0c4) -> 'Tango' -> Listen -> thumb -> 'Adding sound track will take about 2 day(s).'; saved on the WET plot as 'Mixing' in slot 4 (Load-dialog entry 300,119). Clock patched back to 8:00 and the minute countdown 0x4556c0 to 0. The game wrote: account 1500000 - 1200 = 1498800; sound slot 0 = (45 '3 Mix 3000', condition 100, value 3, -1), count 0x458419 = 1; movie 0 sound state +0x198 = 1, track +0x19c = 0x19 ('Tango' is control 8 of DDF 70, track = control + 0x11), start date +0x1a0/+0x1a4/+0x1a8 = 1-1-1997, sound days +0x1ac = (80 / 10) >> 2 = 2.",
+  "script": "soundprops_mixing.txt",
+  "seconds": 82,
+  "patch": {
+   "0x4556a8": 8,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Mixing",
+   "account": 1498800,
+   "0x458419": 1,
+   "0x458379": 45,
+   "0x45837d": 100,
+   "0x458381": 3,
+   "0x458385": -1,
+   "0x455c39": 1,
+   "0x455c3d": 25,
+   "0x455c41": 1,
+   "0x455c45": 1,
+   "0x455c49": 1997,
+   "0x455c4d": 2,
+   "0x455bed": 3,
+   "0x455c25": 3
+  }
+ },
+ "soundprops_d3clock": {
+  "from": "soundprops_mixing",
+  "note": "Patch-only parent of soundprops_day3: soundprops_mixing with the clock set to Wednesday 3-1-1997 9:59 (day 0x45569c = 3, weekday 0x4556b8 = 2) and the normal speed (0x4556bc = 3).",
+  "patch": {
+   "0x45569c": 3,
+   "0x4556b8": 2,
+   "0x4556a8": 9,
+   "0x4556ac": 59,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Mixing",
+   "day": 3,
+   "hour": 9,
+   "minute": 59,
+   "0x455c39": 1
+  }
+ },
+ "soundprops_day3": {
+  "from": "soundprops_d3clock",
+  "note": "soundprops_d3clock loaded and run past 10:00, saved as 'SndDay3' on the WET plot (Load-dialog entry 300,119). At 10:00 the hourly dispatcher calls 0x42ddff, which compares the days since the sound track was started (0x405314 on +0x1a0: 3 - 1 = 2) with the sound days (+0x1ac = 2) using '>', so the sound track is still being added (+0x198 = 1). Then patched to the slow clock (0x4556bc = 30) and 10:00.",
+  "script": [
+   "11500 move 505 40",
+   "12000 click 505 40",
+   "15000 move 300 119",
+   "15500 click 300 119",
+   "17500 move 263 228",
+   "18000 click 263 228",
+   "28000 key F2",
+   "30500 move 305 212",
+   "31000 click 305 212",
+   "33000 move 300 119",
+   "33500 click 300 119",
+   "35500 move 263 228",
+   "36000 click 263 228",
+   "38500 type SndDay3",
+   "40000 key RETURN"
+  ],
+  "seconds": 46,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "SndDay3",
+   "day": 3,
+   "hour": 10,
+   "0x455c39": 1,
+   "0x455c4d": 2,
+   "0x455bed": 3,
+   "0x458419": 1,
+   "account": 1498800
+  }
+ },
+ "soundprops_d4clock": {
+  "from": "soundprops_mixing",
+  "note": "Patch-only parent of soundprops_sounddone: soundprops_mixing with the clock set to Thursday 4-1-1997 9:59 (day 0x45569c = 4, weekday 0x4556b8 = 3) and the normal speed (0x4556bc = 3).",
+  "patch": {
+   "0x45569c": 4,
+   "0x4556b8": 3,
+   "0x4556a8": 9,
+   "0x4556ac": 59,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Mixing",
+   "day": 4,
+   "hour": 9,
+   "minute": 59,
+   "0x455c39": 1
+  }
+ },
+ "soundprops_sounddone": {
+  "from": "soundprops_d4clock",
+  "note": "soundprops_d4clock loaded and run past 10:00, saved as 'SndDone' on the WET plot (Load-dialog entry 300,119). At 10:00 0x42ddff finds 4 - 1 = 3 days > +0x1ac = 2 and sets the sound state +0x198 = 3 (done). Then patched to the slow clock (0x4556bc = 30) and 10:00, so later scripts are not interrupted by hourly events.",
+  "script": [
+   "11500 move 505 40",
+   "12000 click 505 40",
+   "15000 move 300 119",
+   "15500 click 300 119",
+   "17500 move 263 228",
+   "18000 click 263 228",
+   "28000 key F2",
+   "30500 move 305 212",
+   "31000 click 305 212",
+   "33000 move 300 119",
+   "33500 click 300 119",
+   "35500 move 263 228",
+   "36000 click 263 228",
+   "38500 type SndDone",
+   "40000 key RETURN"
+  ],
+  "seconds": 46,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "SndDone",
+   "day": 4,
+   "hour": 10,
+   "0x455c39": 3,
+   "0x455c3d": 25,
+   "0x455c4d": 2,
+   "0x455bed": 3,
+   "0x455c25": 3,
+   "0x458419": 1,
+   "account": 1498800
+  }
+ },
+ "soundprops_props": {
+  "from": "prod_s2staff",
+  "note": "prod_s2staff (all production buildings rented, one employee per job: set builder 280 level 6, props assistant 394 level 6 and props manageress 550 level 9 working; account 1500000, 8:00 on 1-1-1997, WET plot, 'ProdAll' at 300,119) with a slow clock (0x4556bc = 30, 31 timer calls per game minute), so that no hourly event (10:00 marketing roll 0x42f334, 13:00 sabotage roll 0x43070e) calls rand() or shows a box during the props scripts. The props room setup 0x42c28f rolls rand() % 100 > 90 on every entry; with the runner's fixed clock and no clock-driven rand() calls the third entry after loading this save is the one that starts the talk (strings 1406-1414).",
+  "patch": {
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "account": 1500000,
+   "0x4556bc": 30,
+   "0x4559e9": 1,
+   "0x45fd6d": 6,
+   "0x45fd71": 2,
+   "0x460f3d": 13,
+   "0x460f41": 2,
+   "0x46279d": 14,
+   "0x4627a1": 2,
+   "0x459285": 0
+  }
+ },
+ "soundprops_list": {
+  "from": "soundprops_base",
+  "note": "soundprops_base with one '3 Mix 3000' in the sound studio (slot 0x458379 = (45, 100, 3, -1), what the game writes in soundprops_mixing; count 0x458419 = 1) and five more movie records (count 0x457b49 = 6), to test the filter of the DDF 60 list in 0x42de52 (movie i is listed in control 13 + i only when state +0x14c = 3, sound state +0x198 = 0 and cutting state +0x184 = 3): 1 'Not Cut' (state 3, cut 0), 2 'Being Cut' (state 3, cut 1), 3 'Has Sound' (state 3, cut 3, sound 3), 4 'Still Planned' (state 1, cut 3), 5 'Short Film' (20 minutes, state 3, cut 3, sound 0: (20 / 10) >> 2 = 0, raised to 1 day). Name and Load-dialog entry stay 'ProdAll' (300,119).",
+  "patch": {
+   "0x457b49": 6,
+   "0x458379": 45,
+   "0x45837d": 100,
+   "0x458381": 3,
+   "0x458385": -1,
+   "0x458419": 1,
+   "0x455de5": "Not Cut\u0000",
+   "0x455f2d": 60,
+   "0x455f31": 3,
+   "0x455f69": 0,
+   "0x455f7d": 0,
+   "0x456129": "Being Cut\u0000",
+   "0x456271": 60,
+   "0x456275": 3,
+   "0x4562ad": 1,
+   "0x4562c1": 0,
+   "0x45646d": "Has Sound\u0000",
+   "0x4565b5": 60,
+   "0x4565b9": 3,
+   "0x4565f1": 3,
+   "0x456605": 3,
+   "0x4567b1": "Still Planned\u0000",
+   "0x4568f9": 60,
+   "0x4568fd": 1,
+   "0x456935": 3,
+   "0x456949": 0,
+   "0x456af5": "Short Film\u0000",
+   "0x456c3d": 20,
+   "0x456c41": 3,
+   "0x456c79": 3,
+   "0x456c8d": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "0x457b49": 6,
+   "0x458419": 1,
+   "0x455f31": 3,
+   "0x455f69": 0,
+   "0x455f7d": 0,
+   "0x456275": 3,
+   "0x4562ad": 1,
+   "0x4562c1": 0,
+   "0x4565b9": 3,
+   "0x4565f1": 3,
+   "0x456605": 3,
+   "0x4568fd": 1,
+   "0x456935": 3,
+   "0x456949": 0,
+   "0x456c41": 3,
+   "0x456c79": 3,
+   "0x456c8d": 0
+  }
+ },
+ "soundprops_propsets": {
+  "from": "soundprops_props",
+  "note": "soundprops_props after the game bought two sets and sold one in the props room (script soundprops_propsets.txt): 'Buy sets' -> 'Castle Everrandy' (21000 $) -> Buy -> 'City Sex' (12000 $) -> Buy -> sell list 'City Sex' (10800 $ = 12000 * 90 / 100) -> Sell; saved on the WET plot as 'PropSets' in slot 4 (Load-dialog entry 300,119). Clock patched back to 8:00 and the minute countdown 0x4556c0 to 0. The purchase writes slot 0 = (42 'Castle Everrandy', condition 100, value 5, -1) and slot 1 = (City Sex); the sale clears slot 1 back to -1 and the count 0x459285 is the number of used slots (1).",
+  "script": "soundprops_propsets.txt",
+  "seconds": 68,
+  "patch": {
+   "0x4556a8": 8,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "PropSets",
+   "account": 1477800,
+   "0x459285": 1,
+   "0x459145": 42,
+   "0x459149": 100,
+   "0x45914d": 5,
+   "0x459151": -1,
+   "0x459155": -1,
+   "0x459159": -1
+  }
+ }
+}

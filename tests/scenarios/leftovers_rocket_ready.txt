@@ -1,0 +1,18 @@
+# seconds: 60
+# expects: stage-3 save "Store3" with 50000000 $ and the clock at 21:50 (Tuesday 2-1-1997) -> Los Angeles city map -> 21:59 day end 0x404a33: info box "And another busy day comes to an end." -> thumb -> the rest of the day end (store simulation 0x4225fc, ...) and, because the account is 50000000 or more and 0x45dc08 is 0, 0x42977e: the launch tower picture with "You now have enough money to launch the rocket!\nEverything is ready in Houston." (string 1152, drawn by 0x43d079), a sound stream on channel 8 (0x438712) and a 250-tick wait (0x404e47, about 15 s, no frames presented meanwhile); 0x45dc08 = 1 afterwards -> the city map again on Wednesday 3-1-1997 9:00.
+# save: leftovers_s3rocket
+# note: "Store3" is the Load-dialog entry at 300,119 (slot 4)
+# check: DrawTextA\("And another busy day comes to an end\."
+# check: (?s)script 24500 ms: click 330 300.*DrawTextA\("You now have enough money to launch the rocket!
+# check: (?s)launch the rocket!.*DrawTextA\("Los Angeles"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# the day end box comes a few seconds after loading -> thumb
+24000 move 330 300
+24500 click 330 300
+# the rocket picture stays for 250 timer ticks, then the city map returns
+30000 move 320 240

@@ -1,0 +1,57 @@
+# seconds: 125
+# expects: prod_s2staff (all production buildings rented, one employee per job: advertising manager Nina Mount 466 and switchboard operator Helga Schnabel 437 working, account 1500000, Monday 1-1-1997 8:00) loads on the WET plot -> Marketing office (room 31, setup 0x42eb33, WERBUNG.TAF) -> "Start scandals" (158..297, 206..278; 0x42ec40 case 7 needs an advertising manager, job 19) opens the "Start scandals" sheet (DDF 0x3b, callback 0x42f183, ten scandals) -> "Lula sells dildos at car boot sale" -> yes/no "This scandal will cost you $12000. Prepare scandal?" (1606) -> thumb (yes): account -12000, scandal 3 prepared (0x459661 = 1), its button disappears -> "Lula distributes condoms after service" $10000 -> yes -> "Lula has photos thrown from airplane" $15000 -> yes -> "Lula caught with President" $180000 -> toilet (no) -> thumb closes the sheet (account 1463000 in the status line) -> "Start scandals" again: the init message (0x110) hides the three prepared scandals -> thumb -> wait in the office until 10:00: the stage-2 hourly hook calls 0x42f334, which breaks the first prepared scandal with rand() % 100 > 50 -> newspaper "SCANDAL" screen 0x43015e: "Lula, WET company's porn star, sells dildos at car boot sale!" (1607 + 3) for 150 timer ticks (a click at 600,30, where the office has no hotspot, ends it if it is still up at 112 s) -> the office is entered again (WERBUNG.TAF). No lula[warn]/trap.
+# save: prod_s2staff
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot at 8:00. The clock stops while a sheet is open, so 10:00 comes about 75 s into the run.
+# random: the 10:00 roll uses rand() (seeded from the runner's fixed LULA_CLOCK); in every run so far the first prepared scandal (index 3, dildos) broke on the first roll. If another prepared scandal breaks, the headline check names the wrong text; three prepared scandals make a day without a scandal unlikely even with other rand() values (0.51^3).
+# check: (?s)ms: click 266 205.*DrawTextA\("This scandal will cost you \$12000\. Prepare scandal\?".*ms: click 266 349.*DrawTextA\("This scandal will cost you \$10000\. Prepare scandal\?".*ms: click 266 262.*DrawTextA\("This scandal will cost you \$15000\. Prepare scandal\?"
+# check: (?s)ms: click 266 376.*DrawTextA\("This scandal will cost you \$180000\. Prepare scandal\?"
+# check: (?s)script 56000 ms: move 230 240\n(?:(?!lula\[trace\] DrawTextA)[^\n]*\n)*lula\[info\] script 56500 ms: click 230 240\n(?:lula\[info\][^\n]*\n)*lula\[trace\] DrawTextA\("Start scandals\s*"(?:(?!script 59000).)*DrawTextA\("\s*Lula caught with President\s*"
+# check: (?s)script 62000 ms: move 600 30.*DrawTextA\("Lula, WET company's porn star, sells dildos at car boot sale!", rect 441,100,630,470
+# check: (?s)rect 441,100,630,470.*CreateFileA\(DATA\\ANI\\WERBUNG\.TAF, read
+# reject: (?s)script 56500 ms: click 230 240.*DrawTextA\("\s*Lula (sells dildos|distributes condoms|has photos thrown)
+# reject: (?s)script 50500 ms: click 400 305.*(Major pile-up|At midday in Chicago|Porn star Lula distributes condoms)
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Marketing office building
+22000 move 400 210
+22500 click 400 210
+# Start scandals
+26000 move 230 240
+26500 click 230 240
+# Lula sells dildos at car boot sale ($12000) -> yes
+29000 move 266 205
+29500 click 266 205
+32000 move 318 305
+32500 click 318 305
+# Lula distributes condoms after service ($10000) -> yes
+35000 move 266 349
+35500 click 266 349
+38000 move 318 305
+38500 click 318 305
+# Lula has photos thrown from airplane ($15000) -> yes
+41000 move 266 262
+41500 click 266 262
+44000 move 318 305
+44500 click 318 305
+# Lula caught with President ($180000) -> toilet (no)
+47000 move 266 376
+47500 click 266 376
+50000 move 400 305
+50500 click 400 305
+# thumb closes the sheet
+53000 move 495 370
+53500 click 495 370
+# Start scandals again: the prepared ones are hidden -> thumb
+56000 move 230 240
+56500 click 230 240
+59000 move 495 370
+59500 click 495 370
+# wait for 10:00 in the office; the newspaper stays up for 150 timer ticks (9 s, longer when the
+# machine is busy) or until a click: the click at 600,30 (no hotspot in the office) ends it
+62000 move 600 30
+112000 click 600 30

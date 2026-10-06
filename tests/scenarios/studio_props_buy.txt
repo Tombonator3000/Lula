@@ -1,0 +1,63 @@
+# seconds: 104
+# expects: 'Shooting' (studio_props: movie 0 "Studio Heat" being shot in studio 1, empty sex toy store, minute countdown 2 at 8:29, minute length 401 ticks) on the WET plot -> the first 8:30 roll of 0x4242f2 takes the props branch and asks for need 5: "For the next scene, we need a powerful vibrator!" (string 2037 with 2043) in DREH_MSG_ANYWHERE_DLG (0x425075) -> studio icon -> room 24, the setup opens DREH_MSG_STUDIO_DLG (0x424ffb) -> thumb -> 0x4250fd: props building rented but no matching free toy in the store -> DREH_TOY1_DLG (DDF 34, callback 0x425509) -> sex shop tile (control 0): 0x425a1e clears the paint hook, shows the sex shop background and opens the buy sheet 0x406121 (category 10, one slot): "Buy Sex toy" -> row 1 "Super Dildo Neon" (need 3, "Giant dildo", 50 $) -> Buy -> thumb: wrong toy -> "The director didn't ask for that. Do it anyway?" -> no: the slot is cleared and the sheet opens again (the 50 $ stay spent) -> row 6 "Arnie II Super Power" (need 5, "Vibrator", 150 $) -> Buy -> thumb: the right toy, so it is appended to the store 0x4584c1 (count 0x459141 = 1) for studio 1 (+0xc = 0) -> "Shooting is continuing!" -> thumb -> the next 8:30 roll is an actor problem in the studio: "Thommy Session doesn't dare to drop his pants!" (DREH_MSG_STUDIO_DLG from 0x4242f2) -> thumb -> DREH_EVENT_ACTION_DLG -> boot -> "You really want to fire Thommy Session?" -> yes: status 0, refusal counter +0x14 + 1, 0x42568e removes him from the cast, "OK, Thommy Session has been fired!" -> thumb -> "There aren't enough actors to carry on shooting" -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# save: studio_props
+# note: "Shooting" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: the props wish, the toy it wants and the actor problem after it come from rand(), seeded from the runner's fixed LULA_CLOCK; the game logic runs once per WM_TIMER tick and stands still while the sheets are open, so they repeat (see studio_event_actor.txt)
+# note: DREH_TOY1_DLG tiles at y 240: sex shop 267, toilet 371; buy sheet rows at x 150, y 168 + 15.5 per row, Buy 168,341, thumb 292,342
+# note: the save written at the end (checked with --keep) holds the store [(7, 100, 6, 0)], count 1, account 1499530 (50 $ + 150 $ spent), actor 527 in status 0 with +0x14 = 1, cast list [17]
+# check: (?s)DrawTextA\("For the next scene, we need a powerful vibrator!", rect 279,160,475,278.*ms: click 360 311.*DrawTextA\("For the next scene, we need a powerful vibrator!", rect 279,160,474,273
+# check: (?s)ms: click 267 240.*DrawTextA\("Buy Sex toy".*DrawTextA\("Giant dildo".*ms: click 292 342.*DrawTextA\("The director didn't ask for that\. Do it anyway\?"
+# check: (?s)ms: click 150 245.*DrawTextA\("Vibrator", rect 47,138,249,156.*DrawTextA\("Vibrator", rect 333,139,544,156.*ms: click 292 342.*DrawTextA\("Shooting is continuing!"
+# check: (?s)DrawTextA\("Thommy Session doesn't dare to drop his pants!".*DrawTextA\("You really want to fire Thommy Session\?".*DrawTextA\("OK, Thommy Session has been fired!".*DrawTextA\("There aren't enough actors to carry on shooting"
+# check: (?s)ms: click 320 40\b.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# main menu -> Load Game -> Shooting -> Load (WET plot, 8:29)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# props wish on the plot -> studio icon -> studio sheet thumb -> DREH_TOY1_DLG
+24000 move 360 311
+24500 click 360 311
+28000 move 365 305
+28500 click 365 305
+# sex shop -> Buy (row 1 preselected) -> thumb -> "didn't ask" -> no
+32000 move 267 240
+32500 click 267 240
+35500 move 168 341
+36000 click 168 341
+38000 move 292 342
+38500 click 292 342
+41500 move 400 305
+42000 click 400 305
+# row 6 -> Buy -> thumb -> "Shooting is continuing!" -> thumb
+45000 move 150 245
+45500 click 150 245
+47000 move 168 341
+47500 click 168 341
+49500 move 292 342
+50000 click 292 342
+53000 move 340 300
+53500 click 340 300
+# actor problem in the studio -> thumb -> boot -> yes -> thumb
+64000 move 365 305
+64500 click 365 305
+68000 move 397 240
+68500 click 397 240
+71500 move 318 305
+72000 click 318 305
+75000 move 340 300
+75500 click 340 300
+# To the other offices -> WET plot -> F2 save
+79000 move 320 40
+79500 click 320 40
+82500 key F2
+84500 move 305 212
+85000 click 305 212
+86500 move 300 119
+87000 click 300 119
+88500 move 263 228
+89000 click 263 228
+91000 type PropsBuy
+92500 key RETURN

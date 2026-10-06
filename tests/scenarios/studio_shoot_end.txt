@@ -1,0 +1,49 @@
+# seconds: 84
+# expects: 'Shooting' (studio_end: movie 0 "Studio Heat" in production in studio 1 with 0 hours left and Lula cast, clock 8:25, slow clock 0x4556bc = 30) on the WET plot -> Studio 1 (room 24): shooting animation, the film strip still shows "Studio Heat" (0x484848[0] = 1) -> wait in the studio: at 8:30 0x42408f calls 0x4242f2, which finds +0x38 = 0 (no event roll), calls 0x425775 (quality values) and ends the shooting: Lula's counter 0x458371 + 1, movie state 3, +0x17c/+0x1b0 = 0, end date +0x168, studio record +0x34 = -1 and +0x3c = 0, the cast back to status 1; since the player is in a studio room it stops the sounds and calls 0x423e61, which finds no planned movie (0x406018(1) = 0) and clears 0x484848[0], so the strip "Studio Heat" is no longer drawn. The hotspot count [0x45d4d0] stays 1 (only 0x4236e3 at room entry sets it back to 8), so "Assign director" still does nothing until the room is entered again (original code) -> To the other offices -> Studio 1 again -> "Assign director" opens the director's card -> thumb -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# save: studio_end
+# note: "Shooting" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: the game minute is 1.86 s here; 8:30 (end of shooting) comes about 7.5 s after the load: a probe run with "dump" markers every 500 ms saw the strip vanish between 25.5 s and 26 s, so the studio click at 22.5 s has about 3 s of slack (a busy machine only slows the game clock and adds slack)
+# note: the save written at the end (checked with --keep) holds movie state 3, end date 1-1-1997, Lula flag 0, studio record +0x34 = -1, +0x38 = 0, +0x3c = 0, actors 527 and 17 in status 1, 0x458371 = 1 and the values of 0x425775: +0x2f8 = 85 (cast levels 8 and 9, times 10, averaged), +0x2fc = 62 ((70 + 60 + 60 + 70 + 60 + 60 + 60 + 60) / 8: director, lighting engineer, cameraman, then the working casting director, writer, production designer, production assistant and set builder), +0x300 = 35 ((3 * 100 / 100 * 10 + 4 * 100 / 100 * 10) / 2 from the camera and spotlight slots), +0x30c = 0 (0x458349)
+# check: (?s)ms: click 230 250.*CreateFileA\(DATA\\DIALOG\\stud_dia\.TAF, read.*DrawTextA\("Studio Heat", rect 140,430,520,448
+# check: ms: move 300 300\n(?:(?!lula\[info\] script )[^\n]*\n)*?lula\[trace\] DrawTextA\("STUDIO 1"
+# check: (?s)57500 ms: click 320 290.*CreateFileA\(DATA\\ANI\\Perskart\.TAF, read.*DrawTextA\("Bernie Pornolando"
+# check: (?s)ms: click 320 40\b.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: 46500 ms: click 320 290\n(?:(?!lula\[info\] script )[^\n]*\n)*[^\n]*Perskart
+# note: the check on "STUDIO 1" in the 44000 ms step shows the player is still in studio 1 there; the reject below proves the strip "Studio Heat" is no longer drawn from that step on (shooting over while the player stood in the studio)
+# reject: (?s)ms: move 300 300\n.*Studio Heat
+# main menu -> Load Game -> Shooting -> Load (WET plot, room 20, 8:25)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Studio 1 building, then wait in the studio past 8:30
+22000 move 230 250
+22500 click 230 250
+26000 move 600 300
+44000 move 300 300
+# Assign director: no reaction yet
+46000 move 320 290
+46500 click 320 290
+# To the other offices -> Studio 1 again -> Assign director -> thumb
+49500 move 320 40
+50000 click 320 40
+53500 move 230 250
+54000 click 230 250
+57000 move 320 290
+57500 click 320 290
+60500 move 500 380
+61000 click 500 380
+# To the other offices -> WET plot -> F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+63500 move 320 40
+64000 click 320 40
+67000 key F2
+69000 move 305 212
+69500 click 305 212
+71000 move 300 119
+71500 click 300 119
+73000 move 263 228
+73500 click 263 228
+75500 type Ended
+77000 key RETURN

@@ -1,0 +1,96 @@
+{
+ "_comment": [
+  "Recipes of the stage-2 marketing office (room 31) and reception (room 26), prefix marketing.",
+  "Advertising campaigns: 4 records of 28 bytes at 0x4595b9 (0 Lula Promotion Tour, 1 Ads, 2 Posters, 3 TV ads; DDF 0x3a controls 2-5, callback 0x42f03d): +0 price (25000, 14000, 8500, 160000), +4 value (25, 15, 10, 50; set by 0x402f72 only, never read), +8/+0xc/+0x10 day, month, year started (0x4052ed), +0x14 duration in days (20, 40, 60, 45), +0x18 = 1 running. The day end 0x42f2ba stops a campaign when 0x405314(date) > duration and returns 25 * (campaigns that were running) to the warehouse 0x42ab22.",
+  "Scandals: 10 records of 16 bytes at 0x459629 (DDF 0x3b controls 2-11, callback 0x42f183): +0 price (35000, 28000, 64000, 12000, 80000, 15000, 70000, 30000, 10000, 180000), +4 points added to 0x458375 when it breaks, +8 = 1 prepared (paid), +0xc = 1 broken. At 10:00 in stage 2, 0x42f334 walks the prepared and not yet broken scandals in index order and breaks the first one with rand() % 100 > 50 (at most one a day): newspaper 0x43015e (string 1607 + index), 0x458375 += points, +0xc = 1."
+ ],
+ "marketing_poor": {
+  "from": "prod_s2staff",
+  "note": "prod_s2staff with the account patched to 30000. With the credit line 0x455684 = 70000 the stage-2 check 0x40561d (account + credit line >= price) allows 100000 $: TV ads (160000) and the President scandal (180000) are refused with string 903, Lula Promotion Tour (25000) is allowed. Name and Load-dialog entry stay 'ProdAll' (300,119).",
+  "patch": {
+   "0x45568c": 30000
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "account": 30000,
+   "0x455684": 70000,
+   "0x4601a9": 2,
+   "0x4615f9": 2,
+   "0x461a81": 2
+  }
+ },
+ "marketing_ads": {
+  "from": "prod_s2staff",
+  "note": "prod_s2staff after the game itself started two advertising campaigns (Lula Promotion Tour 25000 $, Posters 8500 $) and prepared three scandals (index 3 dildos 12000 $, 5 photos from airplane 15000 $, 8 condoms 10000 $) in the marketing office (script marketing_ads.txt), saved on the WET plot as 'MktAds' in slot 4 (Load-dialog entry 300,119) at about 9:20. Then the clock is patched to 9:50, so the 10:00 scandal roll 0x42f334 comes about 2.5 s after loading.",
+  "script": "marketing_ads.txt",
+  "seconds": 100,
+  "patch": {
+   "0x4556a8": 9,
+   "0x4556ac": 50,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "MktAds",
+   "account": 1429500,
+   "hour": 9,
+   "minute": 50,
+   "0x4595d1": 1,
+   "0x4595c1": 1,
+   "0x4595c5": 1,
+   "0x4595c9": 1997,
+   "0x4595ed": 0,
+   "0x459609": 1,
+   "0x4595f9": 1,
+   "0x459601": 1997,
+   "0x459625": 0,
+   "0x459631": 0,
+   "0x459661": 1,
+   "0x459665": 0,
+   "0x459681": 1,
+   "0x459685": 0,
+   "0x4596b1": 1,
+   "0x4596b5": 0,
+   "0x4596c1": 0,
+   "0x458375": 0
+  }
+ },
+ "marketing_news": {
+  "from": "marketing_ads",
+  "note": "marketing_ads after the 10:00 scandal roll (script marketing_news.txt): the game broke scandal 3 (dildos, the first prepared one; rand() seeded from the runner's fixed LULA_CLOCK passes on the first roll), showed the newspaper on the WET plot and was saved there as 'MktNews' in slot 4 (300,119). The check proves what 0x42f334 does after the newspaper: 0x458375 += 5 (scandal 3 points), scandal 3 +0xc = 1 (broken, still prepared), scandals 5 and 8 still waiting, account unchanged. Then the date is patched to Tuesday 1-2-1997 9:50 (day 0x45569c = 2, weekday 0x4556b8 = 1), so the next 10:00 roll comes about 2.5 s after loading without a day end in between (a real day end here runs the 9:00 trash event 0x40e4a4, whose 0x40716d clock jump of 2 hours skips the 10:00 hook).",
+  "script": "marketing_news.txt",
+  "seconds": 56,
+  "patch": {
+   "0x45569c": 2,
+   "0x4556b8": 1,
+   "0x4556a8": 9,
+   "0x4556ac": 50,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "MktNews",
+   "account": 1429500,
+   "hour": 9,
+   "minute": 50,
+   "day": 2,
+   "0x458375": 5,
+   "0x459661": 1,
+   "0x459665": 1,
+   "0x459681": 1,
+   "0x459685": 0,
+   "0x4596b1": 1,
+   "0x4596b5": 0,
+   "0x4595d1": 1,
+   "0x459609": 1,
+   "0x4556b8": 1
+  }
+ }
+}

@@ -1,0 +1,376 @@
+{
+ "_comment": [
+  "Recipes of the movie area (prefix movie): one stage-2 movie made from start to finish through the game's own UI, then sold. The game itself moves the movie from one production state to the next; recipes only patch the clock, the date or the game speed (and the parent's setup: Lula's flat rented, slow clock).",
+  "Movie record 0 at 0x455aa1 (0x344 bytes, count 0x457b49): +0 title, +0x100 storyline, +0x104 category (0 family, 50 soft, 100 hardcore), +0x108 scenes, +0x148 minutes, +0x14c state (0 planning, 1 planned, 2 in production, 3 shot), +0x154 basic price paid, +0x158/+0x174/+0x178 recommended and chosen shooting days, +0x15c start of shooting, +0x168 end of shooting, +0x17c paused, +0x184 cutting state (0, 1 being cut, 3 cut) with date +0x188 and days +0x194, +0x198 sound state with track +0x19c, date +0x1a0 and days +0x1ac, +0x1b0 Lula cast, +0x1b4 cast list, +0x2f4 cast count, +0x2f8/+0x2fc/+0x300/+0x30c quality values (0x425775), +0x304/+0x308 sound and cutting equipment values and +0x310 the movie value (0x411a4c).",
+  "Staff table: record i at SAVEGAME file offset 0x7b8d + 40*i, written as the pseudo address 0x45d1ad + 40*i (+0 job, +4 status: 1 hired and idle, 2 working, 3 training, 5 sick after a beauty operation; +0xc level; +0x18/+0x1c/+0x20 start date and +0x24 days of a training or an operation). Actor 527 Thommy Session at 0x462405 (+0), actress 17 Cassandra Casablanca at 0x45d455."
+ ],
+ "movie_s2": {
+  "from": "prod_s2staff",
+  "note": "prod_s2staff (all production buildings rented, one employee per job, actor 527 level 8 and actress 17 level 9 hired and idle, account 1500000, Monday 1-1-1997 8:00, WET plot) with Lula's flat rented (building 8 flag 0x455999 = 1, so the office broom cupboard leads to room 23) and the slow clock (0x4556bc = 30, 31 timer calls per game minute) so that no hourly event interrupts the scripts. Name and Load-dialog entry stay 'ProdAll' (300,119).",
+  "patch": {
+   "0x455999": 1,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "account": 1500000,
+   "day": 1,
+   "hour": 8,
+   "minute": 0,
+   "0x455999": 1,
+   "0x457b49": 0,
+   "0x462405": 20,
+   "0x462409": 1,
+   "0x462411": 8,
+   "0x45d455": 21,
+   "0x45d459": 1,
+   "0x45d461": 9
+  }
+ },
+ "movie_planned": {
+  "from": "movie_s2",
+  "note": "movie_s2 after the game planned movie 0 in room 22 (script movie_planned.txt): Write screenplay -> New -> 'Hot Sauna' -> storyline list entry 5 -> thumbs up; Define the subject -> Hardcore (100); Work on storyboard -> film strip pictures 0-3 (4 scenes, 40 minutes, 4000 $) -> Conclude planning -> yes (state 1, 4000 $ paid at 0x41f071); saved on the WET plot as 'Planned' in slot 4 (300,119). Clock patched back to 8:00 and the minute countdown to 0.",
+  "script": "movie_planned.txt",
+  "seconds": 104,
+  "patch": {
+   "0x4556a8": 8,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Planned",
+   "account": 1496000,
+   "0x457b49": 1,
+   "0x455aa1": 544501576,
+   "0x455ba5": 100,
+   "0x455ba9": 0,
+   "0x455bb5": 3,
+   "0x455bb9": -1,
+   "0x455be9": 40,
+   "0x455bed": 1,
+   "0x455bf5": 4000
+  }
+ },
+ "movie_beauty": {
+  "from": "movie_planned",
+  "note": "movie_planned after the game gave both actors a beauty operation (script movie_beauty.txt): office -> To the overview -> Beauty clinic (room 8, setup 0x43273f) -> Give actors beauty treatment -> DDF 0x10 (0x4329e0) -> actors -> card DDF 0x11 (0x432d30) of Thommy Session -> OK -> DDF 0x37 (0x4331c4) 'Lift thighs' (price table 0x485c14: 12000, 18000, 8000, 10000, 15000) -> OK -> 'The operation you want costs $8000. Do it?' -> yes; the same for the actress Cassandra Casablanca; back on the WET plot and saved as 'Beauty' in slot 4 (300,119). The game wrote status 5 (sick), start date 1-1-1997 (+0x18) and 8 days (+0x24 = price / 1000) for both, but took the 8000 $ only for the actress: the actor branch of 0x4329e0 (0x432af5..0x432b62) has no 'sub [0x45568c]', the actress branch has it at 0x432cd1 (original code). Clock patched back to 8:00.",
+  "script": "movie_beauty.txt",
+  "seconds": 98,
+  "patch": {
+   "0x4556a8": 8,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Beauty",
+   "account": 1488000,
+   "0x462409": 5,
+   "0x462411": 8,
+   "0x46241d": 1,
+   "0x462421": 1,
+   "0x462425": 1997,
+   "0x462429": 8,
+   "0x45d459": 5,
+   "0x45d461": 9,
+   "0x45d46d": 1,
+   "0x45d471": 1,
+   "0x45d475": 1997,
+   "0x45d479": 8,
+   "0x455bed": 1
+  }
+ },
+ "movie_heal_clock": {
+  "from": "movie_beauty",
+  "note": "Patch-only parent of movie_healed: movie_beauty with the date moved on to Monday 8-1-1997 19:50 (day 0x45569c = 8, weekday 0x4556b8 = 0) and the normal speed (0x4556bc = 3), so the day end comes about 3 s after loading. Nothing else changes: the operation of both actors started on 1-1-1997 and lasts 8 days.",
+  "patch": {
+   "0x45569c": 8,
+   "0x4556b8": 0,
+   "0x4556a8": 19,
+   "0x4556ac": 50,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Beauty",
+   "day": 8,
+   "hour": 19,
+   "minute": 50,
+   "0x462409": 5,
+   "0x45d459": 5
+  }
+ },
+ "movie_healed": {
+  "from": "movie_heal_clock",
+  "note": "movie_heal_clock loaded on the WET plot and run through the 19:59 day end into Tuesday 9-1-1997 (script inline: three clicks at 366,300 and two at 300,395, which hit the thumbs of the trash box, 'And another busy day comes to an end.' and Daily costs and fall on empty plot ground otherwise), then saved as 'Healed' in slot 4 (300,119). The day-end staff update 0x41da0d (status-5 loop at 0x41dae5) finds 9 - 1 = 8 days >= +0x24 = 8 for both actors: level +0xc + 1 (capped at 9), +0x24 = 0, the date cleared and status 1. So actor 527 goes from level 8 to 9 and actress 17 stays at 9. Then patched to the slow clock (0x4556bc = 30) at 9:00.",
+  "script": [
+   "11500 move 505 40",
+   "12000 click 505 40",
+   "15000 move 300 119",
+   "15500 click 300 119",
+   "17500 move 263 228",
+   "18000 click 263 228",
+   "23500 move 366 300",
+   "24000 click 366 300",
+   "27000 move 366 300",
+   "27500 click 366 300",
+   "30500 move 366 300",
+   "31000 click 366 300",
+   "34000 move 300 395",
+   "34500 click 300 395",
+   "37500 move 300 395",
+   "38000 click 300 395",
+   "41000 key F2",
+   "43500 move 305 212",
+   "44000 click 305 212",
+   "46000 move 300 119",
+   "46500 click 300 119",
+   "48500 move 263 228",
+   "49000 click 263 228",
+   "51500 type Healed",
+   "53000 key RETURN"
+  ],
+  "seconds": 58,
+  "patch": {
+   "0x4556a8": 9,
+   "0x4556ac": 0,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Healed",
+   "day": 9,
+   "hour": 9,
+   "0x4556b8": 1,
+   "0x462409": 1,
+   "0x462411": 9,
+   "0x462429": 0,
+   "0x46241d": 0,
+   "0x45d459": 1,
+   "0x45d461": 9,
+   "0x45d479": 0,
+   "0x455bed": 1
+  }
+ },
+ "movie_cast": {
+  "from": "movie_healed",
+  "note": "movie_healed after the game cast the movie (script movie_cast.txt): casting office -> Cast actors (0x41cea2) -> 'Hot Sauna' -> clapper -> male: Thommy Session (527) -> cast; female: Cassandra Casablanca (17) -> cast (0x41d1c8: status 1 -> 2, cast list +0x1b4, cast count +0x2f4); then office -> broom cupboard -> Lula's flat (room 23) -> 'Cast Lula for movie' -> list -> OK (0x42036d sets the Lula flag +0x1b0); back to the WET plot and saved as 'Cast' in slot 4 (300,119). Clock patched back to 9:00.",
+  "script": "movie_cast.txt",
+  "seconds": 100,
+  "patch": {
+   "0x4556a8": 9,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Cast",
+   "day": 9,
+   "account": 1478733,
+   "0x455bed": 1,
+   "0x455c51": 1,
+   "0x455c55": 527,
+   "0x455c59": 17,
+   "0x455d95": 2,
+   "0x462409": 2,
+   "0x45d459": 2
+  }
+ },
+ "movie_shooting": {
+  "from": "movie_cast",
+  "note": "movie_cast after the game equipped studio 1 and started shooting (script movie_shooting.txt): staff cards of lighting engineer 164, cameraman 230 and director 377 -> assign (studio record 0x458289 +0x20/+0x24/+0x28, status 2); 'Small Spotlight' (120 $) and 'Castor AX 80' (150 $) bought; film strip -> 'Hot Sauna' -> START -> 'The director recommends 4 days' (+0x158 = 40 / 10) -> Change filmtime -> 1 day -> thumb (0x424b50: 4 > 1, so the director's frustration +0x2c goes up by 1; hours left +0x38 = 10); saved on the WET plot as 'Shooting' in slot 4 (300,119). Clock patched back to 9:00.",
+  "script": "movie_shooting.txt",
+  "seconds": 125,
+  "patch": {
+   "0x4556a8": 9,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Shooting",
+   "day": 9,
+   "account": 1478463,
+   "0x455bed": 2,
+   "0x455bf9": 4,
+   "0x455c15": 1,
+   "0x455c19": 1,
+   "0x455bfd": 9,
+   "0x455c01": 1,
+   "0x455c05": 1997,
+   "0x4582bd": 0,
+   "0x4582c1": 10,
+   "0x4582c5": 1,
+   "0x4582b5": 1,
+   "0x4582b9": 8,
+   "0x4582a9": 164,
+   "0x4582ad": 230,
+   "0x4582b1": 377,
+   "0x458289": 55,
+   "0x458299": 214
+  }
+ },
+ "movie_shot_clock": {
+  "from": "movie_shooting",
+  "note": "Patch-only parent of movie_shot: movie_shooting (studio 1 shooting 'Hot Sauna', 10 hours left) with the clock moved on to 15:40 on Tuesday 9-1-1997 and the fastest game speed (0x4556bc = 0: one timer call per game minute, about 4 s per game hour), so that the shooting hours run out through the 19:59 day end and on the next morning while a script waits in the studio.",
+  "patch": {
+   "0x4556a8": 15,
+   "0x4556ac": 40,
+   "0x4556bc": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Shooting",
+   "day": 9,
+   "hour": 15,
+   "minute": 40,
+   "0x4582c1": 10,
+   "0x455bed": 2,
+   "0x4556bc": 0
+  }
+ },
+ "movie_shot": {
+  "from": "movie_shot_clock",
+  "note": "movie_shot_clock after the game finished shooting (script movie_shot.txt): loaded at 15:40 on 9-1-1997 with the fast clock, the player waits in studio 1 while clicks at 350,300 / 340,260 / 300,395 answer whatever box comes up. With the runner's fixed LULA_CLOCK the 16:00 event roll of 0x4242f2 gives 'Thommy Session doesn't dare to drop his pants!' (DDF 29) -> money (DDF 33): 'You pay a $500 bonus' -> 'Shooting is continuing!'; then the 19:59 day end (Daily costs -9267 $), and on the 10th 0x425703 counts the last of the 10 hours and 0x4242f2 ends the shooting (0x425775 writes the quality values, movie state 3, cast back to status 1, studio record +0x34 = -1, Lula's movie counter 0x458371 + 1); the studio strip disappears. The player stays in the studio through the next day end and saves there as 'Shot' (room 24) on the 11th. Then patched to the slow clock at 9:00 on Thursday 11-1-1997. Account: 1478463 - 500 - 2 x 9267 = 1459429. Quality: +0x2f8 = (90 + 90) / 2 = 90 (cast levels after the beauty operation), +0x2fc = 10 * (director 7 + lighting 6 + cameraman 6 + casting director 7 + writer 6 + designer 6 + assistant 6 + set builder 6) / 8 = 62, +0x300 = (10 * 3 * 100 / 100 + 10 * 4 * 100 / 100) / 2 = 35 (camera and spotlight ratings), +0x30c = [0x458349] = 0 (Lula cast, but nothing writes 0x458349).",
+  "script": "movie_shot.txt",
+  "seconds": 126,
+  "patch": {
+   "0x45569c": 11,
+   "0x4556b8": 3,
+   "0x4556a8": 9,
+   "0x4556ac": 0,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 24,
+   "name": "Shot",
+   "account": 1459429,
+   "0x455bed": 3,
+   "0x455d99": 90,
+   "0x455d9d": 62,
+   "0x455da1": 35,
+   "0x455dad": 0,
+   "0x4582bd": -1,
+   "0x458371": 1,
+   "0x462409": 1,
+   "0x45d459": 1,
+   "0x455c09": 10
+  }
+ },
+ "movie_cutting": {
+  "from": "movie_shot",
+  "note": "movie_shot after the game started cutting the movie and bought a copying machine (script movie_cutting.txt): studio -> WET plot -> Cutting department -> Buy equipment -> 'Cut and Go' (1000 $) -> Buy; Cut films (DDF 60, 0x428c1d) -> 'Hot Sauna' -> 'Cutting the film will take 1 day(s)' ((40 / 10) >> 2 = 1); Copier -> Buy copying machines -> 'Emil Copy 5000' (10000 $) -> Buy; saved on the WET plot as 'Cutting' in slot 4 (300,119) on Thursday 11-1-1997. Clock patched back to 9:00.",
+  "script": "movie_cutting.txt",
+  "seconds": 95,
+  "patch": {
+   "0x4556a8": 9,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Cutting",
+   "day": 11,
+   "account": 1448429,
+   "0x455c25": 1,
+   "0x455c29": 11,
+   "0x455c2d": 1,
+   "0x455c31": 1997,
+   "0x455c35": 1,
+   "0x45841d": 26,
+   "0x4584bd": 1,
+   "0x459289": 29,
+   "0x459329": 1,
+   "0x455bed": 3
+  }
+ },
+ "movie_cut_clock": {
+  "from": "movie_cutting",
+  "note": "Patch-only parent of movie_cutdone: movie_cutting with the date moved on to Saturday 13-1-1997 9:59 (day 0x45569c = 13, weekday 0x4556b8 = 5) and the normal speed (0x4556bc = 3).",
+  "patch": {
+   "0x45569c": 13,
+   "0x4556b8": 5,
+   "0x4556a8": 9,
+   "0x4556ac": 59,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Cutting",
+   "day": 13,
+   "hour": 9,
+   "minute": 59,
+   "0x455c25": 1
+  }
+ },
+ "movie_cutdone": {
+  "from": "movie_cut_clock",
+  "note": "movie_cut_clock loaded and run past 10:00, saved as 'CutDone' on the WET plot (300,119). At 10:00 the hourly dispatcher calls 0x428e0a, which finds 13 - 11 = 2 days since the cutting started (0x405314 on +0x188) > the cutting days +0x194 = 1 and sets the cutting state +0x184 = 3. Then patched to the slow clock (0x4556bc = 30) and 10:00.",
+  "script": [
+   "11500 move 505 40",
+   "12000 click 505 40",
+   "15000 move 300 119",
+   "15500 click 300 119",
+   "17500 move 263 228",
+   "18000 click 263 228",
+   "28000 key F2",
+   "30500 move 305 212",
+   "31000 click 305 212",
+   "33000 move 300 119",
+   "33500 click 300 119",
+   "35500 move 263 228",
+   "36000 click 263 228",
+   "38500 type CutDone",
+   "40000 key RETURN"
+  ],
+  "seconds": 46,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "CutDone",
+   "day": 13,
+   "hour": 10,
+   "0x455c25": 3,
+   "0x455c35": 1,
+   "0x455bed": 3,
+   "account": 1448429
+  }
+ }
+}

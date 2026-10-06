@@ -4,8 +4,8 @@
 # note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4). Slider value = 9 * pct / 100 of the click position on the track (0x41603c); the ad table 0x457b4d (count 0x458255) and the 2400 $ are asserted by the recipe casting_ads, which runs the same clicks and saves.
 # check: (?s)ms: click 270 283.*DrawTextA\("\s*Male actors\s*"
 # check: (?s)ms: click 187 245.*DrawTextA\("\s*actors with\s*".*DrawTextA\("1200 \$"
-# check: (?s)ms: click 360 325.*DrawTextA\("professional, super-potent".*ms: click 172 325.*DrawTextA\("average figure".*ms: click 527 325.*DrawTextA\("exaggerated"
-# check: (?s)ms: click 449 243.*DrawTextA\("\s*actresses with\s*".*ms: click 325 325.*DrawTextA\("amateur and untalented".*ms: click 172 325.*DrawTextA\("average", rect
+# check: (?s)ms: click 360 325.*DrawTextA\("professional, super-potent".*ms: click 172 325.*DrawTextA\("average figure".*ms: click 527 325.*DrawTextA\("exaggerated".*ms: click 423 376
+# check: (?s)ms: click 449 243.*DrawTextA\("\s*actresses with\s*".*ms: click 325 325.*DrawTextA\("amateur and untalented".*ms: click 172 325.*DrawTextA\("average", rect.*ms: click 527 325.*DrawTextA\("exaggerated"
 # check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
 # reject: The newspaper isn't taking any more ads
 # reject: Unfortunately you haven't got enough money

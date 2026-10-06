@@ -1,0 +1,42 @@
+# seconds: 56
+# expects: soundprops_props (props building rented, props staff working, account 1500000, no sets) on the WET plot -> Props building -> room 32 -> "Buy sets" (hotspot 4, 413..640 x 53..407; 0x42c4ec case 4 -> 0x406121 with category 7, slots 0x459145, 20 slots; the result goes to 0x459285) -> sheet "Buy Stage props" / "Sell Stage props" -> row 1 "Castle Everrandy" 21000 $ ("Knight set") -> Buy -> row 2 "City Sex" 12000 $ ("City set") -> Buy -> sell list row 2 "City Sex" (10800 $) -> Sell -> only "Castle Everrandy" (18900 $) is left -> left thumb -> "To the other offices" -> WET plot (the HUD then shows Account: 1477800). No lula[warn]/trap.
+# save: soundprops_props
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: the state written by the same clicks is asserted by the recipe soundprops_propsets: account 1500000 - 21000 - 12000 + 10800 = 1477800, slot 0 = (42, 100, 5, -1), slot 1 = -1, count 0x459285 = 1
+# check: (?s)ms: click 520 230.*DrawTextA\("Buy Stage props".*DrawTextA\("Sell Stage props".*DrawTextA\("Knight set", rect 47,
+# check: (?s)ms: click 168 341.*DrawTextA\("Knight set", rect 333,
+# check: (?s)ms: click 150 184.*DrawTextA\("City set", rect 47,
+# check: (?s)script 38000 ms: click 460 184(?:(?!script 40000).)*DrawTextA\("City set", rect 333,
+# check: (?s)script 40500 ms: click 450 344.*script 43000 ms: move 292 342(?:(?!script 43500).)*DrawTextA\("Knight set", rect 333,
+# reject: (?s)script 43000 ms: move 292 342(?:(?!script 43500).)*DrawTextA\("City set", rect 333,
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Props building
+22000 move 180 420
+22500 click 180 420
+# Buy sets -> row 1 -> Buy -> row 2 -> Buy -> sell row 2 -> Sell -> left thumb
+25500 move 520 230
+26000 click 520 230
+28500 move 150 168
+29000 click 150 168
+30500 move 168 341
+31000 click 168 341
+33000 move 150 184
+33500 click 150 184
+35000 move 168 341
+35500 click 168 341
+37500 move 460 184
+38000 click 460 184
+40000 move 450 344
+40500 click 450 344
+43000 move 292 342
+43500 click 292 342
+# To the other offices -> WET plot
+46500 move 120 400
+47000 click 120 400
+51000 move 320 240

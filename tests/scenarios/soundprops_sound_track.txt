@@ -1,0 +1,55 @@
+# seconds: 74
+# expects: soundprops_base (sound engineer 447 and dubber 418 working, movie 'Sound Test' shot and cut, 80 minutes, no sound, no sound equipment) on the WET plot -> Sound studio (room 27) -> "Buy equipment" (hotspot 4, 216..387 x 343..480) -> sheet "Buy Sound equipment" (0x406121, category 8, slots 0x458379) -> row 1 "3 Mix 3000" 1200 $ -> Buy (the sell list now shows it) -> left thumb -> "Add sound track to film" (hotspot 5, 195..371 x 214..340; needs job 18 and 0x458419 > 0) -> DDF 60 (callback 0x42de52): "Films which need sound track:", "Monday der 1.1.1997", entry 1 "Sound Test" (state 3, cut 3, sound 0) -> click it -> DDF 70 (callback 0x42e0c4): ten tracks Rock2 .. March (controls 2-11 = sound ids 0x13-0x1c) and "Listen" -> "Tango" (control 8) -> Listen (control 22 loads sound 0x19 and plays it once on channel 8: a new DirectSound buffer, 22050 Hz 16 bit) -> thumb (control 0 stores the track in +0x19c) -> "Adding sound track will take about 2 day(s)." ((80 / 10) >> 2 = 2; +0x198 = 1, date +0x1a0 = 1-1-1997) -> thumb -> sheet thumb -> "Add sound track to film" again: the movie (sound state now 1) is no longer listed -> sheet thumb -> "To the other offices". No lula[warn]/trap.
+# save: soundprops_base
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: the state written by the same clicks is asserted by the recipe soundprops_mixing (+0x198 = 1, +0x19c = 0x19 'Tango', date 1-1-1997 at +0x1a0, +0x1ac = 2 days, slot 0x458379 = (45 '3 Mix 3000', 100, 3, -1), count 1, account 1500000 - 1200 = 1498800)
+# check: (?s)ms: click 168 341.*DrawTextA\("12-track mixer", rect 333,
+# check: (?s)ms: click 280 280.*DrawTextA\("Films which need.*DrawTextA\("Monday der 1\.1\.1997".*DrawTextA\("Sound Test"
+# check: (?s)ms: click 120 98.*DrawTextA\("Rock2".*DrawTextA\("Tango".*DrawTextA\("March ?".*DrawTextA\("\s*Listen\s*".*script 47500 ms: click 300 347(?:(?!script 50000).)*IDirectSound::CreateSoundBuffer
+# check: (?s)ms: click 170 365.*DrawTextA\("Adding sound track will take about 2 day\(s\)\."
+# check: (?s)script 60000 ms: click 280 280(?:(?!script 63000).)*DrawTextA\("Films which need
+# reject: (?s)script 60000 ms: click 280 280(?:(?!script 63000).)*DrawTextA\("Sound Test"
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Sound studio building
+22000 move 460 120
+22500 click 460 120
+# Buy equipment -> row 1 "3 Mix 3000" -> Buy -> left thumb
+26000 move 300 410
+26500 click 300 410
+29500 move 150 168
+30000 click 150 168
+31500 move 168 341
+32000 click 168 341
+34000 move 292 342
+34500 click 292 342
+# Add sound track to film -> DDF 60 -> entry 1 -> DDF 70 -> Tango -> Listen -> thumb
+37500 move 280 280
+38000 click 280 280
+41000 move 120 98
+41500 click 120 98
+44500 move 341 166
+45000 click 341 166
+47000 move 300 347
+47500 click 300 347
+50000 move 170 365
+50500 click 170 365
+# info box -> thumb -> sheet thumb
+53500 move 340 300
+54000 click 340 300
+56500 move 595 440
+57000 click 595 440
+# Add sound track to film again: empty list -> sheet thumb
+59500 move 280 280
+60000 click 280 280
+62500 move 595 440
+63000 click 595 440
+# To the other offices -> WET plot
+65500 move 80 400
+66000 click 80 400
+70000 move 320 240

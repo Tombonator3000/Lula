@@ -1,0 +1,37 @@
+# seconds: 72
+# expects: stage-3 save "Sabotage" (Los Angeles city map, 21:50 on Tuesday 2-1-1997; the Drippin' Lips store of Los Angeles was 'treated' for 7 days at the Black Cat agency that day, store record +0x10 = 0) -> 21:59 day end 0x404a33: info box "And another busy day comes to an end." -> thumb -> the store simulation 0x4225fc -> 0x4227c8 meets the treated store and calls 0x422b6c (kind 0 -> 5 %, 0 of 7 days used, so the treatment stays): the store's turnover of the day is taken off instead of added (kept save: +0xbc 200000 -> 199367, +0xc0 = -31 = -633 * 5 / 100, +0xd4 = -633, while the untreated stores of the city gain, e.g. +2591) -> Black Cat agency -> Sabotage: Drippin' Lips still "All stores are already being sabotaged" -> toilet -> To the town -> F2 -> Save game -> slot 4 "Dayend".
+# save: leftovers_s3sab
+# note: "Sabotage" is the Load-dialog entry at 300,119 (slot 4); the store record address 0x45ce59 depends on the random city data of the runner's fixed LULA_CLOCK
+# check: DrawTextA\("And another busy day comes to an end\."
+# check: (?s)script 24500 ms: click 330 300.*script 34500 ms: click 390 100.*DrawTextA\("All stores are already being sabotaged"
+# check: CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# the day end box comes a few seconds after loading -> thumb
+24000 move 330 300
+24500 click 330 300
+# Black Cat agency (second portrait) -> Sabotage hostile companies -> toilet -> To the town
+30000 move 420 135
+30500 click 420 135
+34000 move 390 100
+34500 click 390 100
+40000 move 592 440
+40500 click 592 440
+44000 move 140 150
+44500 click 140 150
+48000 key F2
+50500 move 305 212
+51000 click 305 212
+53500 move 300 119
+54000 click 300 119
+55500 move 263 228
+56000 click 263 228
+58000 type Dayend
+59500 key RETURN
+62000 move 328 368
+62500 click 328 368
+66000 move 320 240

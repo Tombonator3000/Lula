@@ -1,0 +1,42 @@
+# seconds: 66
+# expects: 'Studio' (studio_idle_cast: studio 1 equipped and staffed, movie 0 "Studio Heat" planned with actor 527 and actress 17 in its cast, but both actors in status 1 instead of 2) on the WET plot -> Studio 1: the film strip "Select Film" is drawn (0x423e61 does not look at the cast) -> film strip -> STANDARD_LIST_BOX_DLG (0x4248dc) -> "Studio Heat" -> OK: studio record +0x34 = 0 -> from now on 0x42408f calls 0x4282af(movie) every tick; it hands the cast-list index (0) instead of the person index to 0x42568e for each cast member not in status 2, 0x42568e finds no person 0 in the cast and still lowers the cast count, so two ticks later the cast count is 0 (original code) -> START: 0x423fc1(1) counts no actor in the cast -> "Well honey, you should cast at least two actors." (string 2008) instead of the days sheet -> thumb -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# save: studio_idle_cast
+# note: "Studio" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: the save written at the end (checked with --keep) holds cast count +0x2f4 = 0 (cast list memory 527, -1), movie state 1, studio record +0x34 = 0, both actors still in status 1
+# check: (?s)ms: click 330 438.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1.*DrawTextA\("Studio Heat", rect 140,430,520,448
+# check: (?s)ms: click 573 434.*DrawTextA\("Well honey, you should cast at least two actors\."
+# check: (?s)ms: click 320 40\b.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: The director recommends
+# main menu -> Load Game -> Studio -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Studio 1 -> film strip -> row -> OK
+22000 move 230 250
+22500 click 230 250
+26000 move 330 438
+26500 click 330 438
+29000 move 100 112
+29500 click 100 112
+31000 move 115 243
+31500 click 115 243
+# START (the cast is gone by now) -> info box -> thumb
+35000 move 573 434
+35500 click 573 434
+38500 move 340 300
+39000 click 340 300
+# To the other offices -> WET plot -> F2 save
+42000 move 320 40
+42500 click 320 40
+45500 key F2
+47500 move 305 212
+48000 click 305 212
+49500 move 300 119
+50000 click 300 119
+51500 move 263 228
+52000 click 263 228
+54000 type Dropped
+55500 key RETURN

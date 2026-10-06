@@ -1,0 +1,50 @@
+# seconds: 76
+# expects: soundprops_props (props assistant 394 and props manageress 550 working, slow clock) on the WET plot -> Props building -> room 32 and back three times. Every entry runs the setup 0x42c28f, which rolls rand() % 100 > 90; with a props manageress (job 14) and a props assistant (job 13) employed a hit sets 0x485344 = 1, fills the talk record 0x485348 (two speakers, 9 lines, strings 1406-1414 "Look darling, he looks just like our boss" .. "Yeah, whoops!") and runs the text slideshow 0x404cdb inside the setup, before the room takes clicks: each line stays for 80 WM_TIMER ticks (about 4.4 s, the whole talk about 40 s) or until a left click (WM_LBUTTONDOWN 0x436304 latches 0x488b50, copied to 0x4553a8 by 0x436156 in the message pump 0x405862), RETURN, ESC or SPACE. The first two entries miss, the third hits. Nine clicks on "Hire assistants" 2 s apart then only page through the nine lines (no staff card opens); the tenth click on the same spot reaches the room's click handler 0x42c4ec and opens the card of Manfred Woped -> thumb -> "To the other offices". No lula[warn]/trap.
+# save: soundprops_props
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# random: the talk depends on rand(), which the game seeds from time() once at start-up. With the runner's fixed LULA_CLOCK and the slow clock of soundprops_props (no hourly event calls rand() during the script) the rolls of the first two entries fail and the third succeeds (seen in every run so far). Any change in the number of rand() calls before the third entry (another save, other clicks) moves or removes the talk.
+# note: the talk lines are drawn with TextOutA (0x43cf4f); build/game/lula of 2026-10-06 04:30 does not trace TextOutA yet, so the checks prove the talk by the nine clicks that open no staff card. Seen in frames: one line per click, in the order of strings 1406-1414.
+# check: (?s)script 26000 ms: click 120 400(?:(?!script 29000).)*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# check: (?s)script 36500 ms: click 180 420(?:(?!script 40000).)*CreateFileA\(DATA\\ANI\\REQUISIT\.TAF, read
+# check: (?s)script 40000 ms: click 44 130(?:(?!Perskart).)*script 58500 ms: click 44 130
+# check: (?s)script 58500 ms: click 44 130(?:(?!script 61500).)*CreateFileA\(DATA\\ANI\\Perskart\.TAF, read.*DrawTextA\("Manfred Woped"
+# check: (?s)script 65000 ms: click 120 400.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# entry 1 and back
+22000 move 180 420
+22500 click 180 420
+25500 move 120 400
+26000 click 120 400
+# entry 2 and back
+29000 move 180 420
+29500 click 180 420
+32500 move 120 400
+33000 click 120 400
+# entry 3: the talk starts
+36000 move 180 420
+36500 click 180 420
+# nine clicks on "Hire assistants" page through the nine lines of the talk
+39500 move 44 130
+40000 click 44 130
+42000 click 44 130
+44000 click 44 130
+46000 click 44 130
+48000 click 44 130
+50000 click 44 130
+52000 click 44 130
+54000 click 44 130
+56000 click 44 130
+# tenth click: the room takes it -> staff card -> thumb
+58500 click 44 130
+61500 move 500 380
+62000 click 500 380
+# To the other offices -> WET plot
+64500 move 120 400
+65000 click 120 400
+69000 move 320 240

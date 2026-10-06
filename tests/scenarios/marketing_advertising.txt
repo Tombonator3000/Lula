@@ -1,0 +1,62 @@
+# seconds: 88
+# expects: prod_s2staff (all production buildings rented, one employee per job: advertising manager Nina Mount 466 and switchboard operator Helga Schnabel 437 working, account 1500000, Monday 1-1-1997 8:00) loads on the WET plot -> Marketing office (room 31, setup 0x42eb33, WERBUNG.TAF) -> "Start advertising" (383..640, 243..307 below the exit strip; 0x42ec40 case 6 needs a switchboard operator, job 17) opens the "Advertising" sheet (DDF 0x3a, callback 0x42f03d): Lula Promotion Tour, Ads, Posters, TV ads -> Lula Promotion Tour -> yes/no "Advertising this way will cost you $25000. Start advertising?" (1605) -> thumb (yes): account 1500000 -> 1475000, campaign 0 running (0x4595d1 = 1, start date 1-1-1997), its button disappears -> TV ads -> "$160000" -> toilet (no): nothing changes -> Posters -> "$8500" -> yes: account 1466500 -> thumb closes the sheet (status line 1466500) -> "Start advertising" again: the init message (0x110) hides the two running campaigns, only Ads and TV ads are left -> thumb -> "Assign advertising boss" (0x40590d(19)) -> staff card of Nina Mount, 160 $ per day, "Is occupying the available place right now." -> thumb -> "Assign switchboard operator" (0x40590d(17)) -> card of Helga Schnabel, 100 $ per day -> thumb -> "To the other offices" -> WET plot. No lula[warn]/trap.
+# save: prod_s2staff
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot. Yes/no box: thumb (yes) 318,305, toilet (no) 400,305. The status line is not traced, so the amounts were read from frames (1475000 after the tour, 1466500 at the end); the recipe marketing_ads asserts the same purchases in a save.
+# check: (?s)ms: click 230 197\n(?:(?!script 33000).)*DrawTextA\("Advertising this way will cost you \$25000\. Start advertising\?"
+# check: (?s)ms: click 230 290\n(?:(?!script 40000).)*DrawTextA\("Advertising this way will cost you \$160000\. Start advertising\?".*ms: click 230 259\n(?:(?!script 47000).)*DrawTextA\("Advertising this way will cost you \$8500\. Start advertising\?"
+# check: (?s)script 54000 ms: move 500 280\n(?:(?!lula\[trace\] DrawTextA)[^\n]*\n)*lula\[info\] script 54500 ms: click 500 280\n(?:(?!script 57500).)*DrawTextA\("\s*TV ads\s*"
+# check: (?s)ms: click 86 150.*DrawTextA\("Nina Mount".*ms: click 476 120.*DrawTextA\("Helga Schnabel"
+# check: (?s)ms: click 320 450.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: (?s)script 33500 ms: click 318 305.*DrawTextA\("\s*Lula Promotion Tour
+# reject: (?s)script 47500 ms: click 318 305.*DrawTextA\("\s*Posters\s*"
+# reject: You haven't got any staff in this department|Unfortunately you haven't got enough money
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Marketing office building
+22000 move 400 210
+22500 click 400 210
+# Start advertising
+26000 move 500 280
+26500 click 500 280
+# Lula Promotion Tour ($25000) -> yes
+29500 move 230 197
+30000 click 230 197
+33000 move 318 305
+33500 click 318 305
+# TV ads ($160000) -> toilet (no)
+36500 move 230 290
+37000 click 230 290
+40000 move 400 305
+40500 click 400 305
+# Posters ($8500) -> yes
+43500 move 230 259
+44000 click 230 259
+47000 move 318 305
+47500 click 318 305
+# thumb closes the sheet
+50500 move 400 240
+51000 click 400 240
+# Start advertising again: only Ads and TV ads -> thumb
+54000 move 500 280
+54500 click 500 280
+57500 move 400 240
+58000 click 400 240
+# Assign advertising boss -> staff card -> thumb
+61000 move 86 150
+61500 click 86 150
+65000 move 500 380
+65500 click 500 380
+# Assign switchboard operator -> staff card -> thumb
+69000 move 476 120
+69500 click 476 120
+73000 move 500 380
+73500 click 500 380
+# To the other offices
+77000 move 320 450
+77500 click 320 450
+81000 move 320 240

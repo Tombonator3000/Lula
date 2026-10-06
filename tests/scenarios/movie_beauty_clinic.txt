@@ -1,0 +1,69 @@
+# seconds: 130
+# expects: draft
+# save: movie_planned
+# check: CreateFileA\(DATA\\ANI\\HAND_ANI\.TAF
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building -> office -> To the overview -> stage-2 town -> Beauty clinic (17..139 x 95..285)
+22000 move 290 340
+22500 click 290 340
+26000 move 150 40
+26500 click 150 40
+30000 move 78 190
+30500 click 78 190
+# Give actors beauty treatment (20..228 x 48..305; y > 80 so that 'To the town' does not win)
+34000 move 120 200
+34500 click 120 200
+# actors -> card of Thommy Session -> OK -> operation sheet -> Lift thighs -> OK -> price box -> no
+37500 move 187 253
+38000 click 187 253
+40500 move 505 382
+41000 click 505 382
+43500 move 147 230
+44000 click 147 230
+45500 move 222 376
+46000 click 222 376
+48500 move 400 305
+49000 click 400 305
+# actors again -> OK -> Lift thighs -> OK -> yes
+51500 move 187 253
+52000 click 187 253
+54500 move 505 382
+55000 click 505 382
+57500 move 147 230
+58000 click 147 230
+59500 move 222 376
+60000 click 222 376
+62500 move 318 305
+63000 click 318 305
+# actors again: the card shows the sick days -> OK -> 'still sick' refusal -> thumb -> close the card
+65500 move 187 253
+66000 click 187 253
+68500 move 505 382
+69000 click 505 382
+71500 move 340 305
+72000 click 340 305
+74000 dump
+# actresses -> card of Cassandra Casablanca -> OK -> Tighten buttocks -> OK -> yes
+76000 move 470 250
+76500 click 470 250
+79000 move 505 382
+79500 click 505 382
+82000 move 148 264
+82500 click 148 264
+84000 move 222 376
+84500 click 222 376
+87000 move 318 305
+87500 click 318 305
+# close the actors sheet -> To the town -> Office -> office
+90500 move 327 375
+91000 click 327 375
+94000 move 320 40
+94500 click 320 40
+98000 move 320 450
+98500 click 320 450
+102000 move 320 240

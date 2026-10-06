@@ -1,0 +1,220 @@
+{
+ "_comment": [
+  "Recipes of the leftovers area (prefix leftovers): stage-1 inventory items for the motel, distributor, pawnshop and video store, and patched stage-2/3 states.",
+  "Stage-1 inventory: the list [0x45d940] is saved as DATA/DATABASE/STF1DAT.N (u32 count, records of 0x68 bytes: +0 name, +0x50 category, +0x54 kind, +0x58 value or cost, +0x5c condition or hours left, +0x60 owner state 2 = player, 0 = at the video store, +0x64 count). Recipes cannot patch it, so these states are played."
+ ],
+ "leftovers_s1film": {
+  "from": "s1eq",
+  "note": "s1eq after the game did a photo session in the motel room (click Lula for a new pose -> Camera on tripod -> camera toggle -> thumbs up; the film becomes a session item, category 0x65, kind +0x54 = 0 = undeveloped photos) and bought a sex toy in the stage-1 sex store (item 1 of the list, 'Super Dildo Neon' 50 $); saved in the motel room as 'Film' in slot 3 (Load-dialog entry 300,107) at 18:12. Then patched: clock 10:00 (the video store and the pawnshop are open 10-20, table 0x450f0c read by 0x40899b) and motel rent 0x455740 = 300 hours (the hourly hook 0x408a87 counts it down; at 4 hours left it shows 'If you don't pay the rent, we'll be on the street!', which would interrupt the scenarios).",
+  "script": "leftovers_s1film.txt",
+  "seconds": 100,
+  "check": {
+   "slot": 3,
+   "stage": 1,
+   "room": 5,
+   "name": "Film",
+   "hour": 10,
+   "minute": 0,
+   "0x455740": 300
+  },
+  "slot": 3,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x455740": 300
+  }
+ },
+ "leftovers_s1fast": {
+  "from": "leftovers_s1film",
+  "note": "Patch-only parent of leftovers_s1dev: leftovers_s1film (slot 3 'Film', 10:00, rent 300 h) with the fastest clock, 0x4556bc = 0 (one game minute per 60 ms timer tick, 3.6 s per game hour) and 0x4556c0 = 0.",
+  "slot": 3,
+  "patch": {
+   "0x4556bc": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 3,
+   "stage": 1,
+   "room": 5,
+   "name": "Film",
+   "0x4556bc": 0,
+   "0x455740": 300
+  }
+ },
+ "leftovers_s1dev": {
+  "from": "leftovers_s1fast",
+  "note": "leftovers_s1fast after the game put the photo film 'Session 1' into development at the stage-1 video store (Accessories -> 'Have films developed' -> list dialog 0x407c54 with rows by 0x42ceac: 'Completed films:' entry -> To development -> thumb; the item gets +0x60 = 0, and its +0x5c = 17 hours is counted down by the hourly hook 0x408a87, which then sets kind +0x54 = 1 and cost +0x58 = 20) and waited in the town through the 23:59 day end into the second day; saved there as 'Developed' in slot 4 (Load-dialog entry 300,119). Then patched to 11:00 on that day (video store open 10-20) with the normal clock (0x4556bc = 3).",
+  "script": "leftovers_s1dev.txt",
+  "seconds": 143,
+  "patch": {
+   "0x4556a8": 11,
+   "0x4556ac": 0,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 1,
+   "room": 1,
+   "name": "Developed",
+   "day": 2,
+   "hour": 11
+  }
+ },
+ "leftovers_s2wear": {
+  "from": "prod_s2all",
+  "note": "prod_s2all (stage 2, all production buildings rented, WET plot, 'ProdAll' at 300,119) with two pieces of leisure equipment in the recreation room and the clock at 8:58 on Tuesday 1-2-1997, patched: recreation slots (16 bytes: EQUIP.TAP index, condition %, category, -1) 0x459475 = Pink Plush (178, 100, 6, -1) and 0x459485 = Lay On Me (38, 0, 6, -1), count 0x4595b5 = 2; day 0x45569c = 2, weekday 0x4556b8 = 1, 8:58. At 9:00 the stage-2 hourly dispatcher calls 0x40e4a4 (not on 1-1-1997), which ends in the wear roll 0x40ffa6 -> 0x4100a7 per equipment array: an item below 30 % breaks when rand() % 100 >= its condition, so the 0 % item always breaks and 0x410194 removes it.",
+  "patch": {
+   "0x459475": 178,
+   "0x459479": 100,
+   "0x45947d": 6,
+   "0x459481": -1,
+   "0x459485": 38,
+   "0x459489": 0,
+   "0x45948d": 6,
+   "0x459491": -1,
+   "0x4595b5": 2,
+   "0x45569c": 2,
+   "0x4556b8": 1,
+   "0x4556a8": 8,
+   "0x4556ac": 58
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "day": 2,
+   "hour": 8,
+   "minute": 58,
+   "0x4595b5": 2,
+   "0x459489": 0
+  }
+ },
+ "leftovers_s2lease": {
+  "from": "studio_shoot",
+  "note": "studio_shoot (stage 2, movie 0 'Studio Heat' being shot in studio 1 with lighting engineer 164, cameraman 230, director 377 and the cast 527/17 all working, slow clock, WET plot, 'Shooting' at 300,119) with the deal date of building 4 (studio 1; record 0x455849 + 4 * 40, date +0x1c/+0x20/+0x24) moved to 1-12-1996: 0x455905 = 1, 0x455909 = 12, 0x45590d = 1996. 'Cancel lease' in DDF 5 (0x418aa0) needs 0x405314(date) = days since the deal >= 30 (here 31 - (-365 + 361) = 35; days = (year - 1997) * 365 + month * 30 + day).",
+  "patch": {
+   "0x455905": 1,
+   "0x455909": 12,
+   "0x45590d": 1996
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Shooting",
+   "0x4558f9": 1,
+   "0x45590d": 1996,
+   "0x455bed": 2,
+   "0x4582bd": 0
+  }
+ },
+ "leftovers_s3rocket": {
+  "from": "rich3",
+  "note": "rich3 (stage 3, Los Angeles city map, account 50000000, 'Store3' at 300,119) with the clock at 21:50 on Tuesday 2-1-1997, so the 21:59 day end 0x404a33 comes a few seconds after loading. Its last step calls 0x42977e when the account is 50000000 (0x2faf080) or more and the unsaved flag 0x45dc08 is still 0.",
+  "patch": {
+   "0x4556a8": 21,
+   "0x4556ac": 50
+  },
+  "check": {
+   "slot": 4,
+   "stage": 3,
+   "room": 1,
+   "name": "Store3",
+   "account": 50000000,
+   "hour": 21,
+   "minute": 50
+  }
+ },
+ "leftovers_s3sab": {
+  "from": "s3b",
+  "note": "s3b after the game had the Drippin' Lips store in Los Angeles 'treated' at the Black Cat agency (script leftovers_s3sab.txt, the steps of agencies_blackcat_stage3.txt: Intimidation, 8000 $; 'Store is 'treated' for 7 days.'), saved on the city map as 'Sabotage' in slot 4 (Load-dialog entry 300,119); then the clock is set to 21:50 so that the 21:59 day end comes a few seconds after loading. Store records: 0x459835 + city * 0x528 + i * 0xdc (6 per city), +0 owner (-1 none), +0x10 treatment kind (-1 none), +0x14 date, +0x20 days.",
+  "script": "leftovers_s3sab.txt",
+  "seconds": 82,
+  "patch": {
+   "0x4556a8": 21,
+   "0x4556ac": 50
+  },
+  "check": {
+   "slot": 4,
+   "stage": 3,
+   "room": 1,
+   "name": "Sabotage",
+   "account": 1642000,
+   "hour": 21,
+   "minute": 50
+  }
+ },
+ "leftovers_s3sabend": {
+  "from": "leftovers_s3sab",
+  "note": "leftovers_s3sab with the treatment of the Drippin' Lips store in Los Angeles (store record 0x45ce59 with the runner's fixed LULA_CLOCK: +0 owner 0, +0xc city 10, +0x10 kind 0) moved back to 1-1-1997 (+0x14 = 0x45ce6d = 1) with 0 days (+0x20 = 0x45ce79 = 0), so that 0x422b6c ends it at the next day end (days since the date > +0x20: +0x10 = -1, date cleared).",
+  "patch": {
+   "0x45ce6d": 1,
+   "0x45ce79": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 3,
+   "room": 1,
+   "name": "Sabotage",
+   "hour": 21,
+   "minute": 50,
+   "0x45ce59": 0,
+   "0x45ce69": 0,
+   "0x45ce6d": 1,
+   "0x45ce79": 0
+  }
+ },
+ "leftovers_s3mansion": {
+  "from": "stage3",
+  "note": "stage3 after the game bought Mansion 'Like It' at the lady realtor with the buy-back guarantee (script leftovers_s3mansion.txt, the steps of bank_realtor_mansion_buy.txt: 935000 $, account 2500000 -> 1565000; 0x417362 sets 0x45d0f9 = 1 (mansion 0 + 1), 0x45d105 = 1 (guarantee), 0x45d101 = 0 (no weekly rent) and clears the lease date 0x45d109..0x45d111), saved in the realtor's office as 'Mansion' in slot 4 (Load-dialog entry 300,119). Then patched: the pool is finished, extension state 0x45d13d = 3 (states: 0 none, 1 being built, 3 finished; the 9:00 call 0x419a84 finishes them).",
+  "script": "leftovers_s3mansion.txt",
+  "seconds": 63,
+  "patch": {
+   "0x45d13d": 3
+  },
+  "check": {
+   "slot": 4,
+   "stage": 3,
+   "room": 6,
+   "name": "Mansion",
+   "account": 1565000,
+   "0x45d0f9": 1,
+   "0x45d105": 1,
+   "0x45d101": 0,
+   "0x45d109": 0,
+   "0x45d13d": 3
+  }
+ },
+ "leftovers_s2wear1": {
+  "from": "prod_s2all",
+  "note": "leftovers_s2wear with only the broken item: recreation slot 0 = Lay On Me (38, 0, 6, -1), slot 1 empty, count 0x4595b5 = 1. After 0x410194 removes it, 0x4100a7 builds the message from slot 0, which is now -1, so it reads the category of catalog record -1 (0x68 bytes before the EQUIP.TAP table [0x455560]): an out-of-bounds read of the original code.",
+  "patch": {
+   "0x459475": 38,
+   "0x459479": 0,
+   "0x45947d": 6,
+   "0x459481": -1,
+   "0x459485": -1,
+   "0x459489": -1,
+   "0x45948d": -1,
+   "0x459491": -1,
+   "0x4595b5": 1,
+   "0x45569c": 2,
+   "0x4556b8": 1,
+   "0x4556a8": 8,
+   "0x4556ac": 58
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "day": 2,
+   "hour": 8,
+   "minute": 58,
+   "0x4595b5": 1,
+   "0x459479": 0
+  }
+ }
+}

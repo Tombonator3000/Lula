@@ -1,0 +1,33 @@
+# seconds: 52
+# expects: prod_s2staff (one employee per job, doorman 307 working) loads on the WET plot -> Reception (room 26, setup 0x43035d: with a doorman, job 8, it loads PFOERTNE.TBF and the doorman animation walks in) -> "Fit out doorman" (435..640, 202..433; click handler 0x4304b2 case 1 finds a doorman) -> buy/sell sheet 0x406121(category 5 guns, slots 0x4593d1 x10): "Buy Guns" / "Sell Guns", "Pistol" (Faggie 450 $, Thick&Eat 44er 820 $ ... Very Shaggun 4500 $; the list rows are not traced) -> Buy (row 1 Faggie is preselected) -> the sell list shows "Pistol" Faggie 405 $ condition 100 -> left thumb closes (account 1500000 -> 1499550 in the status line, the doorman now holds the gun) -> "To the other offices" -> WET plot. No lula[warn]/trap.
+# save: prod_s2staff
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4). The gun count lands in 0x459471 (return value of 0x406121). Guns are only bought, sold and worn (0x4100a7 at 0x410036); the 13:00 feminist/sabotage roll 0x43070e counts doormen, not guns.
+# check: (?s)ms: click 80 140.*CreateFileA\(DATA\\BACK\\PFOERTNE\.TBF, read
+# check: (?s)ms: click 540 320\n(?:(?!script 29500).)*DrawTextA\("Buy Guns".*DrawTextA\("Sell Guns"
+# check: (?s)ms: click 168 340\n(?:(?!script 33500).)*DrawTextA\("Pistol", rect 333,139
+# check: (?s)ms: click 270 230.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: You haven't got a doorman yet
+# reject: (?s)script 26500 ms: click 540 320\n(?:(?!script 30000).)*rect 333,139
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Reception building
+22000 move 80 140
+22500 click 80 140
+# Fit out doorman -> Buy Guns sheet
+26000 move 540 320
+26500 click 540 320
+# Buy (Faggie, preselected)
+29500 move 168 340
+30000 click 168 340
+# left thumb closes the sheet
+33500 move 292 342
+34000 click 292 342
+# To the other offices
+37500 move 270 230
+38000 click 270 230
+41500 move 320 240

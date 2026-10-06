@@ -1,0 +1,48 @@
+# seconds: 84
+# expects: 'Studio' (studio_ready: lighting engineer 164, cameraman 230 and director 377 working in studio 1, slow clock) on the WET plot -> Studio 2 building (166..297, 108..203) -> room 33 (pre-call 0x423071 with EDX = 1, record 0x4582c9): "STUDIO 2", no film strip -> "Assign director" -> card of Bernie Pornolando, "Is occupying the available place right now. in STUDIO 1" -> assign: 0x424e8c finds no director in studio 2, 0x424eba clears him from studio 1 (0x4582b1 = -1, +0x2c/+0x30 = 0) and stores him in studio 2 (+0x28, frustration 0, patience 8) -> "... in STUDIO 2" -> thumb -> To the other offices -> Studio 3 building (11..142, 342..437) -> room 34 (EDX = 2, record 0x458309): "STUDIO 3" -> "Assign cameraman" -> Charlie Eichler "... in STUDIO 1" -> assign: moved from studio 1 (0x4582ad = -1) to studio 3 -> "... in STUDIO 3" -> thumb -> To the other offices -> Studio 1: without director and cameraman 0x423e61 clears 0x484848[0], so the film strip "Select Film" is gone -> "Assign director" shows him "... in STUDIO 2" -> thumb -> To the other offices. No lula[warn]/trap.
+# save: studio_ready
+# note: "Studio" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# check: (?s)ms: click 230 150.*DrawTextA\("STUDIO 2".*ms: click 320 290.*DrawTextA\("Bernie Pornolando".*DrawTextA\("Is occupying the available place right now\. in STUDIO 1".*ms: click 328 379.*DrawTextA\("Is occupying the available place right now\. in STUDIO 2"
+# check: (?s)ms: click 70 400.*DrawTextA\("STUDIO 3".*ms: click 590 200.*DrawTextA\("Charlie Eichler".*DrawTextA\("Is occupying the available place right now\. in STUDIO 1".*ms: click 328 379.*DrawTextA\("Is occupying the available place right now\. in STUDIO 3"
+# check: (?s)ms: click 230 250.*DrawTextA\("STUDIO 1".*ms: click 320 290.*DrawTextA\("Bernie Pornolando".*DrawTextA\("Is occupying the available place right now\. in STUDIO 2"
+# check: (?s)ms: click 320 40\b.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: Select Film
+# main menu -> Load Game -> Studio -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Studio 2 -> Assign director -> assign -> thumb -> To the other offices
+22000 move 230 150
+22500 click 230 150
+26000 move 320 290
+26500 click 320 290
+29500 move 328 379
+30000 click 328 379
+32000 move 500 380
+32500 click 500 380
+35000 move 320 40
+35500 click 320 40
+# Studio 3 -> Assign cameraman -> assign -> thumb -> To the other offices
+39500 move 70 400
+40000 click 70 400
+43500 move 590 200
+44000 click 590 200
+47000 move 328 379
+47500 click 328 379
+49500 move 500 380
+50000 click 500 380
+52500 move 320 40
+53000 click 320 40
+# Studio 1 -> Assign director -> thumb -> To the other offices
+57000 move 230 250
+57500 click 230 250
+61000 move 320 290
+61500 click 320 290
+64500 move 500 380
+65000 click 500 380
+67500 move 320 40
+68000 click 320 40
+72000 move 320 240

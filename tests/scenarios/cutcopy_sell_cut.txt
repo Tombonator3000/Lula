@@ -1,0 +1,40 @@
+# seconds: 56
+# expects: "CutDone" (cutcopy_cutdone: movie 'Raw Footage' shot and cut by the game, +0x184 = 3; cutter Kerstin Loisi 193 level 6 working; one 'Cut and Go' in the cutting slots, value 2) on the WET plot -> office building -> office -> To the overview -> distributor -> "Sell movie rights" -> STANDARD_LIST_BOX_DLG -> OK -> 0x4118d8 values the movie with 0x411a4c, which calls 0x428b83 (cutter level * 10 = 60) and 0x428bc9 (average equipment value * 10 = 20) because the movie is cut -> yes/no box "The distributor offers you a fixed price of $N. Sell?" -> yes -> "The money will be transferred by tomorrow!". No lula[warn]/trap.
+# save: cutcopy_cutdone
+# note: "CutDone" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: value +0x310 = 30%*60 + 15%*(60 + (0 + 60)/2) + 15%*60 + 10%*0 + 15%*20 + 15%*60 = 18 + 13 + 9 + 0 + 3 + 9 = 52, minus 5 (length 80: 8*3 = 24 > cast count - 1) = 47, so 0x411a4c returns 47000; 0x4118d8 adds 47000/2 + 47000>>4 = 73437, plus 30 % (95468) when rand%3*50 equals the category +0x104 (0), times rand%3 (0 counts as 1). An uncut movie gives 40 and the disjoint set 62500, 125000, 81250, 162500.
+# check: DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1
+# check: DrawTextA\("\s*The distributor offers you a fixed price of \$(73437|146874|95468|190936)\. Sell\?\s*"
+# check: DrawTextA\("\s*The money will be transferred by tomorrow!\s*"
+# random: the distributor is busy on entry when rand()%100 > 80 (0x4111e1; Lula is sent back and the distributor stays closed for 3 to 6 hours, 0x412267). With the fixed LULA_CLOCK and this template it is not busy; the same visit from a template that also owns a copying machine (an earlier version of the chain) was busy in every run, so a rebuilt or changed cutcopy_cutdone may need the route retuned.
+# reject: CreateFileA\(DATA\\ANI\\HAND_ANI\.TAF
+# main menu -> Load Game -> CutDone -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building (plot index 7, 216..359 x 285..386) -> room 5
+22000 move 290 340
+22500 click 290 340
+# To the overview -> town (stage 2)
+26000 move 150 40
+26500 click 150 40
+# Distributor
+30000 move 554 190
+30500 click 554 190
+# Sell movie rights -> list dialog -> OK
+34000 move 152 335
+34500 click 152 335
+37500 move 115 243
+38000 click 115 243
+# yes (thumb) -> confirmation -> thumb
+41000 move 318 305
+41500 click 318 305
+44500 move 344 312
+45000 click 344 312
+# To the town
+48000 move 90 45
+48500 click 90 45
+52000 move 320 240

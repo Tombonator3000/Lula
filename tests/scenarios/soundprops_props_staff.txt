@@ -1,0 +1,46 @@
+# seconds: 64
+# expects: soundprops_props (prod_s2staff with a slow clock: set builder 280, props assistant 394 and props manageress 550 working) on the WET plot -> Props building (152..288, 357..459) -> room 32 (setup 0x42c28f, REQUISIT.TAF; first entry, so the rand() % 100 > 90 roll for the talk fails) -> unlabelled hotspot 1 (370..423 x 231..287): set builder employed (0x4057d2(6) > 0) -> 0x48533c = 3 and animation 0x1d (no log line) -> "Hire assistants" (18..70 x 75..192) -> staff card (0x40590d(13), Perskart.TAF) of Manfred Woped, 150 $ per day -> thumb -> "Hire set builder" (256..371 x 87..413) -> card of Katja Rest (job 6), 200 $ -> thumb -> "Hire props manageress" (86..179 x 0..114) -> card of Linda Molly (job 14), 128 $ -> thumb -> "Buy props" (70..215 x 131..209, slot 6; 0x42c5f8 registers 7 slots but sets the count 0x45d4d0 = 6, so the hit test 0x4040ea never tests slot 6 and the click reaches 0x42c4ec with -1; case 6 would return at once anyway) -> nothing -> "To the other offices" (0..254 x 212..480) -> WET plot. No lula[warn]/trap.
+# save: soundprops_props
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# check: (?s)ms: click 180 420.*CreateFileA\(DATA\\ANI\\REQUISIT\.TAF, read
+# check: (?s)ms: click 44 130.*CreateFileA\(DATA\\ANI\\Perskart\.TAF, read.*DrawTextA\("Manfred Woped".*DrawTextA\("150 \$ per Day Normal pay"
+# check: (?s)ms: click 300 300.*DrawTextA\("Katja Rest".*DrawTextA\("200 \$ per Day Normal pay"
+# check: (?s)ms: click 130 50.*DrawTextA\("Linda Molly".*DrawTextA\("128 \$ per Day Normal pay"
+# check: (?s)ms: click 120 400.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: You haven't got any staff in this department
+# reject: (?s)script 48500 ms: click 140 170(?:(?!script 51500).)*(Perskart|DrawTextA\(|DialogBoxParamA)
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Props building
+22000 move 180 420
+22500 click 180 420
+# unlabelled hotspot 1 (set builder animation)
+25500 move 395 260
+26000 click 395 260
+# Hire assistants -> card -> thumb
+28500 move 44 130
+29000 click 44 130
+32000 move 500 380
+32500 click 500 380
+# Hire set builder -> card -> thumb
+35000 move 300 300
+35500 click 300 300
+38500 move 500 380
+39000 click 500 380
+# Hire props manageress -> card -> thumb
+41500 move 130 50
+42000 click 130 50
+45000 move 500 380
+45500 click 500 380
+# Buy props (dead hotspot)
+48000 move 140 170
+48500 click 140 170
+# To the other offices -> WET plot
+51500 move 120 400
+52000 click 120 400
+56000 move 320 240

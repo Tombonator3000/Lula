@@ -1,12 +1,12 @@
-# seconds: 68
-# expects: ProdAll (casting_base) -> Casting office -> "Look at actors file" (7..150, 157..214) -> strip DDF 16 (callback 0x41ab24) -> male actors -> card DDF 17 (callback 0x41b2b4) of the hired actor Thommy Session (527): "2230 $ per Day Normal pay", "Is glad there's nothing to do." -> pay +100 twice (2430) and -100 once -> next (no other hired actor) -> training button -> DDF 26 (callback 0x41b8ac) "Send Thommy Session for training at 300 dollars a day?", "5 Days" -> slider to "11 Days" -> thumbs up (3300 $, status 3) -> card "Is still in training for 11 day(s)!" -> close -> female actresses -> card of Cassandra Casablanca (17) -> training sheet (DDF 27) and cancel -> fire (0x41dd79, status 0; no other hired actress, so the card closes) -> strip closed -> "To the other offices". No lula[warn]/trap.
+# seconds: 74
+# expects: ProdAll (casting_base) -> Casting office -> "Look at actors file" (7..150, 157..214) -> strip DDF 16 (callback 0x41ab24) -> male actors -> card DDF 17 (callback 0x41b2b4) of the hired actor Thommy Session (527): "2230 $ per Day Normal pay", "Is glad there's nothing to do." -> pay +100 twice (2430) and -100 once -> next (no other hired actor) -> training button -> DDF 26 (callback 0x41b8ac) "Send Thommy Session for training at 300 dollars a day?", "5 Days" -> slider to "11 Days" -> thumbs up (3300 $, status 3) -> card "Is still in training for 11 day(s)!" -> close -> female actresses -> card of Cassandra Casablanca (17) -> training sheet (DDF 27) and cancel -> fire (0x41dd79, status 0; no other hired actress, so the card closes) -> female actresses again: "You haven't got an actress" (0x41ab24, 0x4057d2(21) = 0) -> thumbs up -> strip closed -> "To the other offices". No lula[warn]/trap.
 # save: casting_base
 # note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4). The recipe casting_trained runs the same clicks and asserts the save: account 1496700, 527 status 3, pay 2330, training date 1-1-1997 and 11 days, 17 status 0.
 # check: (?s)ms: click 187 253.*DrawTextA\("Thommy Session".*DrawTextA\("2230 \$ per Day Normal pay".*ms: click 307 383.*ms: click 307 383.*DrawTextA\(" Currently 2430 \$ per Day"
 # check: (?s)ms: click 403 382.*DrawTextA\("Send Thommy Session for training at 300 dollars a day\?".*DrawTextA\("5 Days"
 # check: (?s)ms: click 231 308.*DrawTextA\("11 Days".*ms: click 414 368.*DrawTextA\("Is still in training for 11 day\(s\)!"
 # check: (?s)ms: click 470 250.*DrawTextA\("Cassandra Casablanca".*DrawTextA\("Send Cassandra Casablanca for training at 300 dollars a day\?"
-# check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# check: (?s)ms: click 252 384.*ms: click 470 250.*DrawTextA\("\s*You haven't got an actress\s*".*ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
 # reject: Unfortunately you haven't got enough money
 # main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
 11500 move 505 40
@@ -49,9 +49,14 @@
 56500 click 507 367
 58000 move 252 384
 58500 click 252 384
+# female actors again: nobody is hired now, so "You haven't got an actress" (936) -> thumbs up
+61000 move 470 250
+61500 click 470 250
+64000 move 340 305
+64500 click 340 305
 # close the strip, To the other offices
-60500 move 327 375
-61000 click 327 375
-63000 move 470 160
-63500 click 470 160
-66000 move 320 240
+66500 move 327 375
+67000 click 327 375
+69000 move 470 160
+69500 click 470 160
+72000 move 320 240

@@ -1,0 +1,39 @@
+# seconds: 75
+# expects: stage-1 save 'Equipped' (motel room, 12:10, spotlight, Castor camera and film in the inventory) with the motel record patched to 'evicted' (+0x10) and 'owner told the cops' (+0x14) -> To the motel: the exterior tick calls the day check 0x408dea(AL = 1) -> info box 3112 "You've been kicked out of the motel room and the owner's sold your things!" -> thumb -> the loop at 0x408fe6 removes every player item of category 0, 1, 9 or 10 from the inventory list [0x45d940] with 0x407bbd (all three items) -> 0x4090b6(0x11, 3117): info box "The motel owner has told the cops because you haven't paid the rental." -> thumb -> info box 980 "You're arrested and end up in the can" -> thumb -> arrest flag 0x455829 = 0x11, the check returns 8 and the game changes to room 8 (police cell) -> F2 -> Save game -> slot 3 'Evicted' (STF1DAT.  3 then holds count 0).
+# save: engine_s1evict
+# note: "Equipped" is the Load-dialog entry at 300,94 (slot 2)
+# check: DrawTextA\("You've been kicked out of the motel room and the owner's sold your things!"
+# check: DrawTextA\("The motel owner has told the cops because you haven't paid the rental\."
+# check: DrawTextA\("You're arrested and end up in the can"
+# check: CreateFileA\(DATA\\SAVE\\SAVEGAME\.  3, write
+12000 move 505 40
+12500 click 505 40
+15000 move 300 94
+15500 click 300 94
+17000 move 263 228
+17500 click 263 228
+# motel room -> To the motel (526..613, 55..285)
+22000 move 570 200
+22500 click 570 200
+# info box 3112 -> thumb
+27000 move 344 312
+27500 click 344 312
+# info box 3117 -> thumb
+31000 move 344 312
+31500 click 344 312
+# info box 980 -> thumb
+35000 move 344 312
+35500 click 344 312
+# police cell: F2 -> Save game -> slot 3 -> Save -> name -> RETURN -> close the options sheet
+42000 key F2
+44500 move 305 212
+45000 click 305 212
+47500 move 300 107
+48000 click 300 107
+49500 move 263 228
+50000 click 263 228
+52000 type Evicted
+53500 key RETURN
+56000 move 328 368
+56500 click 328 368
+60000 move 300 300

@@ -1,0 +1,66 @@
+# Recipe script for marketing_ads (from prod_s2staff, prefix marketing).
+# Load ProdAll (WET plot, 8:00) -> Marketing office -> Start advertising: Lula Promotion Tour ($25000)
+# and Posters ($8500), each confirmed with the thumb of the yes/no box -> thumb closes the sheet
+# -> Start scandals: Lula sells dildos at car boot sale ($12000), Lula has photos thrown from
+# airplane ($15000), Lula distributes condoms after service ($10000), each confirmed -> thumb
+# -> To the other offices (WET plot) -> F2 -> Save game -> slot 4 (300,119) -> Save -> "MktAds".
+# The clock stops while a sheet is open, so the save happens at about 9:20, before the 10:00 roll.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Marketing office building
+22000 move 400 210
+22500 click 400 210
+# Start advertising
+26000 move 500 280
+26500 click 500 280
+# Lula Promotion Tour -> yes
+29500 move 230 197
+30000 click 230 197
+33000 move 318 305
+33500 click 318 305
+# Posters -> yes
+36500 move 230 259
+37000 click 230 259
+40000 move 318 305
+40500 click 318 305
+# thumb closes the sheet
+43500 move 400 240
+44000 click 400 240
+# Start scandals
+47000 move 230 240
+47500 click 230 240
+# Lula sells dildos at car boot sale -> yes
+50500 move 266 205
+51000 click 266 205
+54000 move 318 305
+54500 click 318 305
+# Lula has photos thrown from airplane -> yes
+57500 move 266 262
+58000 click 266 262
+61000 move 318 305
+61500 click 318 305
+# Lula distributes condoms after service -> yes
+64500 move 266 349
+65000 click 266 349
+68000 move 318 305
+68500 click 318 305
+# thumb closes the sheet
+71500 move 495 370
+72000 click 495 370
+# To the other offices (WET plot)
+75000 move 320 450
+75500 click 320 450
+# F2 -> Save game -> slot 4 -> Save -> name
+79500 key F2
+82000 move 305 212
+82500 click 305 212
+85000 move 300 119
+85500 click 300 119
+87500 move 263 228
+88000 click 263 228
+90500 type MktAds
+92000 key RETURN

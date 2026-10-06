@@ -10,6 +10,8 @@
 # check: (?s)ms: click 400 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
 # reject: DialogBoxParamA\(STANDARD_GET_TXT_DLG\) -> 0
 # reject: DrawTextA\("Abc", rect
+# note: the MOVIE CATEGORY sheet (DDF 9) draws no DrawTextA text. The reject below proves it was open: without it, the Hardcore click at 472,322 would land on the Write screenplay hotspot (311..500 x 298..408) and draw "Pick storyline", or an info box would appear
+# reject: (?s)ms: click 350 250(?:(?!ms: click 400 40).)*DrawTextA\("\s*(?:Pick storyline|There's no screenplay yet|The planning for this movie is already finished|You can see the production assistant)
 # main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
 11500 move 505 40
 12000 click 505 40

@@ -1,0 +1,76 @@
+# seconds: 215
+# expects: "OnSale" (warehouse_eve: movie 'Warehouse Hit' put on sale at the office laptop on 1-1-1997, so FILMB.TMP holds its record with price field -110 and value 40000; warehousewoman 286, copying girl 257 and one 'Emil Copy 5000' make 0x40e3bf and 0x40e3ed true) loads on the WET plot at 19:50 -> 19:59 day end: the 9:00 office event 0x40e4a4 rolls the trash box "Your buildings are full of trash. Your people need 2 hours to clean them!" (string 217, clock jumps to 11:00) -> "And another busy day comes to an end." -> Daily costs (Direct sales revenue 0 $) -> 0x404a33 calls 0x42a1ef: 0x42a6b0 finds FILMB.TMP, 0x42a4b9 has nothing to write back yet, the record (days since the sale 1 <= 30) becomes warehouse entry 0 with expected sales +0x100 = 40000/30 = 1333 and price +0x10c = 10 - 1333/1000 +- rand()%3 = 7 (0x42ab33 finds no type-5 entry, so no change) -> at 12:00 the hourly dispatcher's 0x42a0ac draws the order "SVE Inc. : 651 Stueck zu 7$ Warehouse Hit" (rand()%100 > 30; quantity rand() % 1333, price 7 +- rand()%3; the plot shows "Order: 1" on the warehouse) -> Warehouse -> "Process orders" (0x429d58 case 3: a warehousewoman and orders) -> WORK_ORDER_DLG (0x42a720) -> Accept: 0x42aaa8 compares the copier capacity (5000 for one type-0 machine) with 651 + 651 ordered, the row goes, revenue 0x485080 += 651 * 7, record +0x108 += 651 -> OK -> "Process orders" again -> "You haven't got any orders!" (string 1209) -> thumb -> about 15:15: two new orders (BuyMe Video 56 x 5$ from 14:00, GreenFuck Inc. 307 x 7$ from 15:00) -> Remove deletes the selected first row and selects the next one (LB_SETCURSEL), Remove again deletes it -> OK -> "Process orders" -> "You haven't got any orders!" -> thumb -> WET plot -> 19:59 day end -> Daily costs show "Direct sales revenue 4557 $" (651 * 7) -> 0x42a4b9 writes the sold count back into FILMB.TMP (+0x110 = 651) and 0x42a1ef reloads the list. No lula[warn]/trap.
+# save: warehouse_eve
+# note: "OnSale" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20) at 19:50, normal speed (14.4 s per game hour)
+# note: the day-end clicks are placed where the plot has no building: 366,300 is inside the info-box thumb (318..372 x 277..327) and between the office (216..359) and casting (y from 335); 300,395 is inside the Daily costs thumb (287..342 x 347..405) and below the office (y up to 386), right of props (x up to 288). Each day end gets three clicks at 366,300 and two at 300,395, 3.5 s apart: a click at 366,300 on the Daily costs box and a click on the empty plot do nothing, so the boxes (trash box if any, 'And another busy day', Daily costs) are closed even when they come one step late, and Daily costs always closes at the first 300,395 click.
+# note: timing (14.4 s per game hour, the clock stops while a box or WORK_ORDER_DLG is open): first day end about 21.7 s (trash box drawn by 21.7 s); Daily costs closes at 34.5 s at 11:00, so 12:00 is at about 49 s, 13:00 at about 70 s, 14:00 at about 88 s, 15:00 at about 103 s; the second 'Process orders' at 106.5 s is about 15:16 and the third at 119.5 s about 15:31, well before 16:00; the second day end comes at about 189 s (19:58 at 187.6 s in a run with frame dumps).
+# note: the last check needs the FILMB.TMP opens right after the second Daily costs in the order read, read, write: 0x42a1ef first calls 0x42a6b0 (fopen rb, read), then 0x42a4b9 calls 0x42a6b0 again (read) and opens the file rb+ (write) for the write-back. The read/write pair drawn before each Daily costs box comes from other day-end code. The checks with "You haven't got any orders!" only accept the text in the step of the first 'Process orders' click after the Accept and after the two Removes.
+# random: the trash box (rand()%100 > 90 at 9:00 on 1-2-1997), the orders (SVE Inc. at 12:00, none at 13:00, BuyMe Video at 14:00, GreenFuck Inc. at 15:00) and their quantities and prices come from rand(); with the fixed LULA_CLOCK they repeat in every run. The first order alone decides the revenue check.
+# check: (?s)ms: click 410 330.*dialog WORK_ORDER_DLG: 5 controls.*DialogBoxParamA\(WORK_ORDER_DLG\) -> 0
+# check: (?s)ms: click 82 270(?:(?!ms: click 410 330).)*DialogBoxParamA\(WORK_ORDER_DLG\) -> 0(?:(?!ms: click 410 330).)*ms: click 410 330(?:(?!ms: click).)*DrawTextA\("You haven't got any orders!"
+# check: (?s)ms: click 410 330(?:(?!ms: click 410 330).)*dialog WORK_ORDER_DLG: 5 controls(?:(?!ms: click 410 330).)*ms: click 566 270(?:(?!ms: click 410 330).)*DialogBoxParamA\(WORK_ORDER_DLG\) -> 0(?:(?!ms: click 410 330).)*ms: click 410 330(?:(?!ms: click).)*DrawTextA\("You haven't got any orders!"
+# check: (?s)DrawTextA\("Direct sales revenue\s*".*DrawTextA\(" 4557 \$", rect 265,314
+# check: (?s)DrawTextA\(" 4557 \$", rect 265,314(?:(?!FILMB).)*CreateFileA\(DATA\\DATABASE\\FILMB\.TMP, read[^\n]*\n[^\n]*CreateFileA\(DATA\\DATABASE\\FILMB\.TMP, read[^\n]*\n[^\n]*CreateFileA\(DATA\\DATABASE\\FILMB\.TMP, write
+# reject: You haven't got any staff in this department
+# main menu -> Load Game -> OnSale -> Load (WET plot, room 20, 19:50)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# day end: trash box (9:00 event), "And another busy day", Daily costs (one spare click each at 366,300 and 300,395)
+23500 move 366 300
+24000 click 366 300
+27000 move 366 300
+27500 click 366 300
+30500 move 366 300
+31000 click 366 300
+34000 move 300 395
+34500 click 300 395
+37500 move 300 395
+38000 click 300 395
+# Warehouse building after the 12:00 order
+57000 move 80 300
+57500 click 80 300
+# Process orders -> WORK_ORDER_DLG -> Accept -> OK
+61000 move 410 330
+61500 click 410 330
+65000 move 82 270
+65500 click 82 270
+68000 move 325 270
+68500 click 325 270
+# Process orders again -> "You haven't got any orders!" -> thumb
+71500 move 410 330
+72000 click 410 330
+75000 move 340 300
+75500 click 340 300
+# about 15:16: Process orders -> Remove (first row) -> Remove (the second row, now selected) -> OK
+106000 move 410 330
+106500 click 410 330
+109500 move 566 270
+110000 click 566 270
+112500 move 566 270
+113000 click 566 270
+115500 move 325 270
+116000 click 325 270
+# Process orders -> "You haven't got any orders!" (both orders removed) -> thumb
+119000 move 410 330
+119500 click 410 330
+122500 move 340 300
+123000 click 340 300
+# To the other offices -> WET plot
+126000 move 440 80
+126500 click 440 80
+# second day end (about 189 s): trash box if any, "And another busy day", Daily costs
+193000 move 366 300
+193500 click 366 300
+196500 move 366 300
+197000 click 366 300
+200000 move 366 300
+200500 click 366 300
+203500 move 300 395
+204000 click 300 395
+207000 move 300 395
+207500 click 300 395
+210500 move 320 240

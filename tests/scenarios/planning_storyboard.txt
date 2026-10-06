@@ -1,10 +1,10 @@
-# seconds: 100
-# expects: 'Planned' (movie 0 "Lust in Space" in planning, writer, designer and assistant hired, slow clock) on the WET plot -> Movie planning (room 22) -> Work on storyboard opens the STORYBOARD sheet (DDF 10 at 0,0, callback 0x41efd2, STORYFUC.TAF scene pictures) with the title -> the title arrow opens the "Movie title to be worked on:" list (STANDARD_LIST_BOX_DLG, 0x41eaa7) -> OK -> three scene pictures from the film strip: "Tot. basic price" 1000 $, 2000 $, 3000 $ (basic price 1000 $ per 10 minutes) -> click the second scene to remove it: 2000 $ -> strip arrow down, the seventh picture (scene 7): 3000 $ -> strip arrow up -> Conclude planning -> "You can't work on the movie any more HERE after that! Finish anyway??" -> yes: planning finished, 3000 $ paid -> Work on storyboard again -> "The planning for this movie is already finished!" -> thumb -> Define the subject of the movie -> the same refusal -> thumb -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# seconds: 107
+# expects: 'Planned' (movie 0 "Lust in Space" in planning, writer, designer and assistant hired, slow clock) on the WET plot -> Movie planning (room 22) -> Work on storyboard opens the STORYBOARD sheet (DDF 10 at 0,0, callback 0x41efd2, STORYFUC.TAF scene pictures) with the title -> the title arrow opens the "Movie title to be worked on:" list (STANDARD_LIST_BOX_DLG, 0x41eaa7) -> OK -> Conclude planning with no scene: "Fantastic idea! I just don't believe that people will buy a blank tape!" -> thumb -> three scene pictures from the film strip: "Tot. basic price" 1000 $, 2000 $, 3000 $ (basic price 1000 $ per 10 minutes) -> click the second scene to remove it: 2000 $ -> strip arrow down, the seventh picture (scene 7): 3000 $ -> strip arrow up -> Conclude planning -> "You can't work on the movie any more HERE after that! Finish anyway??" -> yes: planning finished, 3000 $ paid -> Work on storyboard again -> "The planning for this movie is already finished!" -> thumb -> Define the subject of the movie -> the same refusal -> thumb -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
 # save: planning_movie
 # note: "Planned" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
 # note: after the run slot 4 holds movie 0 with scenes 0, 2, 7 (+0x108), 30 minutes (+0x148), state 1 (+0x14c), total basic price 3000 (+0x154) and account 1497000 (checked by hand with --keep)
 # check: (?s)ms: click 80 190.*CreateFileA\(DATA\\ANI\\STORYFUC\.TAF, read.*DrawTextA\("Lust in Space", rect 87,38
-# check: (?s)ms: click 498 48.*dialog STANDARD_LIST_BOX_DLG.*ms: click 115 243.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1
+# check: (?s)ms: click 498 48.*dialog STANDARD_LIST_BOX_DLG.*ms: click 115 243.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1.*ms: click 454 454.*DrawTextA\("\s*Fantastic idea! I just don't believe that people will buy a blank tape!\s*".*ms: click 340 300
 # check: (?s)ms: click 592 41.*DrawTextA\("1000 \$".*ms: click 592 90.*DrawTextA\("2000 \$".*ms: click 592 137.*DrawTextA\("3000 \$".*ms: click 199 114.*DrawTextA\("2000 \$".*ms: click 592 330.*DrawTextA\("3000 \$"
 # check: (?s)ms: click 454 454.*DrawTextA\("You can't work on the movie any more HERE after that! Finish anyway\?\?"
 # check: (?s)ms: click 318 305.*ms: click 80 190.*DrawTextA\("\s*The planning for this movie is already finished!\s*".*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
@@ -28,48 +28,53 @@
 29500 click 498 48
 32500 move 115 243
 33000 click 115 243
+# Conclude planning with no scene -> blank tape refusal -> thumb
+36000 move 454 454
+36500 click 454 454
+39500 move 340 300
+40000 click 340 300
 # film strip pictures (controls 16, 17, 18 at x 560..625)
-36000 move 592 41
-36500 click 592 41
-38500 move 592 90
-39000 click 592 90
-41000 move 592 137
-41500 click 592 137
+43000 move 592 41
+43500 click 592 41
+45500 move 592 90
+46000 click 592 90
+48000 move 592 137
+48500 click 592 137
 # remove the second scene (control 5, 144..254 x 73..156)
-44000 move 199 114
-44500 click 199 114
+51000 move 199 114
+51500 click 199 114
 # strip arrow down (control 24), seventh picture (control 22), strip arrow up (control 23)
-47000 move 590 370
-47500 click 590 370
-50000 move 592 330
-50500 click 592 330
-53000 move 590 8
-53500 click 590 8
+54000 move 590 370
+54500 click 590 370
+57000 move 592 330
+57500 click 592 330
+60000 move 590 8
+60500 click 590 8
 # Conclude planning (control 29, 374..535 x 443..466) -> yes
-56000 move 454 454
-56500 click 454 454
-59500 move 318 305
-60000 click 318 305
+63000 move 454 454
+63500 click 454 454
+66500 move 318 305
+67000 click 318 305
 # Work on storyboard again -> already finished -> thumb
-63000 move 80 190
-63500 click 80 190
-66500 move 340 300
-67000 click 340 300
-# Define the subject of the movie -> already finished -> thumb
-70000 move 350 250
-70500 click 350 250
+70000 move 80 190
+70500 click 80 190
 73500 move 340 300
 74000 click 340 300
+# Define the subject of the movie -> already finished -> thumb
+77000 move 350 250
+77500 click 350 250
+80500 move 340 300
+81000 click 340 300
 # To the other offices -> WET plot
-77000 move 400 40
-77500 click 400 40
+84000 move 400 40
+84500 click 400 40
 # F2 -> Save game -> slot 4 -> Save -> name -> RETURN
-81000 key F2
-83500 move 305 212
-84000 click 305 212
-86000 move 300 119
-86500 click 300 119
-88500 move 263 228
-89000 click 263 228
-91500 type Storyboard
-93000 key RETURN
+88000 key F2
+90500 move 305 212
+91000 click 305 212
+93000 move 300 119
+93500 click 300 119
+95500 move 263 228
+96000 click 263 228
+98500 type Storyboard
+100000 key RETURN

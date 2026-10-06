@@ -1,0 +1,52 @@
+# seconds: 74
+# expects: soundprops_list (one '3 Mix 3000' in the sound studio; movies 0 'Sound Test' (80 min, shot, cut, no sound), 1 'Not Cut', 2 'Being Cut', 3 'Has Sound', 4 'Still Planned', 5 'Short Film' (20 min, shot, cut, no sound)) on the WET plot -> Sound studio (room 27) -> "Add sound track to film" -> DDF 60 (0x42de52) lists only entry 1 "Sound Test" and entry 6 "Short Film" -> a click on the empty entry 2 (control 14, +0x88 = 0) does nothing -> entry 1 -> DDF 70 (0x42e0c4) -> toilet (cancel, control 1: closes with 2, nothing stored) -> entry 1 again opens DDF 70 again (still enabled) -> toilet -> entry 6 -> DDF 70 -> thumb with the default track (0x485994 = 0x13 'Rock2') -> "Adding sound track will take about 1 day(s)." ((20 / 10) >> 2 = 0, raised to 1) -> thumb -> sheet thumb -> "To the other offices". No lula[warn]/trap.
+# save: soundprops_list
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# check: (?s)ms: click 280 280.*DrawTextA\("Sound Test", rect 76,90,.*DrawTextA\("Short Film", rect 76,248,
+# check: (?s)script 29500 ms: click 120 130(?:(?!script 32000).)*DrawTextA\("Films which need
+# check: (?s)script 32500 ms: click 120 98(?:(?!script 35000).)*DrawTextA\("Rock2"
+# check: (?s)script 38500 ms: click 120 98(?:(?!script 41000).)*DrawTextA\("Rock2"
+# check: (?s)ms: click 170 365.*DrawTextA\("Adding sound track will take about 1 day\(s\)\."
+# reject: DrawTextA\("(Not Cut|Being Cut|Has Sound|Still Planned)"
+# reject: (?s)script 29500 ms: click 120 130(?:(?!script 32000).)*DrawTextA\("Rock2"
+# reject: (?s)script 35500 ms: click 435 370(?:(?!script 38000).)*Adding sound track
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Sound studio building
+22000 move 460 120
+22500 click 460 120
+# Add sound track to film -> DDF 60
+25500 move 280 280
+26000 click 280 280
+# empty entry 2 -> nothing
+29000 move 120 130
+29500 click 120 130
+# entry 1 -> DDF 70 -> toilet
+32000 move 120 98
+32500 click 120 98
+35000 move 435 370
+35500 click 435 370
+# entry 1 again -> DDF 70 -> toilet
+38000 move 120 98
+38500 click 120 98
+41000 move 435 370
+41500 click 435 370
+# entry 6 "Short Film" -> DDF 70 -> thumb (default track)
+44000 move 120 256
+44500 click 120 256
+47500 move 170 365
+48000 click 170 365
+# info box -> thumb -> sheet thumb
+51000 move 340 300
+51500 click 340 300
+54000 move 595 440
+54500 click 595 440
+# To the other offices -> WET plot
+57500 move 80 400
+58000 click 80 400
+62000 move 320 240

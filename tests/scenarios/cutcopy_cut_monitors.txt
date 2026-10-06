@@ -1,0 +1,48 @@
+# seconds: 58
+# expects: cutcopy_base on the WET plot -> Cutting department (room 29) -> the four "Cutting monitor" hotspots switch their animations on (click handler 0x4285f4 cases 0-3: CUT_FLM2, CUT_FLM3, CUT_FLM1, CUT_FLM4, each set up by 0x428a9c, drawn by 0x4289a2, advanced by the tick 0x428a06 that also starts the monitor sound 0x28) -> monitor 1 (498..610 x 0..76) clicked again switches it off without loading anything -> "To the other offices" (leave 0x4283ae -> 0x428838 frees the four TAF handles 0x484a3c..0x484a48 but keeps the on flags 0x484afc..0x484b08) -> back into the Cutting department: setup 0x4283d5 reloads CUT_FLM2, CUT_FLM1 and CUT_FLM4 for the monitors still on, not CUT_FLM3 -> monitor 1 on again reloads CUT_FLM3 -> WET plot. No lula[warn]/trap.
+# save: cutcopy_base
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# check: (?s)ms: click 414 26.*CUT_FLM2\.TAF.*ms: click 554 38.*CUT_FLM3\.TAF.*ms: click 399 158.*CUT_FLM1\.TAF.*ms: click 537 186.*CUT_FLM4\.TAF
+# check: (?s)script 42500 ms: click 350 120(?=(?:(?!script 45500).)*CreateFileA\(DATA\\ANI\\CUT_FLM2\.TAF)(?=(?:(?!script 45500).)*CreateFileA\(DATA\\ANI\\CUT_FLM1\.TAF)(?=(?:(?!script 45500).)*CreateFileA\(DATA\\ANI\\CUT_FLM4\.TAF)
+# check: (?s)script 46000 ms: click 554 38(?:(?!script 48500).)*CreateFileA\(DATA\\ANI\\CUT_FLM3\.TAF
+# check: (?s)ms: click 160 400.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read.*ms: click 350 120.*ms: click 160 400.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: (?s)script 35500 ms: click 554 38(?:(?!script 38000).)*CUT_FLM3
+# reject: (?s)script 42500 ms: click 350 120(?:(?!script 45500).)*CUT_FLM3
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Cutting department building (297..404, 92..155)
+22000 move 350 120
+22500 click 350 120
+# monitor 0 (364..464 x 0..52) -> CUT_FLM2.TAF
+25000 move 414 26
+25500 click 414 26
+# monitor 1 (498..610 x 0..76) -> CUT_FLM3.TAF
+27500 move 554 38
+28000 click 554 38
+# monitor 2 (348..450 x 114..203) -> CUT_FLM1.TAF
+30000 move 399 158
+30500 click 399 158
+# monitor 3 (481..594 x 137..236) -> CUT_FLM4.TAF
+32500 move 537 186
+33000 click 537 186
+# monitor 1 off
+35000 move 554 38
+35500 click 554 38
+# "To the other offices" -> WET plot
+38000 move 160 400
+38500 click 160 400
+# Cutting department again: setup reloads the monitors that are on
+42000 move 350 120
+42500 click 350 120
+# monitor 1 on again
+45500 move 554 38
+46000 click 554 38
+# "To the other offices" -> WET plot
+48500 move 160 400
+49000 click 160 400
+53000 move 320 240

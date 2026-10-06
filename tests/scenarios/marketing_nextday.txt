@@ -1,0 +1,35 @@
+# seconds: 60
+# expects: marketing_news (scandal 3, dildos, broke on day 1: +0xc = 1; scandals 5 and 8 prepared; 0x458375 = 5; date patched to Tuesday 1-2-1997 9:50) loads on the WET plot -> 10:00: 0x42f334 skips the broken scandal 3 (0x42f367 tests +0xc) and breaks scandal 5 -> newspaper 0x43015e on the plot: "At midday in Chicago, unmistakable photos of porn star float down from sky!" (1607 + 5) -> WET plot again (BAUTEN.TAF; a click at 320,20, where the plot has no hotspot, ends the newspaper early if it is still up) -> Marketing office -> "Start scandals": the three prepared scandals stay hidden (the prepared flag +8 is never cleared, so every scandal can be used once) -> thumb -> "To the other offices". No lula[warn]/trap.
+# save: marketing_news
+# note: "MktNews" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot at 9:50, so the 10:00 roll comes about 2.5 s after loading (a probe with a move every 250 ms saw the headline drawn between 20.50 and 20.75 s, so the headline check is anchored at the Load click, not at the 20000 move)
+# random: the roll uses rand() (seeded from the runner's fixed LULA_CLOCK); with this seed the first candidate passes, as on day 1
+# check: (?s)script 18000 ms: click 263 228\n.*DrawTextA\("At midday in Chicago, unmistakable photos of porn star float down from sky!", rect 441,100,630,470
+# check: (?s)rect 441,100,630,470(?:(?!click 400 210).)*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# check: (?s)ms: click 400 210.*CreateFileA\(DATA\\ANI\\WERBUNG\.TAF, read.*script 40500 ms: click 230 240\n(?:lula\[info\][^\n]*\n)*lula\[trace\] DrawTextA\("Start scandals\s*"(?:(?!script 44000).)*DrawTextA\("\s*Lula caught with President\s*"
+# check: (?s)ms: click 320 450.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: (?s)script 40500 ms: click 230 240.*DrawTextA\("\s*Lula (sells dildos|distributes condoms|has photos thrown)
+# reject: (Lula, WET company's porn star, sells dildos|Porn star Lula distributes condoms)
+# main menu -> Load Game -> MktNews -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# wait on the plot for the 10:00 newspaper; it stays up for 150 timer ticks (9 s, longer when the
+# machine is busy) or until a click: the clicks at 320,20 end it (no hotspot there on the plot)
+20000 move 320 20
+30000 click 320 20
+33000 click 320 20
+# Marketing office building
+36000 move 400 210
+36500 click 400 210
+# Start scandals -> thumb
+40000 move 230 240
+40500 click 230 240
+44000 move 495 370
+44500 click 495 370
+# To the other offices
+48000 move 320 450
+48500 click 320 450
+52000 move 320 240

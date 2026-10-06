@@ -1,0 +1,30 @@
+# seconds: 60
+# expects: 'Shooting' (studio_end: movie 0 "Studio Heat" in production in studio 1 with 0 hours left, clock 8:25, slow clock) on the WET plot -> wait on the plot: at 8:30 0x4242f2 ends the shooting (0x425775, movie state 3, studio record freed); the player is not in a studio room, so the sound/0x423e61 branch is skipped -> Studio 1: the setup finds no movie (+0x34 = -1, +0x3c = 0) and no planned movie, so there is no film strip and all 8 hotspots work -> "Assign director" opens the director's card ("Is occupying the available place right now. in STUDIO 1": the crew stays assigned after the shooting) -> thumb -> To the other offices. No lula[warn]/trap.
+# save: studio_end
+# note: "Shooting" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: the game minute is 1.86 s here; 8:30 (end of shooting) comes about 7.5 s after the load (about 26 s), the studio is entered at 42.5 s
+# check: (?s)ms: click 230 250.*CreateFileA\(DATA\\DIALOG\\stud_dia\.TAF, read.*DrawTextA\("STUDIO 1"
+# check: (?s)ms: click 320 290.*CreateFileA\(DATA\\ANI\\Perskart\.TAF, read.*DrawTextA\("Bernie Pornolando".*DrawTextA\("Is occupying the available place right now\. in STUDIO 1"
+# check: (?s)ms: click 320 40\b.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: Studio Heat
+# reject: Select Film
+# main menu -> Load Game -> Shooting -> Load (WET plot, 8:25)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 600 20
+# Studio 1 building after 8:30
+42000 move 230 250
+42500 click 230 250
+# Assign director -> card -> thumb
+46000 move 320 290
+46500 click 320 290
+49500 move 500 380
+50000 click 500 380
+# To the other offices
+52500 move 320 40
+53000 click 320 40
+56000 move 320 240

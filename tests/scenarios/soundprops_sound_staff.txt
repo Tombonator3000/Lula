@@ -1,0 +1,49 @@
+# seconds: 68
+# expects: soundprops_base (dubber 418 and sound engineer 447 working, no sound equipment) on the WET plot -> Sound studio building (403..510, 96..159) -> room 27 (setup 0x42d711 loads TON_MUS.TAF because a sound engineer, job 18, is employed and TON_SPK.TAF because a dubber, job 16, is) -> "Dubbing monitor" (hotspot 2, 34..104 x 178..244; click handler 0x42d940 case 2) loads TON_FLM.TAF and sets 0x485984 = 1 -> "Assign (male or female) dubber" (hotspot 1, 151..307 x 39..163) -> staff card (0x40590d(16), Perskart.TAF) of the dubber Susi Oralo (133 $ per day) -> thumb -> "Assign musician/sound engineer" (hotspot 3, 393..550 x 144..415) -> staff card (0x40590d(18)) of the sound engineer Stefan Raabs (166 $ per day) -> thumb -> "Add sound track to film" (hotspot 5, 195..371 x 214..340) with no equipment (count 0x458419 = 0): "You haven't got any equipment yet!" (997) -> thumb -> "To the other offices" (0x42da94 frees TON_SPK, TON_MUS and TON_FLM) -> WET plot -> Sound studio again: the monitor flag 0x485984 is still 1, so the setup itself loads TON_FLM.TAF -> monitor off (0x42d9e7) -> "To the other offices". No lula[warn]/trap.
+# save: soundprops_base
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# check: (?s)script 22500 ms: click 460 120(?:(?!script 25500).)*CreateFileA\(DATA\\ANI\\TON_MUS\.TAF, read.*CreateFileA\(DATA\\ANI\\TON_SPK\.TAF, read.*script 26000 ms: click 69 211(?:(?!script 28500).)*CreateFileA\(DATA\\ANI\\TON_FLM\.TAF, read
+# check: (?s)ms: click 230 100.*CreateFileA\(DATA\\ANI\\Perskart\.TAF, read.*DrawTextA\("Susi Oralo".*DrawTextA\("Is occupying the available place right now\."
+# check: (?s)ms: click 470 280.*DrawTextA\("Stefan Raabs".*DrawTextA\("Is occupying the available place right now\."
+# check: (?s)ms: click 280 280.*DrawTextA\("\s*You haven't got any equipment yet!\s*"
+# check: (?s)script 52000 ms: click 460 120(?:(?!script 55000).)*CreateFileA\(DATA\\ANI\\TON_FLM\.TAF, read
+# reject: You haven't got any staff in this department
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Sound studio building
+22000 move 460 120
+22500 click 460 120
+# Dubbing monitor on
+25500 move 69 211
+26000 click 69 211
+# Assign dubber -> staff card -> thumb
+28500 move 230 100
+29000 click 230 100
+32000 move 500 380
+32500 click 500 380
+# Assign musician/sound engineer -> staff card -> thumb
+35000 move 470 280
+35500 click 470 280
+38500 move 500 380
+39000 click 500 380
+# Add sound track to film without equipment -> info box -> thumb
+41500 move 280 280
+42000 click 280 280
+44500 move 340 300
+45000 click 340 300
+# To the other offices -> WET plot -> Sound studio again (monitor still on)
+47500 move 80 400
+48000 click 80 400
+51500 move 460 120
+52000 click 460 120
+# Dubbing monitor off, then To the other offices
+55000 move 69 211
+55500 click 69 211
+58000 move 80 400
+58500 click 80 400
+62000 move 320 240

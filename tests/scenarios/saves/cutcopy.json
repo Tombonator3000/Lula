@@ -1,0 +1,270 @@
+{
+ "_comment": [
+  "Recipes of the stage-2 cutting department (room 29) and copier (room 30), prefix cutcopy.",
+  "Chain: prod_s2staff -> cutcopy_base (one shot movie) -> cutcopy_cutting (game buys a cutting machine and starts cutting) -> cutcopy_d4clock (patch: day 4, 9:59) -> cutcopy_cutdone (game runs past 10:00, cutting done) -> cutcopy_copier (game buys a copying machine). Side branches: cutcopy_movies (patched movie list for the 'Cut films' sheet) and cutcopy_d3clock -> cutcopy_day3 (day 3: cutting not done yet; state evidence only, no scenario uses it).",
+  "Movie records: 10 x 0x344 bytes at 0x455aa1, count 0x457b49. +0 title, +0x104 category (0 family, 50 soft, 100 hardcore), +0x148 length in minutes, +0x14c state (3 = shot), +0x184 cutting state (0 not cut, 1 being cut, 3 cut), +0x188/+0x18c/+0x190 day, month, year the cutting started (0x4052ed), +0x194 cutting days ((length / 10) >> 2, at least 1; written by the 'Cut films' sheet callback 0x428c1d), +0x198 sound state, +0x2f8/+0x2fc/+0x300/+0x304/+0x308/+0x30c quality values and +0x310 overall value (0x411a4c).",
+  "0x428e0a (10:00 every day) sets +0x184 = 3 when the days since +0x188 (0x405314: (year - 1997) * 365 + month * 30 + day) are greater than +0x194, so a cut that 'will take 2 day(s)' started on day 1 is done on day 4 at 10:00, not on day 3.",
+  "Equipment slots are 16 bytes: +0 EQUIP.TAP index (-1 empty), +4 condition (EQUIP.TAP +0x5c), +8 value (EQUIP.TAP +0x64, not the category: 2 for the 'Cut and Go' cutting machine of category 3), +0xc -1. Cutting machines: 10 slots at 0x45841d, count 0x4584bd. Copying machines: 10 slots at 0x459289, count 0x459329.",
+  "Staff table: record i at SAVEGAME file offset 0x7b8d + 40*i, written as the pseudo address 0x45d1ad + 40*i (+0 job, +4 status, +0xc level). prod_s2staff has cutter 193 Kerstin Loisi (job 2, level 6) and copying girl 257 Regina Lustweib (job 5, level 6), both status 2."
+ ],
+ "cutcopy_base": {
+  "from": "prod_s2staff",
+  "note": "prod_s2staff (all production buildings rented, one employee per job, account 1500000, 8:00 on 1-1-1997, WET plot, 'ProdAll' at 300,119) plus one shot movie, patched: movie count 1, record 0 'Raw Footage', 80 minutes (+0x148), state 3 (+0x14c), not cut (+0x184 = 0), no sound (+0x198 = 0), quality values +0x2f8/+0x2fc/+0x300/+0x30c = 60 (as in stage2_movie). Slow clock (0x4556bc = 30, 31 timer calls per game minute) so that no hourly event interrupts the scripts.",
+  "patch": {
+   "0x457b49": 1,
+   "0x455aa1": "Raw Footage\u0000",
+   "0x455be9": 80,
+   "0x455bed": 3,
+   "0x455c25": 0,
+   "0x455c39": 0,
+   "0x455d99": 60,
+   "0x455d9d": 60,
+   "0x455da1": 60,
+   "0x455dad": 60,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "account": 1500000,
+   "hour": 8,
+   "minute": 0,
+   "0x457b49": 1,
+   "0x455be9": 80,
+   "0x455bed": 3,
+   "0x455c25": 0,
+   "0x4584bd": 0,
+   "0x459329": 0,
+   "0x45efd5": 2,
+   "0x45efd9": 2,
+   "0x45f9d5": 5,
+   "0x45f9d9": 2
+  }
+ },
+ "cutcopy_movies": {
+  "from": "cutcopy_base",
+  "note": "cutcopy_base with four more movie records and one cutting machine, patched: movie count 5; 1 'Still Planned' (60 minutes, state 1: planned, not shot), 2 'Short Cut' (20 minutes, state 3), 3 'Long Cut' (120 minutes, state 3), 4 'Already Cut' (40 minutes, state 3, cutting state +0x184 = 3); cutting slot 0 = (26 'Cut and Go', 100, 2, -1), count 0x4584bd = 1. The 'Cut films' sheet (DDF 60) shows movie i in control 13 + i only when its state is 3 and its cutting state is 0. Name and Load-dialog entry stay 'ProdAll' (300,119).",
+  "patch": {
+   "0x457b49": 5,
+   "0x455de5": "Still Planned\u0000",
+   "0x455f2d": 60,
+   "0x455f31": 1,
+   "0x455f69": 0,
+   "0x456129": "Short Cut\u0000",
+   "0x456271": 20,
+   "0x456275": 3,
+   "0x4562ad": 0,
+   "0x45646d": "Long Cut\u0000",
+   "0x4565b5": 120,
+   "0x4565b9": 3,
+   "0x4565f1": 0,
+   "0x4567b1": "Already Cut\u0000",
+   "0x4568f9": 40,
+   "0x4568fd": 3,
+   "0x456935": 3,
+   "0x45841d": 26,
+   "0x458421": 100,
+   "0x458425": 2,
+   "0x458429": -1,
+   "0x4584bd": 1
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "ProdAll",
+   "0x457b49": 5,
+   "0x455f2d": 60,
+   "0x455f31": 1,
+   "0x455f69": 0,
+   "0x456271": 20,
+   "0x456275": 3,
+   "0x4562ad": 0,
+   "0x4565b5": 120,
+   "0x4565b9": 3,
+   "0x4565f1": 0,
+   "0x4568f9": 40,
+   "0x4568fd": 3,
+   "0x456935": 3,
+   "0x4584bd": 1
+  }
+ },
+ "cutcopy_cutting": {
+  "from": "cutcopy_base",
+  "note": "cutcopy_base after the game bought one video editing machine and started cutting the movie (script cutcopy_cutting.txt): in room 29 'Buy equipment' -> 'Cut and Go' (1000 $) -> Buy; 'Cut films' (DDF 60, callback 0x428c1d) -> 'Raw Footage' -> 'Cutting the film will take 2 day(s)'; saved on the WET plot as 'Cutting' in slot 4 (Load-dialog entry 300,119). Clock patched back to 8:00. The slot written by the purchase is (26, 100, 2, -1): EQUIP.TAP index 26 'Cut and Go', condition 100, value 2 (EQUIP.TAP +0x64, the value 0x428bc9 averages), -1.",
+  "script": "cutcopy_cutting.txt",
+  "seconds": 72,
+  "patch": {
+   "0x4556a8": 8,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Cutting",
+   "account": 1499000,
+   "0x4584bd": 1,
+   "0x455c25": 1,
+   "0x455c29": 1,
+   "0x455c2d": 1,
+   "0x455c31": 1997,
+   "0x455c35": 2,
+   "0x45841d": 26,
+   "0x458421": 100,
+   "0x458425": 2,
+   "0x45842d": -1
+  }
+ },
+ "cutcopy_d3clock": {
+  "from": "cutcopy_cutting",
+  "note": "Patch-only parent of cutcopy_day3: cutcopy_cutting with the clock set to Wednesday 3-1-1997 9:59 (day 0x45569c = 3, weekday 0x4556b8 = 2) and the normal speed (0x4556bc = 3).",
+  "patch": {
+   "0x45569c": 3,
+   "0x4556b8": 2,
+   "0x4556a8": 9,
+   "0x4556ac": 59,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Cutting",
+   "day": 3,
+   "hour": 9,
+   "minute": 59,
+   "0x455c25": 1
+  }
+ },
+ "cutcopy_day3": {
+  "from": "cutcopy_d3clock",
+  "note": "cutcopy_d3clock loaded and run past 10:00, saved as 'CutDay3' on the WET plot. At 10:00 the hourly dispatcher 0x4050c1 calls 0x428e0a, which compares the days since the cutting started (0x405314: 3 - 1 = 2) with the cutting days (+0x194 = 2) using '>', so the movie is still being cut (+0x184 = 1).",
+  "script": [
+   "11500 move 505 40",
+   "12000 click 505 40",
+   "15000 move 300 119",
+   "15500 click 300 119",
+   "17500 move 263 228",
+   "18000 click 263 228",
+   "28000 key F2",
+   "30500 move 305 212",
+   "31000 click 305 212",
+   "33000 move 300 119",
+   "33500 click 300 119",
+   "35500 move 263 228",
+   "36000 click 263 228",
+   "38500 type CutDay3",
+   "40000 key RETURN"
+  ],
+  "seconds": 46,
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "CutDay3",
+   "day": 3,
+   "hour": 10,
+   "0x455c25": 1,
+   "0x455c35": 2,
+   "account": 1499000,
+   "0x459329": 0
+  }
+ },
+ "cutcopy_d4clock": {
+  "from": "cutcopy_cutting",
+  "note": "Patch-only parent of cutcopy_cutdone: cutcopy_cutting with the clock set to Thursday 4-1-1997 9:59 (day 0x45569c = 4, weekday 0x4556b8 = 3) and the normal speed (0x4556bc = 3).",
+  "patch": {
+   "0x45569c": 4,
+   "0x4556b8": 3,
+   "0x4556a8": 9,
+   "0x4556ac": 59,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Cutting",
+   "day": 4,
+   "hour": 9,
+   "minute": 59,
+   "0x455c25": 1
+  }
+ },
+ "cutcopy_cutdone": {
+  "from": "cutcopy_d4clock",
+  "note": "cutcopy_d4clock loaded and run past 10:00, saved as 'CutDone' on the WET plot (Load-dialog entry 300,119). At 10:00 0x428e0a finds 4 - 1 = 3 days > +0x194 = 2 and sets the cutting state +0x184 = 3 (cut). Then patched to the slow clock (0x4556bc = 30) and 10:00, so later scripts are not interrupted by hourly events.",
+  "script": [
+   "11500 move 505 40",
+   "12000 click 505 40",
+   "15000 move 300 119",
+   "15500 click 300 119",
+   "17500 move 263 228",
+   "18000 click 263 228",
+   "28000 key F2",
+   "30500 move 305 212",
+   "31000 click 305 212",
+   "33000 move 300 119",
+   "33500 click 300 119",
+   "35500 move 263 228",
+   "36000 click 263 228",
+   "38500 type CutDone",
+   "40000 key RETURN"
+  ],
+  "seconds": 46,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "CutDone",
+   "day": 4,
+   "hour": 10,
+   "0x455c25": 3,
+   "0x455c35": 2,
+   "0x455bed": 3,
+   "0x4584bd": 1,
+   "account": 1499000,
+   "0x459329": 0
+  }
+ },
+ "cutcopy_copier": {
+  "from": "cutcopy_cutdone",
+  "note": "cutcopy_cutdone after the game bought a copying machine (script cutcopy_copier.txt): in room 30 'Buy copying machines' -> 'Emil Copy 5000' (10000 $; the sell list then offers it for 9000 $ = 10000 * (100 - 10) / 100) -> Buy; saved on the WET plot as 'Copier' in slot 4 (Load-dialog entry 300,119). With the copier rented, a copying girl working and a machine, 0x40e3ed ('fully equipped copier') is true, so the office laptop can put the cut movie on sale. Clock patched back to 10:00 (slow clock 0x4556bc = 30 kept). The slot written by the purchase is (29, 100, 2, -1): EQUIP.TAP index 29 'Emil Copy 5000', condition 100, value 2, -1.",
+  "script": "cutcopy_copier.txt",
+  "seconds": 60,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Copier",
+   "account": 1489000,
+   "day": 4,
+   "hour": 10,
+   "0x459329": 1,
+   "0x459289": 29,
+   "0x45928d": 100,
+   "0x459291": 2,
+   "0x459299": -1,
+   "0x455c25": 3,
+   "0x4584bd": 1
+  }
+ }
+}

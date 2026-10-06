@@ -1,0 +1,65 @@
+# Load "ProdAll" (studio_cast, slot 4, WET plot) -> Studio 1 building (163..294, 195..290) -> room 24.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 230 250
+22500 click 230 250
+# "Hire lighting engineer" (hotspot 1, 0..109 x 103..480) -> staff card (DDF 25, callback 0x405948) of
+# Jack Zasas (164) -> assign (card control 1, 308..348 x 350..408): 0x424e8c / 0x424eba put him into
+# studio record +0x20, status 2 -> thumb (control 0).
+26000 move 50 300
+26500 click 50 300
+29500 move 328 379
+30000 click 328 379
+32000 move 500 380
+32500 click 500 380
+# "Assign cameraman" (hotspot 2, 546..640 x 79..330) -> Charlie Eichler (230) -> assign -> thumb.
+35000 move 590 200
+35500 click 590 200
+38500 move 328 379
+39000 click 328 379
+41000 move 500 380
+41500 click 500 380
+# "Assign director" (hotspot 5, 213..432 x 182..392) -> Bernie Pornolando (377) -> assign
+# (0x424eba also sets +0x2c = 0 and +0x30 = 15 - level 7 = 8) -> thumb.
+44000 move 320 290
+44500 click 320 290
+47500 move 328 379
+48000 click 328 379
+50000 move 500 380
+50500 click 500 380
+# "Choose lighting" (hotspot 3) -> equipment sheet 0x406121 (category 0, 1 slot at +0x10) ->
+# row 5 "Small Spotlight" 120 $ -> Buy -> left thumb.
+53000 move 170 140
+53500 click 170 140
+56500 move 150 228
+57000 click 150 228
+58500 move 168 341
+59000 click 168 341
+61000 move 292 342
+61500 click 292 342
+# "Choose camera" (hotspot 4) -> equipment sheet (category 1, slot at +0) -> row 2 "Castor AX 80"
+# 150 $ -> Buy -> left thumb.
+64000 move 470 165
+64500 click 470 165
+67500 move 150 183
+68000 click 150 183
+69500 move 168 341
+70000 click 168 341
+72000 move 292 342
+72500 click 292 342
+# "To the other offices" -> WET plot, then F2 -> Save game -> slot 4 -> Save -> name -> RETURN.
+75000 move 320 40
+75500 click 320 40
+79500 key F2
+82000 move 305 212
+82500 click 305 212
+84500 move 300 119
+85000 click 300 119
+87000 move 263 228
+87500 click 263 228
+90000 type Studio
+91500 key RETURN

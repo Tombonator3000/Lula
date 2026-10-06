@@ -1,0 +1,39 @@
+# seconds: 50
+# expects: CastTrain (casting_trained: the save the game wrote after the actors-file session: Thommy Session pay 2330 and 11 days of training, Cassandra Casablanca fired; clock set to 8:30) loads on the WET plot -> Casting office -> "Look at actors file" -> male actors -> card of Thommy Session: " Currently 2330 $ per Day", "Is still in training for 11 day(s)!" (status 3) -> close -> female actors: nobody hired (0x4057d2(21) = 0) -> "You haven't got an actress" -> thumbs up -> close the strip -> "Cast actors": only one actor counts (status 1, 2 or 3), so "Yeah well, make a movie like this, you should know you need at least two actors!" -> thumbs up -> "To the other offices". No lula[warn]/trap.
+# save: casting_trained
+# note: "CastTrain" is the Load-dialog entry at 300,119 (slot 4). This scenario shows that the pay change, the training (0x41b8ac) and the firing (0x41b2b4, 0x41dd79) written by the game survive save and load. Info box thumbs up at 340,305.
+# check: (?s)ms: click 187 253.*DrawTextA\("Thommy Session".*DrawTextA\(" Currently 2330 \$ per Day".*DrawTextA\("Is still in training for 11 day\(s\)!"
+# check: (?s)ms: click 470 250.*DrawTextA\("\s*You haven't got an actress\s*"
+# check: (?s)ms: click 275 145.*DrawTextA\("\s*Yeah well, make a movie like this, you should know you need at least two actors!\s*"
+# check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: Cassandra Casablanca
+# main menu -> Load Game -> CastTrain -> Load (WET plot, room 20, 8:30)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Casting office -> Look at actors file -> male actors -> close card
+22000 move 440 400
+22500 click 440 400
+25500 move 78 185
+26000 click 78 185
+28500 move 187 253
+29000 click 187 253
+31500 move 505 382
+32000 click 505 382
+# female actors -> "You haven't got an actress" -> thumbs up -> close the strip
+34000 move 470 250
+34500 click 470 250
+36500 move 340 305
+37000 click 340 305
+39000 move 327 375
+39500 click 327 375
+# Cast actors -> "need at least two actors" -> thumbs up -> To the other offices
+41500 move 275 145
+42000 click 275 145
+44000 move 340 305
+44500 click 340 305
+46500 move 470 160
+47000 click 470 160

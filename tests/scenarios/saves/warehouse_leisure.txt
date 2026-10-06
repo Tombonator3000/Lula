@@ -1,0 +1,42 @@
+# Load "ProdAll" (prod_s2all, slot 4, WET plot) -> Recreation room building (523..635, 385..472) -> room 28.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 580 440
+22500 click 580 440
+# "Buy equipment" (421..640, 221..433) -> 0x406121(category 6, slots 0x459475, 20) -> sheet "Buy Leisure
+# equipment" / "Sell Leisure equipment", group "Couch".
+25500 move 530 330
+26000 click 530 330
+# Buy row 5 "Pink Plush" (1289 $), then row 1 "Lay On Me" (2550 $).
+29000 move 150 229
+29500 click 150 229
+31500 move 168 341
+32000 click 168 341
+34500 move 150 168
+35000 click 150 168
+37000 move 168 341
+37500 click 168 341
+# Sell list row 1 "Pink Plush" (offered for 1160 $) -> Sell.
+40000 move 450 168
+40500 click 450 168
+42500 move 449 345
+43000 click 449 345
+# Left thumb closes the sheet; "To the other offices" (0..640, 0..80) -> WET plot; F2 -> Save game -> slot 4
+# -> Save -> name -> RETURN.
+45500 move 292 342
+46000 click 292 342
+49000 move 320 40
+49500 click 320 40
+53500 key F2
+56000 move 305 212
+56500 click 305 212
+58500 move 300 119
+59000 click 300 119
+61000 move 263 228
+61500 click 263 228
+64000 type Leisure
+65500 key RETURN

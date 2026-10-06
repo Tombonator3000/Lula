@@ -1,0 +1,53 @@
+# seconds: 76
+# expects: ProdAll with writer, designer and assistant hired but no movie (slow clock) on the WET plot -> Movie planning (room 22) -> Work on storyboard -> "There's no screenplay yet!" -> thumb -> Define the subject of the movie -> "There's no screenplay yet!" -> thumb -> click the designer and the assistant (hotspots 3 and 4 start their animations) -> Write screenplay -> New -> "Ghost Movie" -> toilet (control 1) closes the sheet without storing -> Work on storyboard -> still "There's no screenplay yet!" -> thumb -> To the other offices. No lula[warn]/trap.
+# save: planning_s2
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# check: (?s)ms: click 80 190.*DrawTextA\("\s*There's no screenplay yet!\s*".*ms: move 350 250\n(?:(?!lula\[info\] script)(?![^\n]*no screenplay)[^\n]*\n)*lula\[info\] script \d+ ms: click 350 250(?:(?!ms: click 260 365).)*DrawTextA\("\s*There's no screenplay yet!\s*"
+# check: (?s)ms: click 190 146.*DialogBoxParamA\(STANDARD_GET_TXT_DLG\) -> 1.*DrawTextA\("Ghost Movie", rect 277,138
+# check: (?s)ms: click 231 373.*ms: click 80 190.*DrawTextA\("\s*There's no screenplay yet!\s*"
+# check: (?s)ms: click 400 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: STORYFUC\.TAF
+# reject: The planning for this movie is already finished
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Movie planning building -> room 22
+22000 move 540 310
+22500 click 540 310
+# Work on storyboard -> no movie -> thumb of the info box
+25500 move 80 190
+26000 click 80 190
+29000 move 340 300
+29500 click 340 300
+# Define the subject of the movie -> no movie -> thumb
+32500 move 350 250
+33000 click 350 250
+36000 move 340 300
+36500 click 340 300
+# designer figure (hotspot 3) and assistant figure (hotspot 4)
+39500 move 260 365
+40000 click 260 365
+43000 move 418 210
+43500 click 418 210
+# Write screenplay -> New -> title -> RETURN -> toilet (nothing stored)
+47000 move 420 350
+47500 click 420 350
+50500 move 190 146
+51000 click 190 146
+53500 type Ghost Movie
+55000 key RETURN
+58000 move 231 373
+58500 click 231 373
+# Work on storyboard -> still no movie -> thumb
+61500 move 80 190
+62000 click 80 190
+65000 move 340 300
+65500 click 340 300
+# To the other offices -> WET plot
+68500 move 400 40
+69000 click 400 40
+72500 move 320 240

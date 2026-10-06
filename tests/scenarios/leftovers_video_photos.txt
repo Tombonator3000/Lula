@@ -1,0 +1,41 @@
+# seconds: 72
+# expects: stage-1 save "Developed" (town, day 2 11:00; the photo film "Session 1" was developed at the video store: kind +0x54 = 1, cost +0x58 = 20, still at the store, +0x60 = 0) -> Video store: the room registers hotspot 2 "Finished photos" (515..631, 387..474) because 0x42ce15 -> 0x42d56e(0) sums 20 $ -> click it: DDF 0x2a with callback 0x42d45b: "Your photos are ready" "That's 20 $" -> thumb (control 3): 0x42d56e(1) hands the photos back (+0x60 = 2) and 20 $ are taken (account 19668 -> 19648, info box "$20 was deducted from your account") -> thumb -> To the town -> Distributor -> Photos: "Session 1" now has the photo icon (0x412ed4 returns 1 for kind 1) and can be selected -> thumb: license offer "OK! I'm offering you 20% royalties." -> toilet, toilet.
+# save: leftovers_s1dev
+# note: "Developed" is the Load-dialog entry at 300,119 (slot 4)
+# check: (?s)script 26500 ms: click 573 430.*DrawTextA\("Your photos are ready
+# check: DrawTextA\("20 \$", rect 379,260,450,279
+# check: DrawTextA\("\$20 was deducted from your account"
+# check: (?s)script 53500 ms: click 377 365.*DrawTextA\("OK! I'm offering you 20% royalties
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 560 200
+22500 click 560 200
+26000 move 573 430
+26500 click 573 430
+# thumb: pay (control 3 -> 0x42d4bb: 20 <= account, 0x42d56e(1) hands the photos back, +0x60 = 2)
+30000 move 190 335
+30500 click 190 335
+# info box "$20 was deducted from your account" -> thumb
+34000 move 344 312
+34500 click 344 312
+# To the town -> Distributor -> Photos: the developed photos (kind 1) can be selected
+38000 move 140 440
+38500 click 140 440
+42000 move 430 110
+42500 click 430 110
+46000 move 278 238
+46500 click 278 238
+50000 move 250 148
+50500 click 250 148
+53000 move 377 365
+53500 click 377 365
+# the license offer "OK! I'm offering you 20% royalties." (DDF 0x34, callback 0x412f0c) -> toilet (decline) -> toilet closes the photo sheet
+57000 move 410 310
+57500 click 410 310
+61000 move 445 365
+61500 click 445 365
+65000 move 320 240

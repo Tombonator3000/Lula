@@ -1,0 +1,45 @@
+# seconds: 60
+# expects: ProdAll (every production building rented, no employee) on the WET plot -> Movie planning (room 22, setup 0x41de87 loads FILMPLAN.TAF; 0x41f4d7 finds no designer, assistant or writer) -> Work on storyboard -> "This is the place for the production designer, you haven't hired one!" -> thumb -> Write screenplay -> "Unfortunately you still haven't got a screenplay writer, even if it looks as if you have!" -> thumb -> Define the subject of the movie -> "You can see the production assistant, but you haven't got one!" -> thumb -> the designer and assistant figures (hotspots 3 and 4) do nothing -> To the other offices -> WET plot. No sheet opens. No lula[warn]/trap.
+# save: prod_s2all
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20, not in realtor mode)
+# check: (?s)ms: click 540 310.*CreateFileA\(DATA\\ANI\\FILMPLAN\.TAF, read.*ms: click 80 190.*DrawTextA\("\s*This is the place for the production designer, you haven't hired one!\s*"
+# check: (?s)ms: click 420 350.*DrawTextA\("\s*Unfortunately you still haven't got a screenplay writer, even if it looks as if you have!\s*"
+# check: (?s)ms: click 350 250.*DrawTextA\("\s*You can see the production assistant, but you haven't got one!\s*"
+# check: (?s)ms: click 400 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: Pick storyline
+# reject: STORYFUC\.TAF
+# reject: There's no screenplay yet
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Movie planning building -> room 22
+22000 move 540 310
+22500 click 540 310
+# Work on storyboard -> no designer -> thumb of the info box
+25500 move 80 190
+26000 click 80 190
+29000 move 340 300
+29500 click 340 300
+# Write screenplay -> no writer -> thumb
+32500 move 420 350
+33000 click 420 350
+36000 move 340 300
+36500 click 340 300
+# Define the subject of the movie -> no assistant -> thumb
+39500 move 350 250
+40000 click 350 250
+43000 move 340 300
+43500 click 340 300
+# designer figure (hotspot 3, 192..333 x 330..403) and assistant figure (hotspot 4, 389..448 x 193..227)
+46500 move 260 365
+47000 click 260 365
+49500 move 418 210
+50000 click 418 210
+# To the other offices -> WET plot
+52500 move 400 40
+53000 click 400 40
+56500 move 320 240

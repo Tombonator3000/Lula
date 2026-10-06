@@ -1,0 +1,19 @@
+# seconds: 40
+# expects: stage-1 save "Film" (motel room, 10:00, Super Dildo Neon bought in the sex store) -> the motel room registers hotspot 7 "Sex toy" (127..248, 392..477) because 0x40f0ac counts category-10 items into 0x45e008 -> click it: 0x40e748 case 7 -> 0x40f30b collects the category-10 items of the inventory list [0x45d940] and opens the list dialog 0x407c54 titled "Sex toy" (string 3222) with the row formatter 0x40f42e ("%3d %-21s %-8s %6lu$": "  1 Super Dildo Neon ... 50$") -> thumb closes it.
+# save: leftovers_s1film
+# note: "Film" is the Load-dialog entry at 300,107 (slot 3)
+# note: the rows of the list are drawn with the game's own font (not traced); only the title goes through DrawTextA
+# check: CreateFileA\(DATA\\ANI\\LULA_ZIM\.TAF, read
+# check: (?s)ms: click 187 435.*DrawTextA\("Sex toy", rect 58,129,252,150
+# reject: DrawTextA\("\s*There's no sense in a session without me
+11500 move 505 40
+12000 click 505 40
+15000 move 300 107
+15500 click 300 107
+17500 move 263 228
+18000 click 263 228
+22000 move 187 435
+22500 click 187 435
+27000 move 288 346
+27500 click 288 346
+32000 move 320 240

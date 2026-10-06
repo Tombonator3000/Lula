@@ -1,0 +1,47 @@
+# seconds: 60
+# expects: cutcopy_movies (movies 0 'Raw Footage' 80 min shot, 1 'Still Planned' planned only, 2 'Short Cut' 20 min shot, 3 'Long Cut' 120 min shot, 4 'Already Cut' shot and cut; one cutting machine) on the WET plot -> Cutting department -> "Cut films" (DDF 60, callback 0x428c1d): movie i sits in control 13 + i, so the sheet shows 'Raw Footage' in row 1, 'Short Cut' in row 3 and 'Long Cut' in row 4 and leaves rows 2 and 5 empty (state not 3, or already cut) -> row 3: "Cutting the film will take 1 day(s)" ((20 / 10) >> 2 = 0, raised to 1) -> thumb, the row is hidden -> row 4: "Cutting the film will take 3 day(s)" ((120 / 10) >> 2) -> thumb -> click on the empty row 2: nothing (the control's +0x88 is 0) -> sheet thumb -> "Cut films" again: only 'Raw Footage' is left -> sheet thumb. No lula[warn]/trap.
+# save: cutcopy_movies
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: the sheet is reopened, not left open: the last check needs the move step at 47000 to draw no sheet text, so the reject on 'Short Cut'/'Long Cut' is judged on a fresh init of 0x428c1d
+# check: (?s)script 26000 ms: click 280 200(?:(?!script 29000).)*DrawTextA\("Raw Footage", rect 76,90,(?:(?!script 29000).)*DrawTextA\("Short Cut", rect 76,152,(?:(?!script 29000).)*DrawTextA\("Long Cut", rect 76,184,
+# check: (?s)ms: click 120 161.*DrawTextA\("Cutting the film will take 1 day\(s\)"
+# check: (?s)ms: click 120 193.*DrawTextA\("Cutting the film will take 3 day\(s\)"
+# check: (?s)script 47000 ms: move 280 200(?:(?!Produced films)(?!script 47500).)*script 47500 ms: click 280 200(?:(?!script 50000).)*DrawTextA\("Raw Footage", rect 76,90,
+# reject: DrawTextA\("(Still Planned|Already Cut)"
+# reject: (?s)script 47500 ms: click 280 200(?:(?!script 50000).)*DrawTextA\("(Short Cut|Long Cut)"
+# reject: (?s)ms: click 120 130(?:(?!script 44000).)*Cutting the film will take
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Cutting department building (297..404, 92..155)
+22000 move 350 120
+22500 click 350 120
+# "Cut films" -> DDF 60
+25500 move 280 200
+26000 click 280 200
+# entry 3 (control 15, movie 2 'Short Cut', 20 minutes) -> info box -> thumb
+29000 move 120 161
+29500 click 120 161
+32000 move 340 300
+32500 click 340 300
+# entry 4 (control 16, movie 3 'Long Cut', 120 minutes) -> info box -> thumb
+35000 move 120 193
+35500 click 120 193
+38000 move 340 300
+38500 click 340 300
+# entry 2 (control 14, movie 1 'Still Planned', hidden): nothing
+41000 move 120 130
+41500 click 120 130
+# sheet thumb
+44000 move 595 440
+44500 click 595 440
+# "Cut films" again
+47000 move 280 200
+47500 click 280 200
+50000 move 595 440
+50500 click 595 440
+55000 move 320 240

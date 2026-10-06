@@ -1,0 +1,35 @@
+# Load "Develop" (slot 3, motel room, Monday 12:00, film 'Session 1' in development, 16 hours left,
+# fastest clock: 3.6 s per game hour) -> wait in the motel room: the day-end info box "And another busy
+# day comes to an end." comes at midnight (about 61 s) and is closed with its thumb (344,312; the clicks
+# every 3 s cover a slower machine and hit no hotspot of the motel room when no box is open) -> by
+# Tuesday 12:00 (about 80 s) the hourly hook 0x408a87 has set kind +0x54 = 1 and +0x58 = 20
+# -> F2 -> Save game -> slot 4 (300,119) "Photos" (Tuesday evening, before the next midnight at about 125 s).
+12000 move 505 40
+12500 click 505 40
+15000 move 300 107
+15500 click 300 107
+17000 move 263 228
+17500 click 263 228
+20000 move 344 312
+58000 click 344 312
+61000 click 344 312
+64000 click 344 312
+67000 click 344 312
+70000 click 344 312
+73000 click 344 312
+76000 click 344 312
+79000 click 344 312
+82000 click 344 312
+85000 click 344 312
+88000 click 344 312
+108000 key F2
+110500 move 305 212
+111000 click 305 212
+113500 move 300 119
+114000 click 300 119
+115500 move 263 228
+116000 click 263 228
+118000 type Photos
+119500 key RETURN
+122000 move 328 368
+122500 click 328 368

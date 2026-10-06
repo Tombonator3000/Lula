@@ -1,0 +1,66 @@
+# seconds: 92
+# expects: marketing_poor (prod_s2staff with the account patched to 30000, credit line 0x455684 = 70000) loads on the WET plot -> Marketing office -> "Start advertising" -> TV ads ($160000): 0x40561d finds account + credit line = 100000 < 160000 -> info box "Unfortunately you haven't got enough money!" (903, path 0x42f10c of 0x42f03d) -> thumb -> Lula Promotion Tour ($25000) -> yes (account 5000) -> Ads ($14000; 5000 + 70000 >= 14000, the credit line pays) -> yes (account -9000) -> thumb -> "Start scandals" -> Lula caught with President ($180000) -> 903 (path 0x42f246 of 0x42f183) -> thumb -> Lula fucks mayor ($64000; -9000 + 70000 = 61000 < 64000) -> 903 -> thumb -> Lula strips on talkshow ($28000) -> yes/no "This scandal will cost you $28000. Prepare scandal?" -> yes (account -37000 in the status line) -> thumb -> "To the other offices" -> WET plot. No lula[warn]/trap.
+# save: marketing_poor
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4). Info box thumb 340,305; yes/no box thumb 318,305. The status line is not traced; frames showed 30000 -> 5000 -> -9000 -> -37000.
+# check: (?s)ms: click 230 290\n(?:(?!script 33000).)*DrawTextA\("Unfortunately you haven't got enough money!"
+# check: (?s)ms: click 230 197\n(?:(?!script 40000).)*DrawTextA\("Advertising this way will cost you \$25000\. Start advertising\?".*ms: click 230 228\n(?:(?!script 47000).)*DrawTextA\("Advertising this way will cost you \$14000\. Start advertising\?"
+# check: (?s)ms: click 266 376\n(?:(?!script 61000).)*DrawTextA\("Unfortunately you haven't got enough money!"
+# check: (?s)ms: click 266 177\n(?:(?!script 68000).)*DrawTextA\("Unfortunately you haven't got enough money!"
+# check: (?s)ms: click 266 148\n(?:(?!script 75000).)*DrawTextA\("This scandal will cost you \$28000\. Prepare scandal\?".*ms: click 320 450.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: \$160000\. Start advertising|\$180000\. Prepare scandal|\$64000\. Prepare scandal
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Marketing office building
+22000 move 400 210
+22500 click 400 210
+# Start advertising
+26000 move 500 280
+26500 click 500 280
+# TV ads: not enough money -> info box thumb
+29500 move 230 290
+30000 click 230 290
+33000 move 340 305
+33500 click 340 305
+# Lula Promotion Tour -> yes
+36500 move 230 197
+37000 click 230 197
+40000 move 318 305
+40500 click 318 305
+# Ads -> yes (paid from the credit line)
+43500 move 230 228
+44000 click 230 228
+47000 move 318 305
+47500 click 318 305
+# thumb closes the sheet
+50500 move 400 240
+51000 click 400 240
+# Start scandals
+54000 move 230 240
+54500 click 230 240
+# Lula caught with President: not enough money -> thumb
+57500 move 266 376
+58000 click 266 376
+61000 move 340 305
+61500 click 340 305
+# Lula fucks mayor: not enough money -> thumb
+64500 move 266 177
+65000 click 266 177
+68000 move 340 305
+68500 click 340 305
+# Lula strips on talkshow -> yes
+71500 move 266 148
+72000 click 266 148
+75000 move 318 305
+75500 click 318 305
+# thumb closes the sheet
+78500 move 495 370
+79000 click 495 370
+# To the other offices
+82000 move 320 450
+82500 click 320 450
+86000 move 320 240

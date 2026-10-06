@@ -1,0 +1,75 @@
+# seconds: 104
+# expects: 'Planned' (movie 0 "Lust in Space" in planning) without a screenplay writer (designer and assistant hired, slow clock) on the WET plot -> Movie planning (room 22) -> Work on storyboard -> twelve film strip pictures: "Tot. basic price" 1000 $ ... 12000 $ (120 minutes) -> a thirteenth picture -> "Unfortunately we can only produce movies up to 120 minutes" -> thumb -> Conclude planning -> "You can't finish planning until you've hired all your staff!" (0x484224 = 0) -> thumb -> thumbs up (control 0) stores the storyboard without finishing it -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# save: planning_short
+# note: "Planned" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: after the run slot 4 holds movie 0 with 12 scenes (+0x108: 0..6, 0..4), 120 minutes (+0x148), state 0, total basic price 12000 (+0x154) and the account still 1500000 (checked by hand with --keep)
+# check: (?s)ms: click 80 190.*CreateFileA\(DATA\\ANI\\STORYFUC\.TAF, read.*ms: click 592 41.*DrawTextA\("1000 \$".*DrawTextA\("12000 \$"
+# check: (?s)DrawTextA\("12000 \$".*DrawTextA\("\s*Unfortunately we can only produce movies up to 120 minutes\s*"
+# check: (?s)ms: click 454 454.*DrawTextA\("\s*You can't finish planning until you've hired all your staff!\s*"
+# check: (?s)ms: click 400 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: Finish anyway
+# reject: 13000 \$
+# main menu -> Load Game -> Planned -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Movie planning building -> room 22
+22000 move 540 310
+22500 click 540 310
+# Work on storyboard
+25500 move 80 190
+26000 click 80 190
+# twelve film strip pictures (controls 16..22, then 16..20 again)
+29000 move 592 41
+29500 click 592 41
+31500 move 592 90
+32000 click 592 90
+34000 move 592 137
+34500 click 592 137
+36500 move 592 185
+37000 click 592 185
+39000 move 592 233
+39500 click 592 233
+41500 move 592 281
+42000 click 592 281
+44000 move 592 330
+44500 click 592 330
+46500 move 592 41
+47000 click 592 41
+49000 move 592 90
+49500 click 592 90
+51500 move 592 137
+52000 click 592 137
+54000 move 592 185
+54500 click 592 185
+56500 move 592 233
+57000 click 592 233
+# a thirteenth picture -> 120-minute limit -> thumb
+59000 move 592 281
+59500 click 592 281
+62500 move 340 300
+63000 click 340 300
+# Conclude planning -> staff missing -> thumb
+66000 move 454 454
+66500 click 454 454
+69500 move 340 300
+70000 click 340 300
+# thumbs up (control 0, 463..517 x 369..422) stores the storyboard
+73000 move 490 395
+73500 click 490 395
+# To the other offices -> WET plot
+76500 move 400 40
+77000 click 400 40
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+80500 key F2
+83000 move 305 212
+83500 click 305 212
+85500 move 300 119
+86000 click 300 119
+88000 move 263 228
+88500 click 263 228
+91000 type Limits
+92500 key RETURN

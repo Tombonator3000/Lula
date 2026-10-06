@@ -5,7 +5,7 @@
 # note: after the run slot 4 holds writer 212 working (status 2) and writer 208 idle (status 1) (checked by hand with --keep)
 # check: (?s)ms: click 80 190.*DrawTextA\("\s*This is the place for the production designer, you haven't hired one!\s*"
 # check: (?s)ms: click 60 400.*DrawTextA\("Scrply writer".*DrawTextA\("Assign staff\s*"
-# check: (?s)ms: click 191 201.*DrawTextA\("Stanley Smith".*ms: click 192 381.*DrawTextA\("Sascha Rosine".*DrawTextA\("Is glad there's nothing to do\.".*ms: click 328 379.*DrawTextA\("Is occupying the available place right now\."
+# check: (?s)ms: click 191 201.*DrawTextA\("Stanley Smith".*ms: click 192 381.*DrawTextA\("Sascha Rosine".*DrawTextA\("Is glad there's nothing to do\.".*ms: click 328 379(?:(?!ms: click 191 311).)*DrawTextA\("Is occupying the available place right now\."
 # check: (?s)ms: click 191 255.*DrawTextA\("\s*You haven't got any staff in this department\s*"
 # check: (?s)ms: click 191 311.*DrawTextA\("Judy Icecream".*ms: click 400 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
 # main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)

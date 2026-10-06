@@ -1,0 +1,42 @@
+# seconds: 66
+# expects: marketing_ads (the game started Lula Promotion Tour and Posters and prepared scandals 3, 5 and 8; account 1429500; patched to Monday 1-1-1997 9:50) loads on the WET plot -> 10:00: 0x42f334 breaks scandal 3 while the player is on the plot -> newspaper 0x43015e: it calls the room-31 leave function 0x42eaf2 (not the current room's leave function), sets the room to -1, shows "Lula, WET company's porn star, sells dildos at car boot sale!" and then ChangeRoom(20) enters the plot again (BAUTEN.TAF; a click at 320,20, where the plot has no hotspot, ends the newspaper early if it is still up) -> Marketing office -> "Start advertising": the saved running campaigns stay hidden (only Ads and TV ads) -> thumb -> "Start scandals": the three prepared scandals stay hidden -> thumb -> "To the other offices". No lula[warn]/trap.
+# save: marketing_ads
+# note: "MktAds" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot at 9:50, so the 10:00 roll comes about 2.5 s after loading (a probe with a move every 250 ms saw the headline drawn between 20.50 and 20.75 s, so the headline check is anchored at the Load click, not at the 20000 move)
+# random: the roll uses rand() (seeded from the runner's fixed LULA_CLOCK); with this seed the first prepared scandal (3) passes, as in marketing_scandal and the recipe marketing_news
+# check: (?s)script 18000 ms: click 263 228\n.*DrawTextA\("Lula, WET company's porn star, sells dildos at car boot sale!", rect 441,100,630,470
+# check: (?s)rect 441,100,630,470(?:(?!click 400 210).)*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# check: (?s)ms: click 400 210.*CreateFileA\(DATA\\ANI\\WERBUNG\.TAF, read.*script 40500 ms: click 500 280\n(?:(?!script 44000).)*DrawTextA\("\s*TV ads\s*"
+# check: (?s)script 48500 ms: click 230 240\n(?:lula\[info\][^\n]*\n)*lula\[trace\] DrawTextA\("Start scandals\s*"(?:(?!script 52000).)*DrawTextA\("\s*Lula caught with President\s*"
+# check: (?s)ms: click 320 450.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: (?s)script 40500 ms: click 500 280.*DrawTextA\("\s*(Lula Promotion Tour|Posters\s*")
+# reject: (?s)script 48500 ms: click 230 240.*DrawTextA\("\s*Lula (sells dildos|distributes condoms|has photos thrown)
+# reject: At midday in Chicago|Porn star Lula distributes condoms
+# main menu -> Load Game -> MktAds -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# wait on the plot for the 10:00 newspaper; it stays up for 150 timer ticks (9 s, longer when the
+# machine is busy) or until a click: the clicks at 320,20 end it (no hotspot there on the plot)
+20000 move 320 20
+30000 click 320 20
+33000 click 320 20
+# Marketing office building
+36000 move 400 210
+36500 click 400 210
+# Start advertising -> thumb
+40000 move 500 280
+40500 click 500 280
+44000 move 400 240
+44500 click 400 240
+# Start scandals -> thumb
+48000 move 230 240
+48500 click 230 240
+52000 move 495 370
+52500 click 495 370
+# To the other offices
+56000 move 320 450
+56500 click 320 450
+60000 move 320 240

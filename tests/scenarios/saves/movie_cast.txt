@@ -1,0 +1,62 @@
+# movie_cast: cast actor 527 and actress 17 for 'Hot Sauna' in the casting office and Lula in her flat, save on the WET plot as 'Cast'
+# main menu -> Load Game -> Healed (slot 4) -> Load (WET plot)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Casting office (plot building 11) -> Cast actors -> DDF 22 (0x41cea2) -> row 'Hot Sauna' -> clapper -> strip DDF 11 (0x41d0d4)
+22000 move 440 400
+22500 click 440 400
+25500 move 275 145
+26000 click 275 145
+28500 move 300 122
+29000 click 300 122
+30500 move 286 434
+31000 click 286 434
+# Male actors -> DDF 24 (0x41d1c8) Thommy Session -> cast (status 1 -> 2) -> close
+33500 move 187 245
+34000 click 187 245
+36500 move 327 378
+37000 click 327 378
+39000 move 502 382
+39500 click 502 382
+# Female actors -> DDF 23 Cassandra Casablanca -> cast -> close
+42000 move 449 243
+42500 click 449 243
+45000 move 328 378
+45500 click 328 378
+47500 move 504 380
+48000 click 504 380
+# close the strip and the cast sheet -> To the other offices -> WET plot
+50500 move 328 367
+51000 click 328 367
+53000 move 543 433
+53500 click 543 433
+55500 move 470 160
+56000 click 470 160
+# office building -> broom cupboard -> Lula's flat (room 23) -> Cast Lula for movie -> STANDARD_LIST_BOX_DLG (0x42036d) -> OK
+60000 move 280 340
+60500 click 280 340
+64000 move 440 150
+64500 click 440 150
+68000 move 505 405
+68500 click 505 405
+71500 move 115 243
+72000 click 115 243
+# To the office (0..161 x 0..269) -> To the other WET buildings -> WET plot
+75000 move 80 130
+75500 click 80 130
+79000 move 560 110
+79500 click 560 110
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+83500 key F2
+86000 move 305 212
+86500 click 305 212
+88500 move 300 119
+89000 click 300 119
+91000 move 263 228
+91500 click 263 228
+94000 type Cast
+95500 key RETURN

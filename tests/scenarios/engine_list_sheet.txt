@@ -1,0 +1,59 @@
+# seconds: 80
+# expects: stage-1 save at 10:00 (account 20000) -> Sex store -> Sex toys -> thumb -> list sheet DDF 40 (0x407c54, callback 0x407cd8, flags 1: buying keeps the store list) -> store rows 0, 3 and 1 each moved to the shopping list with Buy (control 28, 0x4081d9) -> shopping-list row 0 selected (control 18) -> Back (control 29, 0x408242) drops it from the shopping list (0x407bbd) -> shopping-list scroll down and up (controls 4 and 5, 0x4082fb and 0x408398) -> thumb pays the two remaining toys, OrIndy Bull 280$ + Soko LatexMiniDi 22$ (Super Dildo Neon 50$ was dropped) -> info box "$302 was deducted" -> thumb -> To the town.
+# save: s1town10
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000
+# note: DDF 40 sits at screen offset (38,114): store rows (8..268, 44+16k..60+16k) -> x 46..306, y 158+16k; shopping rows (295..555) -> x 333..593; Buy (60..174, 217..239) -> 98..212 x 331..353; Back (352..464) -> 390..502; shopping-list arrows 4 (514..534, 20..40) -> 552..572 x 134..154 and 5 (537..556) -> 575..594; thumb 7 (522..558, 211..244) -> 560..596 x 325..358
+# check: CreateFileA\(DATA\\ANI\\SHOP1_~1\.TAF, read
+# check: DrawTextA\("Sex toys:", rect 58,129,252,150
+# check: DrawTextA\("Shopping list:", rect 347,129,539,150
+# check: DrawTextA\("\s*Back", rect 393,334,499,350
+# check: DrawTextA\("\$302 was deducted from your account"
+# reject: DrawTextA\("\$352 was deducted
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Sex store (143..309, 275..398)
+22000 move 226 336
+22500 click 226 336
+# Sex toys (266..639, 317..433)
+26000 move 450 380
+26500 click 450 380
+# "What's it to be?" -> thumb
+29500 move 397 362
+30000 click 397 362
+# store row 0, Buy; row 3, Buy; row 1, Buy
+32500 move 150 166
+33000 click 150 166
+34500 move 155 342
+35000 click 155 342
+36500 move 150 214
+37000 click 150 214
+38500 move 155 342
+39000 click 155 342
+40500 move 150 182
+41000 click 150 182
+42500 move 155 342
+43000 click 155 342
+# shopping-list row 0, Back
+44500 move 450 166
+45000 click 450 166
+46500 move 446 342
+47000 click 446 342
+# shopping-list arrows: down, up
+48500 move 562 144
+49000 click 562 144
+50500 move 584 144
+51000 click 584 144
+# thumb pays
+53000 move 578 342
+53500 click 578 342
+# info box "$... was deducted" -> thumb
+56500 move 344 312
+57000 click 344 312
+# To the town (0..215, 343..479)
+61000 move 100 410
+61500 click 100 410
+65000 move 300 300

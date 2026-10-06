@@ -29,12 +29,13 @@
  },
  "planning_movie": {
   "from": "planning_s2",
-  "note": "planning_s2 after the game planned one screenplay in room 22 (script planning_movie.txt): Write screenplay -> New -> title 'Lust in Space' -> Pick storyline -> 'Sex Hackers' (list entry 3, string 607) -> thumbs up; Define the subject of the movie -> 'Soft' -> thumbs up; back to the WET plot and saved as 'Planned' in slot 4 (Load-dialog entry 300,119). Clock patched back to 8:00. The check asserts movie count 1, the title's first dword ('Lust'), storyline 3, category 50, state 0, no scenes, basic price 1000 per 10 minutes and the untouched account.",
+  "note": "planning_s2 after the game planned one screenplay in room 22 (script planning_movie.txt): Write screenplay -> New -> title 'Lust in Space' -> Pick storyline -> 'Sex Hackers' (list entry 3, string 607) -> thumbs up; Define the subject of the movie -> 'Soft' -> thumbs up; back to the WET plot and saved as 'Planned' in slot 4 (Load-dialog entry 300,119). Clock patched back to 8:00 and the minute countdown 0x4556c0 to 0 (the only byte that differed between two builds). The check asserts movie count 1, the title's first dword ('Lust'), storyline 3, category 50, state 0, no scenes, basic price 1000 per 10 minutes and the untouched account.",
   "script": "planning_movie.txt",
   "seconds": 82,
   "patch": {
    "0x4556a8": 8,
-   "0x4556ac": 0
+   "0x4556ac": 0,
+   "0x4556c0": 0
   },
   "check": {
    "slot": 4,
@@ -77,12 +78,13 @@
  },
  "planning_done": {
   "from": "planning_movie",
-  "note": "planning_movie after the game finished the planning of movie 0 (script planning_done.txt): Work on storyboard -> film strip pictures 0, 1, 2 (3000 $) -> Conclude planning -> yes; back to the WET plot and saved as 'Finished' in slot 4 (Load-dialog entry 300,119). Clock patched back to 8:00. The check asserts state 1 (+0x14c), scenes 0, 1, 2 (+0x108), 30 minutes (+0x148), total basic price 3000 (+0x154) and the account 1500000 - 3000.",
+  "note": "planning_movie after the game finished the planning of movie 0 (script planning_done.txt): Work on storyboard -> film strip pictures 0, 1, 2 (3000 $) -> Conclude planning -> yes; back to the WET plot and saved as 'Finished' in slot 4 (Load-dialog entry 300,119). Clock patched back to 8:00 and the minute countdown 0x4556c0 to 0 (the only byte that differed between two builds). The check asserts state 1 (+0x14c), scenes 0, 1, 2 (+0x108), 30 minutes (+0x148), total basic price 3000 (+0x154) and the account 1500000 - 3000.",
   "script": "planning_done.txt",
   "seconds": 66,
   "patch": {
    "0x4556a8": 8,
-   "0x4556ac": 0
+   "0x4556ac": 0,
+   "0x4556c0": 0
   },
   "check": {
    "slot": 4,
@@ -124,6 +126,44 @@
    "0x462409": 1,
    "0x45d455": 21,
    "0x45d459": 1
+  }
+ },
+ "planning_short": {
+  "from": "planning_movie",
+  "note": "planning_movie (movie 0 'Lust in Space' in planning) without a screenplay writer: writer 208 back to free (status +4 = 0 at the pseudo address 0x45d1ad + 40*208 + 4). Room 22 setup (0x41f4d7) then leaves 0x484230 = 0 and 0x484224 = 0, so the storyboard still opens (designer) but Conclude planning answers 'You can't finish planning until you've hired all your staff!'. Name and Load-dialog entry stay 'Planned' (300,119).",
+  "patch": {
+   "0x45f231": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Planned",
+   "account": 1500000,
+   "0x457b49": 1,
+   "0x455bed": 0,
+   "0x45f22d": 3,
+   "0x45f231": 0,
+   "0x460749": 2,
+   "0x460429": 2
+  }
+ },
+ "planning_poor": {
+  "from": "planning_movie",
+  "note": "planning_movie with 9 movie records in use (count 0x457b49 = 9; records 1-8 stay blank) and the account at -69500 (with the credit line 0x455684 = 70000 only 500 $ can be spent, 0x40561d). 'New' in the screenplay sheet then refuses a tenth title (string 602, count >= 9 at 0x41e500) and the first storyboard scene (1000 $) answers 'Unfortunately you haven't got enough money!'. Name and Load-dialog entry stay 'Planned' (300,119).",
+  "patch": {
+   "0x457b49": 9,
+   "0x45568c": -69500
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Planned",
+   "account": -69500,
+   "0x455684": 70000,
+   "0x457b49": 9,
+   "0x455bed": 0
   }
  }
 }

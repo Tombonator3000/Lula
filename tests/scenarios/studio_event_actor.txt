@@ -1,0 +1,74 @@
+# seconds: 118
+# expects: 'Shooting' (studio_toys: movie 0 "Studio Heat" being shot in studio 1, 10 hours left, 24 toys in the sex toy store already assigned to studio 1 so that the props branch of the event roll never fires, minute length 401 ticks, clock 8:29) on the WET plot -> at 8:30 0x42408f calls 0x4242f2 every tick; its 6 % roll picks an actor problem (rand() % 22 = 6 -> string 2021 with the actress): "Cassandra Casablanca has broken a tooth during a blow job!" in DREH_MSG_ANYWHERE_DLG (DDF 30, callback 0x425075, the player is not in the studio) -> studio icon (control 1): the leave function and ChangeRoom(24); the studio setup 0x423104 sees the pending event 0x4848d4[0] = 1 and opens DREH_MSG_STUDIO_DLG (DDF 29, callback 0x424ffb) with the same text -> thumb -> 0x4250fd opens DREH_EVENT_ACTION_DLG (DDF 33, callback 0x4251ec) -> whip (control 1): "Yeah baby, be HARD!", roll fails: "You're slacking off baby, that didn't work!" -> hourglass (control 0): "OK, big man! Everyone take a break for 1 hour!" (0x40716d moves the clock to 9:00), roll succeeds: "Shooting is continuing!", the sheet closes -> the 9:00 roll gives a second problem while the player is in studio 1, so 0x4242f2 opens DREH_MSG_STUDIO_DLG itself: "Thommy Session doesn't dare to drop his pants!" -> thumb -> money (control 2): "You pay a $500 bonus" (account - 500), roll succeeds: "Shooting is continuing!" -> third problem "Cassandra Casablanca has diarrhea and has to go to the toilet urgently!" -> thumb -> boot (control 3): "You really want to fire Cassandra Casablanca?" -> no -> file card (control 4): "Actually take Cassandra Casablanca out of the cast?" -> no -> file card -> yes: status 1, 0x42568e removes her from the cast list, "Cassandra Casablanca has lost the part!" -> thumb: one actor left, so 0x42408f pauses the shooting (+0x17c = 1) and the studio shows "There aren't enough actors to carry on shooting" -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# save: studio_toys
+# note: "Shooting" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: the event texts and roll results come from rand(), seeded from the runner's fixed LULA_CLOCK; the game logic (and every rand() call) runs once per WM_TIMER tick and stands still while DDF sheets are open, so with no input between the ticks that matter the sequence repeats; the waits are long because the next problem comes a number of ticks after the sheets close
+# note: DREH_EVENT_ACTION_DLG tiles at y 240: hourglass 96, whip 198, money 300, boot 397, file card 511; yes 318,305, no 400,305, info thumb 340,300
+# note: the save written at the end (checked with --keep) holds the cast list [527], count 1, actress 17 in status 1, +0x17c = 1, account 1499230
+# check: (?s)DrawTextA\("Cassandra Casablanca has broken a tooth during a blow job!", rect 279,160,475,278.*ms: click 360 311.*CreateFileA\(DATA\\DIALOG\\stud_dia\.TAF, read.*DrawTextA\("Cassandra Casablanca has broken a tooth during a blow job!", rect 279,160,474,273
+# check: (?s)ms: click 198 240.*DrawTextA\("Yeah baby, be HARD!".*DrawTextA\("You're slacking off baby, that didn't work!".*ms: click 96 240.*DrawTextA\("OK, big man! Everyone take a break for 1 hour!".*DrawTextA\("Shooting is continuing!"
+# check: (?s)DrawTextA\("Thommy Session doesn't dare to drop his pants!".*ms: click 300 240.*DrawTextA\("You pay a \$500 bonus".*DrawTextA\("Shooting is continuing!"
+# check: (?s)DrawTextA\("Cassandra Casablanca has diarrhea and has to go to the toilet urgently!".*DrawTextA\("You really want to fire Cassandra Casablanca\?".*DrawTextA\("Actually take Cassandra Casablanca out of the cast\?".*DrawTextA\("Cassandra Casablanca has lost the part!"
+# check: (?s)ms: click 340 300.*DrawTextA\("There aren't enough actors to carry on shooting", rect 0,150,640,180.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: has been fired
+# main menu -> Load Game -> Shooting -> Load (WET plot, 8:29)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# first problem on the plot -> studio icon -> studio sheet thumb -> action sheet
+24000 move 360 311
+24500 click 360 311
+28000 move 365 305
+28500 click 365 305
+# whip -> two info boxes
+32000 move 198 240
+32500 click 198 240
+35000 move 340 300
+35500 click 340 300
+38000 click 340 300
+# hourglass -> two info boxes, the sheet closes
+41000 move 96 240
+41500 click 96 240
+44000 move 340 300
+44500 click 340 300
+47000 click 340 300
+# second problem (in the studio) -> thumb -> money -> two info boxes
+56500 move 365 305
+57000 click 365 305
+60500 move 300 240
+61000 click 300 240
+63500 move 340 300
+64000 click 340 300
+66500 click 340 300
+# third problem -> thumb -> boot -> no -> file card -> no -> file card -> yes -> thumb
+76000 move 365 305
+76500 click 365 305
+80000 move 397 240
+80500 click 397 240
+83000 move 400 305
+83500 click 400 305
+86500 move 511 240
+87000 click 511 240
+89500 move 400 305
+90000 click 400 305
+93000 move 511 240
+93500 click 511 240
+96000 move 318 305
+96500 click 318 305
+99000 move 340 300
+99500 click 340 300
+# To the other offices -> WET plot -> F2 save
+103000 move 320 40
+103500 click 320 40
+106500 key F2
+108500 move 305 212
+109000 click 305 212
+110500 move 300 119
+111000 click 300 119
+112500 move 263 228
+113000 click 263 228
+115000 type Actors
+116500 key RETURN

@@ -1,0 +1,55 @@
+# movie_cutting: buy a video editing machine and start cutting 'Hot Sauna', buy a copying machine, save on the WET plot as 'Cutting'
+# main menu -> Load Game -> Shot (slot 4) -> Load (studio 1) -> To the other offices -> WET plot
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+21500 move 320 40
+22000 click 320 40
+# Cutting department (plot building 1) -> Buy equipment -> 'Cut and Go' 1000 $ -> Buy -> left thumb
+25500 move 350 120
+26000 click 350 120
+29500 move 550 370
+30000 click 550 370
+33000 move 150 168
+33500 click 150 168
+35000 move 168 341
+35500 click 168 341
+37500 move 292 342
+38000 click 292 342
+# Cut films -> DDF 60 (0x428c1d) -> entry 1 'Hot Sauna' -> 'Cutting the film will take 1 day(s)' -> thumb -> sheet thumb
+41000 move 280 200
+41500 click 280 200
+44500 move 120 98
+45000 click 120 98
+47500 move 340 300
+48000 click 340 300
+50500 move 595 440
+51000 click 595 440
+# To the other offices -> WET plot -> Copier (plot building 3) -> Buy copying machines -> 'Emil Copy 5000' 10000 $ -> Buy -> left thumb
+54000 move 160 400
+54500 click 160 400
+58000 move 560 175
+58500 click 560 175
+62000 move 100 290
+62500 click 100 290
+65500 move 150 168
+66000 click 150 168
+67500 move 168 341
+68000 click 168 341
+70000 move 292 342
+70500 click 292 342
+# To the other offices -> WET plot -> F2 save 'Cutting'
+73500 move 320 30
+74000 click 320 30
+78000 key F2
+80500 move 305 212
+81000 click 305 212
+83000 move 300 119
+83500 click 300 119
+85500 move 263 228
+86000 click 263 228
+88500 type Cutting
+90000 key RETURN

@@ -1,0 +1,37 @@
+# seconds: 50
+# expects: "Leisure" (warehouse_leisure: the game bought 'Pink Plush' and 'Lay On Me' in the recreation room and sold 'Pink Plush' back, so the leisure slots 0x459475 hold 'Lay On Me' (38, 100, 6, -1), count 0x4595b5 = 1, account 1497321) loads on the WET plot -> Recreation room building (523..635, 385..472) -> room 28 stage 2 (enter 0x42b65c, setup 0x42b6ce loads FREIZEIT.TAF into 0x485204 and sounds 0x2e and 0x32, hotspots 0x42b84a, click 0x42b797, paint 0x42b8d0, tick 0x42b92d, whose random timer 0x40925f plays sound 0x2e now and then) -> the unlabelled hotspot 2 (4..160, 235..447) plays sound 0x32 (click handler case 2) -> "Buy equipment" (421..640, 221..433, case 1: 0x406121 with category 6 and 20 slots at 0x459475, the returned count goes to 0x4595b5) -> sheet "Buy Leisure equipment" / "Sell Leisure equipment"; the sell list is not empty, so its group header "Couch" is drawn too -> the down arrow of the buy list scrolls the catalog from 'Lay On Me' (row 1, group "Couch") to row 15 'Asskneader' (group "Fitness machine"; rows 12-14 are the group "Pool") -> left thumb -> "To the other offices" (0..640, 0..80): leave function 0x42b699 -> 0x42b813 frees FREIZEIT.TAF -> WET plot. No lula[warn]/trap.
+# save: warehouse_leisure
+# note: "Leisure" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20)
+# note: without equipment (prod_s2all, see prod_enter_recreation) the sell list stays empty and only the buy header "Couch" (rect 47,138) is drawn
+# check: (?s)ms: click 580 440.*CreateFileA\(DATA\\ANI\\FREIZEIT\.TAF, read
+# check: (?s)ms: click 530 330.*DrawTextA\("Sell Leisure equipment".*DrawTextA\("Couch", rect 333,139
+# check: (?s)ms: click 278 145.*DrawTextA\("Fitness machine", rect 47,138
+# check: (?s)ms: click 320 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# main menu -> Load Game -> Leisure -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Recreation room building
+22000 move 580 440
+22500 click 580 440
+# unlabelled hotspot 2 (sound 0x32)
+25500 move 80 300
+26000 click 80 300
+# Buy equipment
+29000 move 530 330
+29500 click 530 330
+# down arrow of the buy list: hovering over it already scrolls the list to the end of the catalog (row 15 at the top): the
+# WM_DRAWITEM branch of the sheet callback 0x406261 (0x406b90) scrolls one row each time it draws the arrow while the cursor is on it,
+# so the click (command 2, 0x40633e) has nothing left to scroll. This is original behaviour (checked with a run without the click).
+32500 move 278 145
+33000 click 278 145
+# left thumb of the equipment sheet
+36500 move 292 342
+37000 click 292 342
+# To the other offices
+40000 move 320 40
+40500 click 320 40
+44000 move 320 240

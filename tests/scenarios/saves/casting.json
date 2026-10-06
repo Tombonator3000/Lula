@@ -71,7 +71,7 @@
  },
  "casting_hired": {
   "from": "casting_ads",
-  "note": "casting_ads after the game drew the applicants and one was hired (script casting_hired.txt): loaded at 10:50 on the WET plot, the 11:00 draw 0x41c19b -> 0x41c25f (once per ad) filled the applicant list 0x458259 with 9 people (actors 519 Mario Neversatt and 526 Jo Vulkano, actresses 1, 20, 52, 60, 62, 82, 102; status 4 each, all matching their ad exactly). In the casting office 'Look at applications' -> next -> casting (0x41c9ad): Jo Vulkano hired (status 1; the working casting director 149 rolls the level, (4 + 7) / 2 + rand() % 7 capped at 9), then Mario Neversatt rejected (status 0, refusal counter +0x14 = 10). Saved on the WET plot as 'CastHire' in slot 4 (300,119); 7 actress applicants are left.",
+  "note": "casting_ads after the game drew the applicants and one was hired (script casting_hired.txt): loaded at 10:50 on the WET plot, the 11:00 draw 0x41c19b -> 0x41c25f (once per ad) filled the applicant list 0x458259 with 9 people (actors 519 Mario Neversatt and 526 Jo Vulkano, actresses 1, 20, 52, 60, 62, 82, 102; status 4 each, all matching their ad exactly). In the casting office 'Look at applications' -> next -> casting (0x41c9ad): Jo Vulkano hired (status 1; the working casting director 149 rolls the level, (4 + 7) / 2 + rand() % 7 capped at 9), then Mario Neversatt rejected (status 0, refusal counter +0x14 = 10). Saved on the WET plot as 'CastHire' in slot 4 (300,119); 7 actress applicants are left. Then the clock is set back to 11:30 so that a scenario has time before the 13:00 events (sabotage roll 0x43070e, next applicant draw).",
   "script": "casting_hired.txt",
   "seconds": 74,
   "check": {
@@ -85,7 +85,13 @@
    "0x4623e1": 1,
    "0x4622c9": 0,
    "0x4622d9": 10,
-   "0x45d1d9": 4
+   "0x45d1d9": 4,
+   "hour": 11,
+   "minute": 30
+  },
+  "patch": {
+   "0x4556a8": 11,
+   "0x4556ac": 30
   }
  },
  "casting_cast": {
@@ -125,7 +131,7 @@
  },
  "casting_trained": {
   "from": "casting_base",
-  "note": "casting_base after the actors file was used (script casting_trained.txt): card of Thommy Session (527) pay +100, +100, -100 (+0x10 = 2330), training 11 days by the slider (0x41b8ac: 11 x 300 $ = 3300 $ at once, status 3, date +0x18/+0x1c/+0x20 = 1-1-1997, days +0x24 = 11); Cassandra Casablanca (17) fired from her card (0x41dd79, status 0, +0x14 = 1). Saved on the WET plot as 'CastTrain' in slot 4 (300,119).",
+  "note": "casting_base after the actors file was used (script casting_trained.txt): card of Thommy Session (527) pay +100, +100, -100 (+0x10 = 2330), training 11 days by the slider (0x41b8ac: 11 x 300 $ = 3300 $ at once, status 3, date +0x18/+0x1c/+0x20 = 1-1-1997, days +0x24 = 11); Cassandra Casablanca (17) fired from her card (0x41dd79, status 0, +0x14 = 1). Saved on the WET plot as 'CastTrain' in slot 4 (300,119). Then the clock is set to 8:30 (it was 8:57) so that a scenario has time before the 10:00 department events.",
   "script": "casting_trained.txt",
   "seconds": 83,
   "check": {
@@ -141,7 +147,13 @@
    "0x462425": 1997,
    "0x462429": 11,
    "0x45d459": 0,
-   "0x45d469": 1
+   "0x45d469": 1,
+   "hour": 8,
+   "minute": 30
+  },
+  "patch": {
+   "0x4556a8": 8,
+   "0x4556ac": 30
   }
  }
 }

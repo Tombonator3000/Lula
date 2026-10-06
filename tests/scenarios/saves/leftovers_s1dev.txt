@@ -1,0 +1,60 @@
+# Load "Film" (slot 3, motel room, 10:00, fastest clock: one game minute per timer tick)
+# -> To the motel -> To the town -> Video store -> Accessories (DDF 0x29, callback 0x42cee6)
+# -> "Have films developed" picture (control 3) -> list dialog 0x407c54 (rows by 0x42ceac):
+# "Completed films:" Session 1 -> To development -> right thumb -> toilet closes the sheet
+# -> To the town -> wait in the town (17 game hours of the hourly hook 0x408a87 count the
+# film's +0x5c down from 17; the 23:59 day end box is closed with its thumb at 330,300, other
+# clicks there only make Lula walk; the first day end comes at about 80 s, game hour 12 of the second day at about 110 s) -> F2 -> Save game -> slot 4 (300,119) "Developed".
+12000 move 505 40
+12500 click 505 40
+15000 move 300 107
+15500 click 300 107
+17000 move 263 228
+17500 click 263 228
+22000 move 570 200
+22500 click 570 200
+26000 move 30 300
+26500 click 30 300
+30000 move 560 200
+30500 click 560 200
+34000 move 250 300
+34500 click 250 300
+38000 move 520 70
+38500 click 520 70
+41000 move 460 165
+41500 click 460 165
+43500 move 446 342
+44000 click 446 342
+46500 move 578 342
+47000 click 578 342
+50000 move 445 365
+50500 click 445 365
+54000 move 140 440
+54500 click 140 440
+60000 move 330 300
+60500 click 330 300
+70000 move 330 300
+70500 click 330 300
+80000 move 330 300
+80500 click 330 300
+86000 move 330 300
+86500 click 330 300
+92000 move 330 300
+92500 click 330 300
+98000 move 330 300
+98500 click 330 300
+104000 move 330 300
+104500 click 330 300
+110000 move 330 300
+110500 click 330 300
+125000 key F2
+127500 move 305 212
+128000 click 305 212
+130500 move 300 119
+131000 click 300 119
+132500 move 263 228
+133000 click 263 228
+135000 type Developed
+136500 key RETURN
+139000 move 328 368
+139500 click 328 368

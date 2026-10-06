@@ -1,0 +1,40 @@
+# seconds: 66
+# expects: stage-1 save "Film" (10:00, undeveloped photo film "Session 1") -> To the motel -> To the town -> Video store -> Accessories (DDF 0x29, callback 0x42cee6: "Buy accessory :", "Have films developed") -> the film/photo picture (control 3, 0x42d092): list dialog 0x407c54 "Films in development:" / "Completed films:" whose rows come from 0x42ceac ("  1 Session 1" in the right list) -> select it -> "To development" moves it left (the left "Back" button appears) -> thumb: the item gets +0x60 = 0 (at the store) -> the picture again: the left list now shows "  1 Session 1  17 Hour(s)" (0x42ceac with the hours of +0x5c) -> thumb -> toilet -> To the town.
+# save: leftovers_s1film
+# note: "Film" is the Load-dialog entry at 300,107 (slot 3); the list rows are drawn with the game's own font (not traced)
+# check: CreateFileA\(DATA\\ANI\\FOTOS1\.TAF, read
+# check: DrawTextA\("Have films developed
+# check: (?s)script 38500 ms: click 520 70.*DrawTextA\("Films in development:", rect 58,129,252,150
+# check: (?s)script 44000 ms: click 446 342.*DrawTextA\("        Back", rect 101,334,209,350
+# check: (?s)script 50500 ms: click 520 70.*DrawTextA\("        Back", rect 101,334,209,350
+11500 move 505 40
+12000 click 505 40
+15000 move 300 107
+15500 click 300 107
+17500 move 263 228
+18000 click 263 228
+22000 move 570 200
+22500 click 570 200
+26000 move 30 300
+26500 click 30 300
+30000 move 560 200
+30500 click 560 200
+34000 move 250 300
+34500 click 250 300
+38000 move 520 70
+38500 click 520 70
+41000 move 460 165
+41500 click 460 165
+43500 move 446 342
+44000 click 446 342
+46500 move 578 342
+47000 click 578 342
+50000 move 520 70
+50500 click 520 70
+53500 move 578 342
+54000 click 578 342
+57000 move 445 365
+57500 click 445 365
+60500 move 140 440
+61000 click 140 440
+64000 move 320 240

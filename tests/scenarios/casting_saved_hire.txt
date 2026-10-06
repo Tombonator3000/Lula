@@ -1,0 +1,38 @@
+# seconds: 52
+# expects: CastHire (casting_hired: the save the game wrote after hiring Jo Vulkano and rejecting Mario Neversatt, clock set to 11:30) loads on the WET plot -> Casting office: the applicants are still there (hotspot 9) -> "Look at actors file" -> male actors -> the card (0x41b2b4) starts at the first hired actor by index, the new employee Jo Vulkano (526): "2000 $ per Day Normal pay", "Is glad there's nothing to do." (status 1) -> next: Thommy Session (527) -> close card and strip -> "Look at applications" -> the first of the 7 remaining applicants, Belinda Blow (1), "500 $ per Day" -> close -> "To the other offices". No lula[warn]/trap.
+# save: casting_hired
+# note: "CastHire" is the Load-dialog entry at 300,119 (slot 4). This scenario shows that the hire written by 0x41c9ad survives save and load.
+# check: (?s)ms: click 187 253.*DrawTextA\("Jo Vulkano".*DrawTextA\("2000 \$ per Day Normal pay".*DrawTextA\("Is glad there's nothing to do\."
+# check: (?s)ms: click 195 382.*DrawTextA\("Thommy Session"
+# check: (?s)ms: click 407 427.*DrawTextA\("Belinda Blow".*DrawTextA\("500 \$ per Day"
+# check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: Mario Neversatt
+# main menu -> Load Game -> CastHire -> Load (WET plot, room 20, 11:30)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Casting office -> Look at actors file -> male actors -> next -> close card -> close strip
+22000 move 440 400
+22500 click 440 400
+25500 move 78 185
+26000 click 78 185
+28500 move 187 253
+29000 click 187 253
+31500 move 195 382
+32000 click 195 382
+34000 move 505 382
+34500 click 505 382
+36500 move 327 375
+37000 click 327 375
+# Look at applications -> close (thumbs up 501,381)
+39500 move 407 427
+40000 click 407 427
+42500 move 501 381
+43000 click 501 381
+# To the other offices
+45500 move 470 160
+46000 click 470 160
+49000 move 320 240

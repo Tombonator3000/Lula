@@ -1,0 +1,48 @@
+# Load 'Studio' (studio_ready) -> Studio 1 -> select 'Studio Heat' -> START -> 1 day of shooting -> WET plot -> F2 save 'Shooting'.
+# Same steps as tests/scenarios/studio_shoot_start.txt (see there for the screens).
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 230 250
+22500 click 230 250
+26000 move 320 290
+26500 click 320 290
+29500 move 500 380
+30000 click 500 380
+33000 move 330 438
+33500 click 330 438
+36000 move 100 112
+36500 click 100 112
+38000 move 115 243
+38500 click 115 243
+41500 move 573 434
+42000 click 573 434
+45000 move 335 316
+45500 click 335 316
+48000 move 215 405
+48500 click 215 405
+50000 click 215 405
+51500 move 421 405
+52000 click 421 405
+53500 click 421 405
+55000 click 421 405
+56500 click 421 405
+58500 move 320 405
+59000 click 320 405
+62000 move 438 297
+62500 click 438 297
+70000 move 320 40
+70500 click 320 40
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+75000 key F2
+77500 move 305 212
+78000 click 305 212
+80000 move 300 119
+80500 click 300 119
+82500 move 263 228
+83000 click 263 228
+85500 type Shooting
+87000 key RETURN

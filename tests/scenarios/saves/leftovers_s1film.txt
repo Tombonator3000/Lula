@@ -1,0 +1,55 @@
+# Load "Equipped" (slot 2, motel room, 12:10, spotlight + Castor camera + Furioso Color film)
+# -> click Lula (pose change; the camera refuses the first pose) -> Camera on tripod -> session sheet -> camera toggle -> thumbs up (a photo session runs,
+# clock about +3 h, the film becomes a category 0x65 inventory item with +0x54 = 0)
+# -> To the motel -> To the town -> Sex store -> Sex toys -> thumb -> item 1 -> Buy -> thumb
+# (pays) -> info box thumb -> To the town -> Motel -> motel room -> F2 -> Save game -> slot 3
+# (300,107) "Film" -> RETURN -> close the options sheet.
+12000 move 505 40
+12500 click 505 40
+15000 move 300 94
+15500 click 300 94
+17000 move 263 228
+17500 click 263 228
+22000 move 189 286
+22500 click 189 286
+25500 move 476 250
+26000 click 476 250
+29000 move 450 208
+29500 click 450 208
+31500 move 270 340
+32000 click 270 340
+40000 move 570 200
+40500 click 570 200
+44000 move 30 300
+44500 click 30 300
+48000 move 226 336
+48500 click 226 336
+52000 move 450 380
+52500 click 450 380
+55500 move 397 362
+56000 click 397 362
+58500 move 150 165
+59000 click 150 165
+60500 move 155 342
+61000 click 155 342
+62500 move 578 342
+63000 click 578 342
+66000 move 344 312
+66500 click 344 312
+69500 move 100 410
+70000 click 100 410
+73500 move 77 145
+74000 click 77 145
+77500 move 455 180
+78000 click 455 180
+82000 key F2
+84500 move 305 212
+85000 click 305 212
+87500 move 300 107
+88000 click 300 107
+89500 move 263 228
+90000 click 263 228
+92000 type Film
+93500 key RETURN
+96000 move 328 368
+96500 click 328 368

@@ -1,0 +1,41 @@
+# seconds: 64
+# expects: stage-1 save "Film" (motel room, 10:00, undeveloped photo session "Session 1" in the inventory) -> To the motel -> To the town -> Distributor -> Photos: 0x412558 case 1 finds a category-0x65 item of kind 0 or 1 and opens DDF 0x42 with callback 0x412b68 (the photo sheet) instead of the refusal; 0x412b68 lists the item and its paint step asks 0x412ed4 for the icon (kind 0) -> the entry cannot be selected (0x412b68 only takes kind != 0, the undeveloped film keeps its red dot) -> thumb: no selection (0x45e214 < 0), the sheet stays -> toilet: 0x412bea hands the item back to the inventory and closes the sheet -> Photos again: the same sheet with "Session 1" -> toilet.
+# save: leftovers_s1film
+# note: "Film" is the Load-dialog entry at 300,107 (slot 3)
+# check: CreateFileA\(DATA\\ANI\\VER_ANI1\.TAF, read
+# check: (?s)script 34500 ms: click 278 238.*DrawTextA\("Session 1", rect 219,140,595,160
+# check: DrawTextA\("Offer at fixed price
+# check: script 46000 ms: move 445 365\n(?:(?![^\n]*script )[^\n]*\n)*?[^\n]*DrawTextA\("Session 1", rect 219,140,595,160
+# check: script 50000 ms: move 278 238\n(?:(?![^\n]*DrawTextA\("Session 1")[^\n]*\n)*?[^\n]*script 50500 ms: click 278 238\n(?s:.*)DrawTextA\("Session 1", rect 219,140,595,160
+# reject: You ain't got photos
+# reject: I'm offering you
+# note: check 4: the sheet is still drawn in the step after the thumb (no selection, no offer); check 5: nothing of the sheet is drawn in the 50000 step (the toilet closed it) and the second Photos click shows "Session 1" again; the reject "I'm offering you" is the license offer text of DDF 0x34 (0x412f0c), which would come if the undeveloped film could be selected
+11500 move 505 40
+12000 click 505 40
+15000 move 300 107
+15500 click 300 107
+17500 move 263 228
+18000 click 263 228
+22000 move 570 200
+22500 click 570 200
+26000 move 30 300
+26500 click 30 300
+30000 move 430 110
+30500 click 430 110
+34000 move 278 238
+34500 click 278 238
+# the list entry (kind 0 cannot be selected: 0x412b68 only takes entries with +0x54 != 0)
+39000 move 250 148
+39500 click 250 148
+# thumb: no selection (0x45e214 < 0), the sheet stays
+42500 move 377 365
+43000 click 377 365
+# toilet: 0x412bea gives the items back to the inventory and closes the sheet
+46000 move 445 365
+46500 click 445 365
+# Photos again: the session is still there
+50000 move 278 238
+50500 click 278 238
+54500 move 445 365
+55000 click 445 365
+58000 move 320 240

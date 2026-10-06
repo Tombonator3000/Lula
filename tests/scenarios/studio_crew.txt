@@ -1,0 +1,66 @@
+# seconds: 100
+# expects: studio_cast ('ProdAll': all production buildings rented, one employee per job, lighting engineer 164, cameraman 230 and director 377 hired but idle, movie 0 "Studio Heat" planned and cast, slow clock) on the WET plot -> Studio 1 (room 24): no film strip yet (0x423e61 finds no crew) -> "Hire lighting engineer" (hotspot 1) opens the staff card (DDF 25, callback 0x405948) of Jack Zasas, "Is glad there's nothing to do." -> assign (card control 1): for the studio jobs 0, 4 and 12 the card calls 0x424e8c (current crew member of this studio) and 0x424eba (store the person in the studio record, clear him from the other studios), status 2: "Is occupying the available place right now. in STUDIO 1" -> thumb -> the same for the cameraman Charlie Eichler (hotspot 2) and the director Bernie Pornolando (hotspot 5) -> "Choose lighting" -> "Buy Lighting" sheet (0x406121, category 0) -> row 5 "Small Spotlight" 120 $ -> Buy -> thumb -> "Choose camera" -> "Buy Camera" -> row 2 "Castor AX 80" 150 $ -> Buy -> thumb: now crew, equipment and a planned movie are there, 0x423e61 sets 0x484848[0] = 1 and the paint hook draws the film strip "Select Film" -> To the other offices. The studio_ready recipe runs the same steps and asserts the studio record (+0x20 164, +0x24 230, +0x28 377, +0x30 8, camera 55, lighting 214) and the account 1499730. No lula[warn]/trap.
+# save: studio_cast
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); studio_cast keeps the name of prod_s2staff and loads on the WET plot
+# check: (?s)ms: click 50 300.*DrawTextA\("Jack Zasas".*DrawTextA\("Is glad there's nothing to do\.".*ms: click 328 379.*DrawTextA\("Is occupying the available place right now\. in STUDIO 1"
+# check: (?s)ms: click 590 200.*DrawTextA\("Charlie Eichler".*ms: click 328 379.*DrawTextA\("Is occupying the available place right now\. in STUDIO 1"
+# check: (?s)ms: click 320 290.*DrawTextA\("Bernie Pornolando".*ms: click 328 379.*DrawTextA\("Is occupying the available place right now\. in STUDIO 1"
+# check: (?s)ms: click 170 140.*DrawTextA\("Buy Lighting".*ms: click 470 165.*DrawTextA\("Buy Camera"
+# check: (?s)ms: click 168 341.*ms: click 292 342.*DrawTextA\("Select Film", rect 140,430,520,448.*ms: click 320 40\b.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: (?s)Select Film.*ms: click 470 165
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 230 250
+22500 click 230 250
+# "Hire lighting engineer" (hotspot 1, 0..109 x 103..480) -> staff card (DDF 25, callback 0x405948) of
+# Jack Zasas (164) -> assign (card control 1, 308..348 x 350..408): 0x424e8c / 0x424eba put him into
+# studio record +0x20, status 2 -> thumb (control 0).
+26000 move 50 300
+26500 click 50 300
+29500 move 328 379
+30000 click 328 379
+32000 move 500 380
+32500 click 500 380
+# "Assign cameraman" (hotspot 2, 546..640 x 79..330) -> Charlie Eichler (230) -> assign -> thumb.
+35000 move 590 200
+35500 click 590 200
+38500 move 328 379
+39000 click 328 379
+41000 move 500 380
+41500 click 500 380
+# "Assign director" (hotspot 5, 213..432 x 182..392) -> Bernie Pornolando (377) -> assign
+# (0x424eba also sets +0x2c = 0 and +0x30 = 15 - level 7 = 8) -> thumb.
+44000 move 320 290
+44500 click 320 290
+47500 move 328 379
+48000 click 328 379
+50000 move 500 380
+50500 click 500 380
+# "Choose lighting" (hotspot 3) -> equipment sheet 0x406121 (category 0, 1 slot at +0x10) ->
+# row 5 "Small Spotlight" 120 $ -> Buy -> left thumb.
+53000 move 170 140
+53500 click 170 140
+56500 move 150 228
+57000 click 150 228
+58500 move 168 341
+59000 click 168 341
+61000 move 292 342
+61500 click 292 342
+# "Choose camera" (hotspot 4) -> equipment sheet (category 1, slot at +0) -> row 2 "Castor AX 80"
+# 150 $ -> Buy -> left thumb.
+64000 move 470 165
+64500 click 470 165
+67500 move 150 183
+68000 click 150 183
+69500 move 168 341
+70000 click 168 341
+72000 move 292 342
+72500 click 292 342
+# To the other offices -> WET plot
+75000 move 320 40
+75500 click 320 40
+79000 move 320 240

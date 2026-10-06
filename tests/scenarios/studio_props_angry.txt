@@ -1,0 +1,46 @@
+# seconds: 84
+# expects: 'Shooting' (studio_props_angry: as studio_props, with the director's frustration +0x2c at 7 of his patience 8) on the WET plot -> 8:30: "For the next scene, we need a powerful vibrator!" in DREH_MSG_ANYWHERE_DLG (0x425075) -> toilet (control 0): the sheet ends with 2, the wish stays pending (0x4848d4[0] = 2) and 0x4242f2 adds 1 to the frustration (8) -> wait on the plot (no new roll for a studio with a pending wish) -> Studio 1: the setup 0x423104 finds the pending wish and the running shooting and opens DREH_MSG_STUDIO_DLG (0x424ffb) -> thumb -> 0x4250fd -> DREH_TOY1_DLG (0x425509) -> toilet (control 1): "Shooting is continuing!", frustration 9 -> thumb -> the next 0x42408f tick finds 9 > 8: "The director is completely frustrated and has given notice!" (status 0, refusal counter +0x14 + 1, studio record +0x28 = -1) -> thumb -> without a director 0x484848[0] = 0, the shooting pauses (+0x17c = 1) and the studio shows "There aren't enough staff to carry on shooting" -> To the other offices -> F2 save into slot 4. No lula[warn]/trap.
+# save: studio_props_angry
+# note: "Shooting" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot
+# note: the props wish comes from rand(), seeded from the runner's fixed LULA_CLOCK (see studio_event_actor.txt)
+# note: DREH_MSG_ANYWHERE_DLG: studio icon 360,311, toilet 441,308
+# note: the save written at the end (checked with --keep) holds the studio record +0x28 = -1 and +0x2c = 9, director 377 in status 0 with +0x14 = 1, movie +0x17c = 1, no toy bought
+# check: (?s)DrawTextA\("For the next scene, we need a powerful vibrator!", rect 279,160,475,278.*ms: click 441 308
+# check: (?s)ms: click 230 250.*CreateFileA\(DATA\\DIALOG\\stud_dia\.TAF, read.*DrawTextA\("For the next scene, we need a powerful vibrator!", rect 279,160,474,273
+# check: (?s)ms: click 371 240.*DrawTextA\("Shooting is continuing!".*DrawTextA\("The director is completely frustrated and has given notice!"
+# check: (?s)DrawTextA\("There aren't enough staff to carry on shooting", rect 0,150,640,180.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: Buy Sex toy
+# main menu -> Load Game -> Shooting -> Load (WET plot, 8:29)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# props wish on the plot -> toilet
+24000 move 441 308
+24500 click 441 308
+# Studio 1 -> pending wish -> thumb -> DREH_TOY1_DLG -> toilet -> thumb
+30000 move 230 250
+30500 click 230 250
+35000 move 365 305
+35500 click 365 305
+39000 move 371 240
+39500 click 371 240
+42500 move 340 300
+43000 click 340 300
+# the director gives notice -> thumb
+49000 move 340 300
+49500 click 340 300
+# To the other offices -> WET plot -> F2 save
+56000 move 320 40
+56500 click 320 40
+59500 key F2
+61500 move 305 212
+62000 click 305 212
+63500 move 300 119
+64000 click 300 119
+65500 move 263 228
+66000 click 263 228
+68000 type Angry
+69500 key RETURN

@@ -1,0 +1,59 @@
+# movie_beauty: beauty operation 'Lift thighs' (8000 $, 8 days) for actor 527 and actress 17 at the stage-2 beauty clinic, save on the WET plot as 'Beauty'
+# main menu -> Load Game -> Planned (slot 4) -> Load (WET plot)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building -> office -> To the overview -> stage-2 town -> Beauty clinic (room 8)
+22000 move 290 340
+22500 click 290 340
+26000 move 150 40
+26500 click 150 40
+30000 move 78 190
+30500 click 78 190
+# Give actors beauty treatment -> DDF 0x10 (callback 0x4329e0)
+34000 move 120 200
+34500 click 120 200
+# actors -> DDF 0x11 card of Thommy Session (0x432d30) -> OK -> DDF 0x37 (0x4331c4) -> Lift thighs -> OK -> yes
+37500 move 187 253
+38000 click 187 253
+40500 move 505 382
+41000 click 505 382
+43500 move 147 230
+44000 click 147 230
+45500 move 222 376
+46000 click 222 376
+48500 move 318 305
+49000 click 318 305
+# actresses -> card of Cassandra Casablanca -> OK -> Lift thighs -> OK -> yes
+51500 move 470 250
+52000 click 470 250
+54500 move 505 382
+55000 click 505 382
+57500 move 147 230
+58000 click 147 230
+59500 move 222 376
+60000 click 222 376
+62500 move 318 305
+63000 click 318 305
+# close the sheet -> To the town -> Office -> To the other WET buildings -> WET plot
+65500 move 327 375
+66000 click 327 375
+69000 move 320 40
+69500 click 320 40
+73000 move 320 450
+73500 click 320 450
+77000 move 560 110
+77500 click 560 110
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+81500 key F2
+84000 move 305 212
+84500 click 305 212
+86500 move 300 119
+87000 click 300 119
+89000 move 263 228
+89500 click 263 228
+92000 type Beauty
+93500 key RETURN
