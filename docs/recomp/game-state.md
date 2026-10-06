@@ -29,7 +29,7 @@ It is compiled from the state notes of exploration round 2 (the base setup, the 
 |---|---|---|---|
 | `DATA/SAVE/SAVEGAME.  N` | Header, guest block, staff table (1.2) | save 0x40d71d in proc 0x40d611; load 0x40daec and the list 0x40ddbc in proc 0x40d9e3 | Yes (`patch`) |
 | `DATA/DATABASE/STF1DAT.  N` | Stage-1 inventory: u32 count, then 0x68-byte records of the list [0x45d940] (12.4) | write 0x40fca0, read 0x40fd83 | No. `copy_slot` copies it |
-| `DATA/DATABASE/FILMB.  N` | Byte copy of FILMB.TMP, the movies on sale (8.7) | 0x4424b3 called at 0x40d7cb on save; copied back on load | No. `copy_slot` does not copy it |
+| `DATA/DATABASE/FILMB.  N` | Byte copy of FILMB.TMP, the movies on sale (8.7) | 0x4424b3 called at 0x40d7cb on save; copied back on load (0x40dbc0). If the load finds no FILMB file for the slot, it deletes FILMB.TMP (DeleteFileA at 0x40dbd5), so the movies on sale are gone | No. `copy_slot` does not copy it |
 | `DATA/DATABASE/FILMB.TMP` | Live NGS pool of sold movies | 0x411bff, 0x40bfed, 0x411ed9, 0x42a1ef, 0x42a4b9, 0x42a6b0; deleted at startup 0x4020ad | No |
 | `DATA/SAVE/WET.1ST` | Settings, 0x84 bytes = guest 0x455034..0x4550b7 | read 0x4012ce, written 0x401798 | No |
 
@@ -42,7 +42,7 @@ It is compiled from the state notes of exploration round 2 (the base setup, the 
 | File offset | Address | Size | Content | Evidence |
 |---|---|---|---|---|
 | 0x0 | 0x455620 | 4 | `NGS\0` | checked here: every template |
-| 0x4 | 0x455624 | 4 (float) | Save version 1.69 (0x3fd851ec). The save list compares it at 0x40de10; the branch for an older version was not traced | checked here: code 0x402f68, 0x40de10 |
+| 0x4 | 0x455624 | 4 (float) | Save version 1.69 (0x3fd851ec). The save list compares it at 0x40de10: a file with a lower version gets an empty list entry (jb 0x40dd18 zeroes the name). The load proc reads the file without a version check | checked here: code 0x402f68, 0x40de10, 0x40dd18 |
 | 0x8 | 0x455628 | 0x50 | Save name, NUL-terminated. The runner reads the name here | B.9; tools/scenarios.py `read_slot` |
 | 0x58 | 0x455678 | to 0x7b8c | Rest of the guest block, up to 0x45d1ac inclusive (map in 1.3) | code 0x40d73f (length 0x7b8d) |
 | 0x7b8d | pseudo 0x45d1ad | 553 x 40 = 22120 | Staff table (section 6), copied from the heap array [0x45555c], count [0x455348] = 553 | code 0x40d760; checked here |
@@ -58,7 +58,7 @@ Every template is 53749 bytes = 0x7b8d + 22120 (checked here).
 | 0x455620..0x455677 | Header and save name | 1.2 |
 | 0x455678..0x4556c3 | Bank deposit, interest rates, credit line, account, room, stage, credit warning, date, time, weekday, speed | 2, 3 |
 | 0x4556c4..0x455717 | Weekday names, 7 x 12 bytes ("Monday" first) | checked here |
-| 0x45571c..0x45572c | Sound settings that WET.1ST also stores (B.9) | B.9 |
+| 0x45571c..0x45572f | Sound settings that WET.1ST also stores (B.9). A load keeps the current values (1.4) | B.9; checked here: code 0x40da89, 0x40dc1e |
 | 0x45573c..0x455848 | Stage-1 state: motel, police, FBI, royalties, goal flags | 12 |
 | 0x455849..0x455aa0 | 15 building records of 40 bytes | 5 |
 | 0x455aa1..0x457b48 | 10 movie records of 0x344 bytes | 8 |
@@ -73,7 +73,7 @@ Every template is 53749 bytes = 0x7b8d + 22120 (checked here).
 | 0x4595b9..0x459628 | 4 advertising campaigns of 28 bytes | 10.1 |
 | 0x459629..0x4596c8 | 10 scandals of 16 bytes | 10.2 |
 | 0x4596c9..0x459814 | Video charts | 14.2 |
-| 0x459815..0x459834 | State of the 11:00 hook 0x431691 (room 7, the Black Cat agency); layout not documented | 14.2 |
+| 0x459815..0x459834 | Hell Devils sabotage job of stage-2 room 7 (the parking lot), read by the 11:00 hook 0x431691 | 10.5 |
 | 0x459835..0x45d0ec | Stage-3 stores: 11 cities x 6 stores x 0xdc bytes | 13.2 |
 | 0x45d0ed..0x45d1ac | Stage-3 flags, mansion, extensions, current city, parties | 13 |
 
@@ -88,7 +88,8 @@ The load proc reads the block (0x40db18), the staff table, FILMB and STF1DAT (0x
 | Deposit rate 0x455680 | 2 + (([0x45533c] % 100) & 3) |
 | Day hours [0x4555d0]/[0x4555d4] (not in the block) | stage 1: 7 and 23; stage 2: 9 and 19; stage 3: 9 and 21 |
 | Video charts 0x4596c9.. | rebuilt in stage 2 by 0x40bfed (called at 0x40995b). This is why the base notes saw this region "change in every save" |
-| Stage 3 | 0x40b952 runs (role not documented) |
+| Stage 3 | 0x40b952 copies the current city's name (string 5376 + [0x45d18d]) into the RAM buffer 0x45de7c. INIT_STUFE calls it at 0x409a0f and the load proc again at 0x40dc0f |
+| Sound settings 0x45571c..0x45572f | Not taken from the save. The load proc stores the five current values before the read (0x40da89..0x40daad) and writes them back after INIT_STUFE (0x40dc1e..0x40dc46) |
 
 INIT_STUFE also enters the stage's first room (stage 1 room 1, stage 2 room 5, stage 3 room 6). The load then goes on to the saved room (base: "the game opens the office first, then the saved room 20").
 
@@ -106,7 +107,7 @@ RAM-only state, lost by a save and a load:
 | Realtor mode and strip scroll of room 20 | 0x483b9c, 0x483c54 | base |
 | Staff icon flag, simulation pause flag | 0x4555f4, 0x4555fc | 14.1 |
 
-So room 20 always loads in plot mode, a warehouse has no orders until one hour after the next day end, and the rocket announcement can come again after a load (INFERRED for the rocket: from the address being outside the block).
+So room 20 always loads in plot mode, a warehouse has no orders until one hour after the next day end, and the rocket announcement does not come again after a load in the same run: only WinMain clears 0x45dc08, once at program start (0x403a20), so it comes again only after the program is restarted (checked here).
 
 ---
 
@@ -119,7 +120,7 @@ So room 20 always loads in plot mode, a warehouse has no orders until one hour a
 | 0x45569c | Day | 1..30 | code 0x40a26e |
 | 0x4556a0 | Month | 1..12 | code 0x40a28f |
 | 0x4556a4 | Year | 1997 at the start | code 0x40a2aa |
-| 0x4556a8 | Hour | stage day start .. closing hour | code 0x40a22d |
+| 0x4556a8 | Hour | Normally stage day start .. closing hour. A stage switch keeps the old hour, so the game-written stage2 save starts stage 2 at 8:05, before the stage-2 day start 9 | code 0x40a22d; save stage2 |
 | 0x4556ac | Minute | 0..59 | code 0x40a20e |
 | 0x4556b8 | Weekday | 0 = Monday .. 6 = Sunday. Names at 0x4556c4 + 12*n | code 0x40a25a; cutcopy (date text 'Monday der 1.1.1997') |
 | 0x4556bc | Minute length | One game minute lasts 0x4556bc + 1 clock calls | code 0x40a2b0 |
@@ -143,16 +144,16 @@ Game speed 0x4556bc:
 | 0 | Fastest: 1 call per minute, about 3.6 s per game hour | patch s2fast, leftovers_s1fast |
 | 2 | Set when stage 3 starts | checked here: code 0x404ba9 |
 | 3 | Normal: 4 calls per minute, 14.4 s per game hour. Set by a new game and by the stage-2 switch | code 0x4016e2, 0x4028a5, 0x408e7d |
-| 30 | Recipe "slow clock": 31 calls per minute, so no hourly event fires during a script | patch prod_s2slow and many others |
+| 30 | Recipe "slow clock": 31 calls per minute, about 112 s per game hour. Hourly events still fire, but only when a script runs past the next full hour (15.3) | patch prod_s2slow and many others |
 | 400 | Recipe value for studio event tests: one minute lasts 401 ticks | patch studio_toys, studio_props |
 
 The options sheet slider shows 6 - 0x4556bc and writes 0x4556bc = 6 - slider value (checked here: code 0x40d5f8, 0x40d456). Values above 6 can only come from a patch.
 
-`0x40716d(n)` moves the clock n hours forward, keeps the minute and clamps the hour to the day start. It does not run the hourly hooks it passes (studio and marketing verifiers, code 0x40717f..0x407250). The trash, feminist and sabotage boxes and the studio break option use it, so a 9:00 trash box can skip the 10:00 hooks.
+`0x40716d(n)` moves the clock n hours forward, keeps the minute and clamps the hour to the day start. It does not run the hourly hooks it passes (studio and marketing verifiers, code 0x40717f..0x407250). If it passes the closing hour, it sets the day-end flag [0x4555e8], sets the hour to 0 and moves the weekday and date on. The clamp then gives the next day's start hour (checked here: code 0x4071c3..0x40724a). Five places call it (checked here): the stage-1 wrapper 0x4090fb, which then calls the stage-1 hook 0x408a87 once per hour; the trash box (0x40e593); the studio break (0x425258); the stage-3 map in room 25 (0x42b4c9, n from 0x48514c), which checks the day-end flag right after; and the feminist and sabotage boxes (0x430827). So a 9:00 trash box can skip the 10:00 hooks of stage 2.
 
 ### 2.3 Days between dates
 
-`0x405314(date)` returns the days since a date as (year - 1997) * 365 + month * 30 + day, minus the same for the current date (cutcopy, casting, leftovers). All "older than N days" tests use it. Day 0 of month 1 is one day before 1-1-1997 (casting_ads note).
+`0x405314(date)` returns the days since a date: (year - 1997) * 365 + month * 30 + day for the current date, minus the same sum for the given date (checked here: code 0x405314..0x40538e; cutcopy, casting, leftovers). A year counts 365 days but its 12 months only 360, so the count jumps by 6 from 30-12 to 1-1. All "older than N days" tests use it. Day 0 of month 1 is one day before 1-1-1997 (casting_ads note).
 
 ### 2.4 Hourly hooks (checked here: code 0x4050c1..0x40526c)
 
@@ -164,10 +165,10 @@ At minute 0 (guarded by 0x45d964), the tick first calls the stage hook [0x4550cc
 | 2 | Every hour, when 0x40e3bf and 0x40e3ed pass | 0x42a0ac | Warehouse orders (8.8) |
 | 2 | 9 (not on 1-1-1997) | 0x40e4a4 | Trash roll, then equipment wear 0x40ffa6 (9.4, 10.4) |
 | 2 | 10 | 0x42f334, 0x428e0a, 0x42ddff | Scandal roll, cutting done, sound done |
-| 2 | 11 | 0x431691 | Room 7 (Black Cat agency) hook; role not documented |
+| 2 | 11 | 0x431691 | Hell Devils job of room 7, the stage-2 parking lot (10.5). A waiting job hits when rand() % 100 > 50 (string 1804). After the hit, each 11:00 lowers the target company's chart sales, until the job's days are over and the block is cleared (checked here: code 0x431691..0x4317b8) |
 | 2 | 1 and 13 | 0x43070e | Feminist and sabotage roll (10.4). Hour 1 never comes in stage 2 |
 | 3 | 9 | 0x419a84 | Mansion extensions (13.3) |
-| 3 | 10 | 0x410c04 | Role not documented |
+| 3 | 10 | 0x410c04 | Party (13.4). With a buffet or girls booked, it holds a party when the days since 0x45d19d are a multiple of the period: it charges 200 * buffet + 1000 * girls, shows string 272 and sets 0x45e158 = 1. On other days it clears 0x45e158 (checked here: code 0x410c04..0x410ccf) |
 
 After the hourly part, every tick in stage 2 calls the studio tick 0x42408f, unless [0x4555fc] != 0 (code 0x40525a).
 
@@ -187,7 +188,7 @@ Stage 2:
 7. Credit check (3.4).
 8. Account >= 2000000: switch to stage 3 (section 4).
 
-Stage 3: the bank interest (3.2), then 0x4225fc, 0x42244e(city) for the 11 cities, 0x41790c, and the account minus 0x419de7(). Then the credit check and, at 50000000 or more, the rocket (section 4). The roles of these calls are not documented except what section 13 says.
+Stage 3: the bank interest (3.2), then 0x4225fc, 0x42244e(city) for the 11 cities, 0x41790c (the mansion rent check, 3.4), and the account minus 0x419de7(). Then the credit check and, at 50000000 or more, the rocket (section 4). The roles of the other calls are not documented except what section 13 says.
 
 The warehouse notes add: on a stage-2 day end the 9:00 hourly hooks of the new day run before the day-end sequence (19:59 -> 9:00, then 0x40e4a4 and 0x42a0ac, then 0x404a33).
 
@@ -208,8 +209,8 @@ The warehouse notes add: on a stage-2 day end the 9:00 hourly hooks of the new d
 
 ### 3.2 Money rules
 
-- **Money check 0x40561d (stage 2):** account + credit line >= amount. It only compares; the caller subtracts (planning, marketing, movie verifier). With account 30000 and credit 70000, 100000 $ can be spent (patch marketing_poor). With -69500, only 500 $ (patch planning_poor). Stages 1 and 3 were not documented.
-- **Bank interest (checked here):** 0x413ca5 returns the daily overdraft interest -account / 100 * [0x45567c] / 30 when the account is negative. 0x413d3e returns the daily deposit income [0x455678] / 100 * [0x455680] / 30. Both round a result between 0.5 and 1 up to 1 and a result below 0.5 down to 0.
+- **Money check 0x40561d:** in stage 2, account + credit line >= amount. It only compares; the caller subtracts (planning, marketing, movie verifier). With account 30000 and credit 70000, 100000 $ can be spent (patch marketing_poor). With -69500, only 500 $ (patch planning_poor). In stage 1 it compares the account alone (amount <= account). Stage 3 uses the same test as stage 2 (checked here: code 0x405649..0x405661).
+- **Bank interest (checked here):** 0x413ca5 returns the daily overdraft interest -account / 100 * [0x45567c] / 30 when the account is negative. 0x413d3e returns the daily deposit income [0x455678] / 100 * [0x455680] / 30. Both round a result above 0.5 and below 1 up to 1, and a result of 0.5 or less down to 0. Any larger result is truncated toward zero (0x442d7c runs frndint with the chop rounding mode). The overdraft line is 0 when the account is >= 0, and the income line is 0 when the deposit is <= 0 (checked here: code 0x413cc4, 0x413d5a, 0x442d85).
 - **When money moves:** equipment, buildings bought, job ads (800 $ staff, 1200 $ actors), training, beauty operations (actress only), scandals and campaigns are paid at once. Renting pays nothing at once; rent is charged daily. A sale of rights pays the next day. Licences pay on Mondays. Direct sales pay at the next day end (section 8).
 
 ### 3.3 Daily costs (stage 2, callback 0x40538f)
@@ -227,11 +228,11 @@ The movie notes list the lines. The sheet adds receipts minus expenses to the ac
 
 Example (run movie_heal_dayend, save movie_healed): rent -1430 (14 buildings), staff -7837 (22 people), total -9267.
 
-### 3.4 Credit limit and bankruptcy (checked here: code 0x404b0b..0x404b73)
+### 3.4 Credit limit and bankruptcy (checked here: code 0x404a91..0x404aa0, 0x404b0b..0x404b73, 0x404bc1..0x404c99)
 
 - At a stage-2 or stage-3 day end, if account + credit line < 0 and 0x455698 = 0: string 907 'You've exceeded your credit limit, you have to balance your account today!', and 0x455698 = 1.
-- At the next day end, if it is still negative: the bust dialog 0x41f615 (DDF record 0x59 with two buttons; string 908 'Your company is bust, Lula has left you ... Do you want to start again?' has the matching text, but the link was not traced). Its first button starts a new game in stage 1 (0x4015b9, then INIT_STUFE(1)); the other sets the quit flag 0x4555e4.
-- 0x417a0a also sets 0x455698 = 1 (not traced).
+- A later day end clears the flag before the daily costs, but only when account + credit line > 0 (stage 2: 0x404a91..0x404aa0; stage 3: 0x404bc1..0x404bd0). If the flag is still 1 at the check after the costs, the bust dialog opens whatever the balance is by then (0x404b48, 0x404c72). The dialog is 0x41f615 (DDF record 0x59 with two buttons; string 908 'Your company is bust, Lula has left you ... Do you want to start again?' has the matching text, but the link was not traced). Its first button starts a new game in stage 1 (0x4015b9, then INIT_STUFE(1)); the other sets the quit flag 0x4555e4.
+- In stage 3 the mansion rent check 0x41790c (called at 0x404c1b, before the credit check) sets 0x455698 = 1 at 0x417a0a when a lease date 0x45d109..0x45d111 is set and more than 7 days old. The check that follows then opens the bust dialog at the same day end, even with a positive balance. When the date is exactly 7 days old, the game asks for the rent instead (string 524). Paying sets the lease date to today; a refusal or too little money loses the mansion (string 525) (checked here: code 0x417919..0x417a0a).
 
 ---
 
@@ -245,9 +246,9 @@ Example (run movie_heal_dayend, save movie_healed): rent -1430 (14 buildings), s
 | Switch | Condition and effect | Evidence |
 |---|---|---|
 | Stage 1 -> 2 | In the stage-1 day check 0x408dea: 0x455845 != 0 and 0x455841 != 0 and account >= 50000. Effects: the inventory list is cleared, a video plays, every staff status +4 is set to 0, INIT_STUFE(2), speed 3. The game goes on in the office (room 5). The clock is not reset there; the stage2 template was saved at 8:05 | checked here: code 0x408dfa..0x408e87; patch stage1_goal, s1flag |
-| Buying the identity | 0x426755 sets 0x455841 = 1 and 0x455845 = 1 and pays [0x484724] | checked here; s1rich note: account 70000 is enough |
-| Stage 1 game over | 0x455845 set but 0x455841 = 0: when the FBI countdown is 0, string 3115 'The FBI have got you ... try again?'; after the third arrest (0x45582d >= 3), string 3119. Yes restarts stage 1, no quits | checked here: code 0x408ec2..0x408f76 |
-| Stage 2 -> 3 | At the stage-2 day end, account >= 2000000 (cmp at 0x404b75): video 0x1f5e, INIT_STUFE(3), speed 2. Stage 3 starts at the Los Angeles realtor (room 6) | base; checked here; patch stage2_rich, save stage3 |
+| Buying the identity | 0x426755 sets 0x455841 = 1 and 0x455845 = 1 and pays [0x484724] = 10000 + 1000 * (rand() % 5 - 2), so 8000 to 12000 (set at 0x425d77). The switch to stage 2 then needs 50000 or more left after paying | checked here: code 0x425d4f..0x425d77, 0x42673d..0x42676e; s1rich note: account 70000 is enough |
+| Stage 1 game over | 0x455845 set but 0x455841 = 0. Besides the purchase, 0x455845 is set when the FBI countdown 0x455831 reaches 0 (0x408ddb) and at the third arrest (0x433317). Then: when the FBI countdown is 0, string 3115 'The FBI have got you ... try again?'; after the third arrest (0x45582d >= 3), string 3119. Yes restarts stage 1, no quits | checked here: code 0x408ddb, 0x433317, 0x408ec2..0x408f76 |
+| Stage 2 -> 3 | At the stage-2 day end, account >= 2000000 (cmp at 0x404b75): video 0x1f5e, then 0x403598 (its only caller; clears the extensions 0x45d13d[5] and fills the 11 x 6 store records with random data), INIT_STUFE(3), speed 2. Stage 3 starts at the Los Angeles realtor (room 6) | base; checked here: code 0x404b75..0x404ba9; patch stage2_rich, save stage3 |
 | Rocket | Stage-3 day end, account >= 50000000 and 0x45dc08 = 0: 0x42977e (string 1152), then 0x45dc08 = 1 | leftovers; checked here: code 0x404c9f |
 | Bust | 3.4 | |
 
@@ -296,7 +297,7 @@ Index i is also the realtor string 301 + i. Rooms come from the jump table 0x417
 | 13 | Studio 2 | 33 | 4500 | 200000 | 27 | 0x455a61 | 230,150 |
 | 14 | Studio 3 | 34 | 4500 | 200000 | 27 | 0x455a89 | 70,400 |
 
-Plot hotspots are tested in index order and the first match wins. Building 8 overlaps the office and the points 366,300 and 300,395: once Lula's flat is rented, 366,300 opens the office (movie notes).
+Plot hotspots are tested in index order and the first match wins. Building 8 (216..416 x 258..387) overlaps the office and covers the safe plot point 366,300, so once Lula's flat is rented, 366,300 opens the office (movie notes). The other safe point, 300,395, lies below building 8 (y > 387) and hits no building.
 
 ### 5.3 Rules
 
@@ -306,14 +307,14 @@ Plot hotspots are tested in index order and the first match wins. Building 8 ove
 - **Lula's flat:** 0x455999 = 1 makes the office broom cupboard (office hotspot 5) lead to room 23; otherwise string 209 'That's just a junk room.' (casting, code 0x40cf34).
 - **Cancel lease** (DDF 5, 0x418aa0) needs 30 days or more since the deal date (0x405314), else string 318. DDF 5 shows the 'Present rental' as rent / 30 (leftovers, patch leftovers_s2lease).
 - **Cancelling a studio lease** (0x418fc4) puts its movie back to state 1. It writes -1 into the cast entries but keeps the cast count +0x2f4. The studio's camera and lighting are gone without a refund (leftovers).
-- **Sell** (DDF 6) offers a price only when the building was bought with the guarantee or [0x45533c] % 100 > 80, else string 322. The price comes from +0x04 and [0x45533c] % 30 (leftovers).
+- **Sell** (DDF 6) offers a price only when the building was bought with the guarantee or [0x45533c] % 100 > 80, else string 322. The price is (+0x04 / 100) * (50 + [0x45533c] % 30), so 50 to 79 % of the buy price, also for a guarantee purchase. It is paid at once, and +0x10, +0x14 and +0x18 are cleared (checked here: code 0x418cd7..0x418d83; leftovers).
 - **Hotspots:** plot hotspots are registered only for flag != 0 and only at the setup 0x418489. A newly rented building is clickable only after re-entering the plot; a cancelled one stays clickable until then (base, leftovers).
 
 ### 5.4 Room 20 modes (RAM)
 
 - Realtor mode 0x483b9c = 1 only when the plot is entered from room 6 (pre-call 0x418457). A loaded save in room 20 is always in plot mode.
 - Realtor mode shows a film strip of buildings with flag != 1, except 7, starting at index [0x483c54]. Tiles are at x = 16 + 102*s (+1 for s >= 3), y 10..83; arrows at 0..29 and 630..640.
-- A tile opens the DDF 4 info sheet (callback 0x4185fd: Rent 245,228, Buy 245,325, guarantee toggle 219..336 x 285..301). A rented building opens DDF 5, a bought one DDF 6.
+- A tile opens the DDF 4 info sheet (callback 0x4185fd: Rent 245,228, Buy 245,325, guarantee toggle 219..336 x 285..301). In realtor mode a click on a rented building on the plot opens DDF 5 (cancel lease, callback 0x418aa0), or DDF 6 (sell, callback 0x418c5c) when +0x14 = 1. A click on building 7 or 8 (the office, Lula's flat) goes back to room 6 instead, so Lula's flat cannot be cancelled or sold there (checked here: code 0x417f1a..0x418115).
 
 ---
 
@@ -328,9 +329,9 @@ In memory: the heap array [0x45555c], count [0x455348] = 553. In the save: file 
 | +0x00 | Job | 0..21 (6.2) | base; save stage2 |
 | +0x04 | Status | 0..5 (6.3) | base, casting; patch prod_s2staff |
 | +0x08 | Unknown | 0 in all 553 records of movie_beauty | checked here |
-| +0x0c | Level (wrench icons) | 1..9 | base; save casting_hired |
+| +0x0c | Level (wrench icons) | 0..9. PERSO.TAP gives 2..9 to everyone except person 9 (Ozzy Osram, lighting engineer), who has 0 | base; save casting_hired; checked here: PERSO.TAP, save stage2 |
 | +0x10 | Current pay per day | dollars | casting; save casting_trained (2330) |
-| +0x14 | Refusal and firing counter | Reject +10, fire +1, director quits +1. An applicant draw skips the person and decrements it with a 30 % chance | casting; save casting_hired, casting_trained |
+| +0x14 | Refusal and firing counter | Reject +10, fire +1, director quits +1, pay quit +1 (6.7). While it is not 0, an applicant draw skips the person. When the draw would have taken the person, it decrements the counter with a 29 % chance (rand() % 100 > 70) | casting; save casting_hired, casting_trained; checked here: code 0x41c378..0x41c3c7 |
 | +0x18, +0x1c, +0x20 | Start date of training or sickness | day, month, year | save casting_trained, movie_beauty |
 | +0x24 | Days of training or sickness | | same |
 
@@ -342,12 +343,12 @@ Addresses for one person: status of person 527 = 0x45d1ad + 40*527 + 4 = 0x46240
 
 ### 6.2 Jobs
 
-Names are strings 912 + job; ad texts 757 + job (base). "People" is the count in PERSO.TAP (checked here).
+Names are strings 912 + job; staff ad texts 757 + job for jobs 0..19 (base). Strings 777 and 778 are not the ad texts of jobs 20 and 21: from 777 on, the strings describe a staff applicant's training (777 + A, 'no training and a complete dope.', 'no training and a total zombie.', ...). Actor and actress ads use 706/726/736/746 + A or B (6.6). "People" is the count in PERSO.TAP (checked here).
 
 | Job | Name | Department and use | People |
 |---|---|---|---|
 | 0 | Lighting engineer | Studios, studio record +0x20 | 22 |
-| 1 | Casting director | Casting (21). A working one re-rolls the level of a hired applicant. More than one sets the staff icon (0x41c994) | 20 |
+| 1 | Casting director | Casting (21). A working one (status 2) re-rolls the level of a hired actor or actress (6.5). More than one sets the staff icon (0x41c994) | 20 |
 | 2 | Cutter | Cutting (29). 'Cut films' needs one in status 1, 2 or 3; only status 2 adds cutter quality | 19 |
 | 3 | Screenplay writer | Planning (22) | 20 |
 | 4 | Cameraman | Studios, +0x24 | 20 |
@@ -388,11 +389,11 @@ Helpers:
 
 ### 6.4 Assigning staff
 
-`0x40590d(job)` opens the staff card DDF 0x19 (Perskart.TAF, callback 0x405948). Its assign button toggles status 1 and 2. Studio crew go into the studio record instead (8.4).
+`0x40590d(job)` opens the staff card DDF 0x19 (Perskart.TAF, callback 0x405948). Its assign button (control 1, 0x4059ad) gives the shown person status 2 and puts the job's current worker (the first person in status 2) back to status 1, so one person per job works. Dubbers (16) differ: the button toggles 1 and 2, and up to 5 work at once (a sixth sends the first back to 1). For studio crew (jobs 0, 4, 12) the replaced worker is the current studio's, and 0x424eba also stores the person in the studio record (8.4); the person still gets status 2 (checked here: code 0x4059ad..0x405ac7).
 
 ### 6.5 Hiring
 
-The hire code 0x41c9ad turns an applicant (status 4) into status 1. It then sets status 2 if the person is the first of its job and the job is not 0, 4, 12, 20 or 21. Doormen and cleaning ladies always get 2 (base). With a working casting director the level is re-rolled: in casting_hired it came out as min(9, (4 + 7) / 2 + rand() % 7) = 9 (casting). The applicant leaves the list.
+The hire code 0x41c9ad turns an applicant (status 4) into status 1. It then sets status 2 if the person is the first of its job and the job is not 0, 4, 12, 20 or 21. Doormen and cleaning ladies always get 2 (base). Only actors and actresses get a new level. With a working casting director (status 2, level L) it starts from (A + B) / 2: below L it adds rand() % L, above L it subtracts (rand() % L) / 2, equal keeps the old level; then it is capped at 9. In casting_hired it came out as min(9, (4 + 7) / 2 + rand() % 7) = 9 (casting). Without one, an actor or actress gets B when B < A and keeps the level otherwise. Every other job gets level A in both cases (checked here: code 0x41ca76..0x41cb4d, 0x41ce22..0x41ce55). The applicant leaves the list.
 
 prod_s2staff patched one person per job to the status the hire code gives the first employee. These people appear in many recipes (checked here: save prod_s2staff):
 
@@ -443,7 +444,7 @@ The space holds 50 records; the casting notes give a limit of 48 (code, not run)
 
 - The draw 0x41c19b runs at 11, 13, 15 and 17 in stage 2 (2.4). It does nothing while [0x483d74] != 0, which the casting office sets while the player is inside (string 792 'So long as you hang around here, there won't be any applications!').
 - It draws only for ads 1 to 3 days old (0x405314), so nobody applies on the day of the ad. Older ads are deleted.
-- Each draw 0x41c25f picks free people that match the ad's A, B and pay class and sets their status to 4. People with a refusal counter are skipped (6.1).
+- Each draw 0x41c25f walks the free people (status 0) of the ad's job. A person matches when PERSO A equals the ad's +0x04, the pay class of the normal pay is at most +0x0c (the class is the first index in 0x483d4c whose value is >= the pay, 9 above 4500), and, for actor and actress ads only, B equals +0x08. A match is taken with a 39 % chance (rand() % 100 > 60) and gets status 4. A person whose refusal counter is not 0 is skipped instead (6.1). The list stops at 9 people (count + 1 < 10), although it has room for 10 (checked here: code 0x41c25f..0x41c437; the casting_hired recipe note: the 11:00 draw filled 9 places).
 - Original quirk: after deleting an expired ad, the loop skips the ad that moved into its slot for that hour (casting verifier, code 0x41c20b).
 - Reject: status 0, +0x14 += 10. Hire: 6.5.
 - With the runner's fixed LULA_CLOCK the drawn list is the same in every run (casting).
@@ -454,13 +455,13 @@ The space holds 50 records; the casting notes give a limit of 48 (code, not run)
 |---|---|---|
 | Training (actors file card, DDF 26/27) | 300 $ per day paid at once; status 3; date +0x18..+0x20; days +0x24. The slider passes min + value and the callback adds 1 again, so value 9 gives 11 days (original quirk) | save casting_trained (11 days, 3300 $) |
 | Pay +/- on a card | Steps of 100 on +0x10 | save casting_trained |
-| Fire (0x41dd79) | Status 0, +0x14 += 1, removed from the cast of every movie (7.1) | save casting_trained; planning |
+| Fire (actors file card, 0x41b3b2) | 0x41dd79 removes the person from the cast of every movie (7.1); then status 0 and +0x14 += 1 | save casting_trained; planning; checked here: code 0x41b3b2..0x41b3dd |
 | Director quits | When studio +0x2c > +0x30: string 2073, status 0, +0x14 += 1 | studio; run studio_props_angry |
-| Day-end update 0x41da0d | Training over: level += days / 5, status 1. Sick (status 5) and days since +0x18 >= +0x24: level + 1 (max 9), status 1. Both clear date and days. Also a pay-based quit check (string 790 '%s is frustrated and has given notice!') and a random resignation through 0x41dd79 (0x41dbb1) | movie; save movie_healed |
+| Day-end update 0x41da0d | Only actors and actresses (jobs 20, 21) are checked for training and sickness. Training (status 3) is over when the days since +0x18 >= +0x24: level += those days / 5 (max 9), status 1. Sick (status 5) with the same test: level + 1 (max 9), status 1. Both clear date and days. Then one quit check covers every job: a person in status 1, 2, 3 or 5 whose pay +0x10 is below the PERSO.TAP normal pay quits when rand() % 100 > pay * 100 / normal pay. Quitting means status 0, +0x14 += 1 and string 790 '%s is frustrated and has given notice!'. A quitting actor or actress is also removed from every cast (0x41dd79 at 0x41dbb1). When a working staff member quits and exactly one colleague of the job is left, that colleague gets status 2 (not for doormen and cleaning ladies) | movie; save movie_healed; checked here: code 0x41da20..0x41dd31 |
 
 ### 6.8 PERSO.TAP
 
-553 records of 382 bytes, read into the buffer 0x4553dc (casting): name +0; age +0x50; texts +0x54, +0x7a, +0xca, +0x11a; job +0x16a; normal pay +0x16e; A +0x172; B +0x176; portrait +0x17a.
+553 records of 382 bytes, read into the buffer 0x4553dc (casting): name +0; age +0x50; texts +0x54 (measurements, for example '89/73/99'), +0x7a, +0xca, +0x11a; dwords +0x72 and +0x76 (181 and 81 for Cassandra Casablanca, probably height and weight, INFERRED); job +0x16a; normal pay +0x16e; A +0x172; B +0x176; portrait +0x17a.
 
 ---
 
@@ -476,8 +477,8 @@ The space holds 50 records; the casting notes give a limit of 48 (code, not run)
 
 - **Cast actors** (casting office, 0x41cea2 -> 0x41d0d4 -> 0x41d1c8): lists movies in state 1. Casting a person sets status 1 -> 2, appends to the list and increments the count (save casting_cast).
 - **Cast Lula** (room 23, STANDARD_LIST_BOX_DLG 0x42036d): OK sets +0x1b0. Lula can be in only one movie in state > 1 (string 803 'Sorry, I can only act in ONE movie at a time!', 0x41fe76; patch casting_lula_busy).
-  Original quirk: OK writes the flag to movie[list index] (0x420416), not to the matching state-1 movie. This only matters when a movie in another state comes first (casting verifier).
-- **Removing a person** (0x41dd79, from firing or a resignation): shifts the list, writes -1 at the old count index and decrements the count. The value after the new end stays. Cast 527, 17, 0 becomes 17, 0, -1 with count 1 (planning, save from planning_fire_actor).
+  OK first clears +0x1b0 in every movie (0x4203fb). Original quirk: it then writes the flag to movie[list index] (0x420416), not to the matching state-1 movie. This only matters when a movie in another state comes first (casting verifier; checked here: code 0x4203d9..0x420423).
+- **Removing a person** (0x41dd79, from firing or a pay quit): shifts the rest of the list down. The shift also copies the slot after the old end into the old last place; then -1 is written into the slot after the old end (the old count index), and the count is decremented. Cast 527, 17, 0 with count 2 becomes 17, 0, -1 with count 1; the 0 at index 1 is the old slot 2 (planning, save from planning_fire_actor; checked here: code 0x41dd8f..0x41dde1).
 - **0x42568e** (studio removal) searches the list for a person, then writes -1 at cast[count] and decrements the count even when it found nothing (studio verifier, code 0x4256e0..0x4256f7).
 - **Studio actor check 0x4282af** runs every tick for a studio with a movie. For every cast member not in status 2 it passes the list index, not the person, to 0x42568e, so the cast empties itself (original quirk; patch studio_idle_cast, run studio_cast_dropped ends with 2008 'Well honey, you should cast at least two actors.'). Consequence: cast actors must be in status 2. Actors in status 1, 3 or 5 lose the movie this way.
 - **After shooting** the cast goes back to status 1, the list and count stay, and +0x1b0 is cleared (8.4).
@@ -495,7 +496,7 @@ The space holds 50 records; the casting notes give a limit of 48 (code, not run)
 | Choice | 0x485c10 = radio control - 6. The sheet init does not reset it, so OK without a pick repeats the last operation (original quirk) | movie; movie verifier |
 | Effect | Status 5, date +0x18 (0x4052ed), days +0x24 = price / 1000 | save movie_beauty |
 | Payment | Only the actress branch subtracts the price (0x432cd1). The actor branch 0x432af5..0x432b62 never charges (original quirk) | save movie_beauty: 2 x 8000 cost 8000 |
-| Refusals | Status 2: 1903/1904 'No dice, as long as he's/she's cast in a movie!'; status 3: 1905/1906; status 5: 1907/1908 | run movie_beauty_refused |
+| Refusals | Status 2: 1903/1904 'No dice, as long as he's/she's cast in a movie!'; status 3: 1905/1906; status 5: 1907/1908 | run movie_beauty_refused (1903, 1904); runs movie_beauty_clinic and movie_heal_dayend (1907); 1905, 1906 and 1908 only from code 0x432d73..0x432da4 (INFERRED) |
 | Healing | Day-end update 0x41da0d (6.7): level + 1, max 9 | save movie_healed (527: 8 -> 9) |
 
 RAM: 0x485c08 person, 0x485c0c job, 0x485bd8 HAND_ANI.
@@ -613,18 +614,18 @@ A forced rebuild of all 21 movie recipes gave byte-identical SAVEGAME files.
 **Ready flag (RAM)** 0x484848[studio] = crew in status 2, both slots filled and a movie in state 1. It gates the film strip (hotspot 6, click 330,438) and START (hotspot 7, click 573,434).
 
 **Shooting rules (studio, movie):**
-- START needs at least two actors in the cast (string 2008). Cast members that are not in status 2 have already been dropped by 0x4282af (7.1). START sets state 2, the start date, +0x34, +0x3c = 1 and +0x38 = days * 10.
-- The days sheet (0x424b50) shows the recommendation +0x158. Choosing fewer days adds 1 to the frustration.
+- START needs at least two actors in the cast (string 2008). Cast members that are not in status 2 have already been dropped by 0x4282af (7.1). Picking the movie in the film strip sets +0x34 (0x42497f) and clears that movie from the other studios. START refuses while +0x34 = -1 (0x42353b). It opens the days sheet, which sets +0x38 = days * 10 (0x424be3), and then sets state 2, the start date and +0x3c = 1 (0x42359e..0x4235ce).
+- The days sheet (0x424b50) shows the recommendation +0x158. Choosing fewer days than minutes / 10 adds 1 to the frustration. Choosing that many or more takes 1 off a frustration above 0 (checked here: code 0x424b98..0x424bcc).
 - At every :00, 0x425703 decrements +0x38 of a state-2 movie that is not paused.
-- At every :00 and :30 tick, 0x42408f calls 0x4242f2. With hours left it rolls for an event; at 0 it ends the shooting. 0x42408f runs on every WM_TIMER tick while [0x4555fc] = 0.
-- Ending (0x4242f2, 0x425775): quality values (8.5); Lula's counter 0x458371 + 1 (max 100) if +0x1b0 = 1; state 3; +0x17c = 0; +0x1b0 = 0; end date; cast back to status 1; +0x34 = -1; +0x3c = 0; studio equipment worn to 99 %.
+- At every :00 and :30 tick, 0x42408f calls 0x4242f2 once for each studio whose movie can shoot (not paused) and has no pending event (0x4848d4[studio] = 0). 0x4242f2 walks all three studios and skips paused movies. With hours left, a studio gets an event only when rand() % 100 > 93; at 0 hours its shooting ends (checked here: code 0x42428a..0x4242b5, 0x42438c..0x4243a0). 0x42408f runs on every WM_TIMER tick while [0x4555fc] = 0.
+- Ending (0x4242f2, 0x425775): quality values (8.5); Lula's counter 0x458371 + 1 (max 100) if +0x1b0 = 1; state 3; +0x17c = 0; +0x1b0 = 0; end date; actors and actresses of the cast back to status 1; +0x34 = -1; +0x3c = 0. Sex toys lent to this studio are freed (store slot +0xc = -1) and lose 5 condition points (0x42435a..0x42438a). The ending does not touch the camera or the lighting. Their 100 -> 99 in movie_shot comes from the 9:00 wear roll 0x40ffa6 (9.4), which takes 1 point when rand() % 100 > 50 (code 0x4100cb..0x4100e6). The roll of day 10 left them at 100, as +0x300 = 35 at the end of shooting on day 10 shows (8.5); the roll of day 11 took the point.
 - If shooting ends while the player is in the studio, the hotspot count stays 1 until re-entry (original quirk, run studio_shoot_end).
 
 **Events (studio):**
 - Event type: the per-tick accumulator 0x45533c % 100 < 50 gives an actor problem, otherwise a props wish with need rand() % 24. With the runner's fixed clock the type depends on the minute countdown 0x4556c0 at load (0 or 1: actor; 2: props; patch studio_props).
 - Actor problem (DREH_MSG_STUDIO_DLG / DREH_MSG_ANYWHERE_DLG, then DREH_EVENT_ACTION_DLG): break (clock + 1 h with 0x40716d), whip, money (500 $ bonus), boot (remove from the cast), card.
 - Props wish (need = catalogue +0x54): with a toy for that need already given to this studio, nothing is shown (patch studio_toys). With a free toy in the store and a working props assistant, the roll hands the toy over by itself (studio_props_store note). A free toy without a props assistant opens DREH_TOY2_DLG (shop, use from the store, decline); no toy opens DREH_TOY1_DLG (shop or decline), both from 0x4250fd. Declining adds 1 frustration at each step (0x4242f2 on the plot, 0x425509 in the studio).
-- Original quirk in 0x425a1e: a wrong toy is paid and thrown away when the player answers no. Closing the shop without buying still asks 2078; yes appends an empty slot (item -1) and adds 1 frustration.
+- Original quirk in 0x425a1e: a wrong toy is paid and thrown away when the player answers no. Closing the shop without buying still asks 2078; yes adds 1 frustration and, while the props room is rented (0x4559e9), appends an empty slot (item -1) to the sex-toy store.
 
 RAM: 0x4848c8[3] problem or props need; 0x4848d4[3] pending event (1 actor, 2 props); 0x4848e0 + 100*i event text; 0x484a10[3] problem person; 0x484a0c studio for DDF 30; [0x45d4d0] hotspot count (8, or 1 while shooting).
 
@@ -632,9 +633,9 @@ RAM: 0x4848c8[3] problem or props need; 0x4848d4[3] pending event (1 actor, 2 pr
 
 | Field | Formula | Example (movie_shot) |
 |---|---|---|
-| +0x2f8 cast | Average of 10 * level over the cast | (90 + 90) / 2 = 90 |
+| +0x2f8 cast | Sum of 10 * level over the +0x2f4 cast entries, divided by +0x2f4. An entry of -1 adds 0 but still counts in the divisor (checked here: code 0x4257a5..0x425803) | (90 + 90) / 2 = 90 |
 | +0x2fc crew | 10 * (director + lighting + cameraman + casting director (job 1) + writer (3) + designer (10) + assistant (9) + set builder (6)) / 8 | 10 * (7+6+6+7+6+6+6+6) / 8 = 62 |
-| +0x300 equipment | (10 * camera rating * condition / 100 + 10 * light rating * condition / 100) >> 1 | (30 + 40) / 2 = 35 |
+| +0x300 equipment | (10 * (camera rating * condition / 100) + 10 * (light rating * condition / 100)) >> 1. Each division truncates before the * 10, so rating 3 at 99 % gives 20, not 29 (checked here: code 0x4259d4..0x425a10) | (30 + 40) / 2 = 35 |
 | +0x30c Lula | [0x458349] if Lula is cast. Nothing writes 0x458349, so it is 0 | 0 |
 
 Other quality inputs (movie, cutcopy, soundprops):
@@ -673,7 +674,7 @@ Examples: 'Hot Sauna' 27 + 16 + 5 + 3 + 3 + 0 - 5 = 49, so 49000 (run movie_sale
 | +0x000 | Title, copied with strcpy into an uncleared stack buffer, so the bytes after the NUL differ between builds |
 | +0x100, +0x104, +0x108 | Sale day, month, year (0x4052ed) |
 | +0x10c | Price code: > 0 rights sale (the amount, paid once); -1..-3 licence (n $ per unit); < -100 laptop sale, -(100 + max(1, V / 1000 >> 2)) |
-| +0x110, +0x114, +0x118 | Laptop: copies sold in the 0-30, 31-60 and 61-90 day windows (-1 until the first write-back). Licence: +0x110 sums the royalties paid |
+| +0x110, +0x114, +0x118 | Laptop: copies sold in the 0-30, 31-60 and 61-90 day windows (-1 until the first write-back). Licence: the royalties paid in the same three windows. +0x110 replaces its -1 at the first payment; +0x114 and +0x118 add to the -1, so they end 1 low (checked here: code 0x411fc9..0x411fe1, 0x41206d, 0x4120ed) |
 | +0x11c | Value V of the 0-30 day window |
 | +0x120 | Value of the 31-60 day window = +0x11c / 2 |
 | +0x124 | Value of the 61-90 day window = +0x120 / 2 |
@@ -694,7 +695,7 @@ Evidence: movie (offers 76562 and 115780 recomputed; licence 37851; FILMB write-
 
 A declined offer leaves the movie record in memory with the raised +0x2fc, so the next offer is higher (76562 -> 89062 base, movie).
 
-**Distributor busy roll** (stage 2, 0x4111e1, cutcopy): rand() % 100 > 80 sets [0x4555fc] = 1 and 0x45e2a8 = 1, stores the text 2210 at 0x45e2c0, the day and hour at 0x45e2b4/0x45e2b8 and busy hours 0x45e2bc = rand() % 4 + 3. 0x412267 then refuses entry while busy (INFERRED). All RAM.
+**Distributor busy roll** (stage 2, 0x4111e1, cutcopy): rand() % 100 > 80 sets [0x4555fc] = 1 and 0x45e2a8 = 1, stores the text 2210 at 0x45e2c0, the day and hour at 0x45e2b4/0x45e2b8 and busy hours 0x45e2bc = rand() % 4 + 3. 0x412267, the first call of the distributor setup 0x4111e1, refuses entry with string 2209 while the stored day is today and the stored hour + 0x45e2bc is above the hour; otherwise it clears 0x45e2bc (checked here: code 0x4111fd, 0x412267..0x4122be). All RAM.
 
 ### 8.8 Warehouse list and orders (RAM)
 
@@ -708,7 +709,7 @@ A declined offer leaves the movie record in memory with the raised +0x2fc, so th
 | 0x48507c | Marketing level, 25 per running campaign (10.1) |
 | 0x485078 | Cleared at the day end; meaning unknown |
 
-- **Day end (0x42a1ef):** one entry per FILMB record with code < -100 and age <= 90 days. Copies = window value / 30, plus a marketing term (0x42a314 adds orders * (0x48507c / 2) / 100) and a chart term (0x42ab33 finds the record in the video charts). Price = -code - 100 - copies / 1000, +/- rand() % 3. Example: code -112, V 49000: 1633 copies at 11 $.
+- **Day end (0x42a1ef):** one entry per FILMB record with code < -100 and age <= 90 days. Copies = window value / 30. Then copies += copies * (0x48507c / 2) / 100 for marketing (0x42a314) and, when 0x42ab33 finds the record at chart place p (0..9), copies += (30 - p) * copies / 100 (0x42a339). Price = -code - 100 - copies / 1000, +/- rand() % 3, at least 1. Example: code -112, V 49000: 1633 copies at 11 $.
 - **Hourly (0x42a0ac):** draws orders until they add up to q. Orders still open at the day end are dropped.
 - **Accept (WORK_ORDER_DLG, 0x42a720):** the copier capacity test 0x42aaa8 sums catalog +0x54 of the copiers (0 -> 5000, 1 -> 10000, 2 -> 15000, 3 -> 30000). Original quirk: the order is counted twice against capacity.
 - **Write-back (0x42a4b9):** after the Daily costs, the copies sold go into the FILMB window field (warehouse: +0x110 = 651).
@@ -768,7 +769,7 @@ Each array is followed by a dword holding the used-slot count. 0x406121(EAX cate
 |---|---|---|---|---|---|---|
 | 0x458379 | 10 | 0x458419 | 8 sound | 27 | | save soundprops_mixing |
 | 0x45841d | 10 | 0x4584bd | 3 cutting | 29 | | save cutcopy_cutting |
-| 0x4584c1 | 200 | 0x459141 | 10 sex toys | bought at the stage-2 sex store, used by the studios | Stored only when the props building is rented (0x4559e9 = 1). String 2102 'You have no props department where you could store the things!' fits the other case (INFERRED link) | patch studio_toys |
+| 0x4584c1 | 200 | 0x459141 | 10 sex toys | bought at the stage-2 sex store, used by the studios | The buy sheet opens only when the props building is rented (0x4559e9 = 1). Otherwise the click shows string 2102 'You have no props department where you could store the things!' (checked here: code 0x40bb57..0x40bb82) | patch studio_toys |
 | 0x459145 | 20 | 0x459285 | 7 sets | 32 'Buy sets' | 'Buy props' is never hit-tested (hotspot count 6 for 7 slots) | save soundprops_propsets |
 | 0x459289 | 10 | 0x459329 | 2 copiers | 30 | | save cutcopy_copier |
 | 0x45932d | 10 | 0x4593cd | unknown | | Only initialised (0x402ed8) and worn; no buy code fills it. Probably the unused packing machines (INFERRED) | leftovers, marketing |
@@ -779,11 +780,12 @@ Each array is followed by a dword holding the used-slot count. 0x406121(EAX cate
 
 ### 9.4 Buy, sell and wear
 
-- **Buy** deducts the price at once (account + credit line test) and copies the 16-byte entry to slot[count]. Original quirk: when the item lands in the last slot, the count is not incremented. Reopening the sheet recounts up to the capacity and reads one slot past the array (for sound that slot is the count dword itself) (soundprops verifier).
+- **Buy** deducts the price at once (account + credit line test) and copies the 16-byte entry to slot[count]. Original quirk: when the item lands in the last slot, the count is not incremented. Reopening the sheet does not repair this: the recount reads one slot past the array (for sound that slot is the count dword itself) and reaches the capacity, and the sheet's init then sets a full count back to capacity - 1 (soundprops verifier; checked here: code 0x406200, 0x40673b).
 - **Sell** pays price * (condition - 10) / 100 (cutcopy: 9000 for a 10000 $ copier). At condition 100 that is the 90 % the warehouse, soundprops and marketing notes report. It removes the slot and moves the rest up.
-- **Wear** (stage 2, 9:00, after the trash roll): 0x40ffa6 runs 0x4100a7 over every array above and both studio slots. An item below 30 % breaks when rand() % 100 >= its condition, and 0x410194 removes it (patch leftovers_s2wear).
+- **Wear** (stage 2, 9:00, after the trash roll): 0x40ffa6 runs 0x4100a7 over every array above and the camera and lighting slots of all three studios. Each item loses 1 % with a 49 % chance (rand() % 100 > 50). An item below 30 % breaks when rand() % 100 >= its condition, and 0x410194 removes it (patch leftovers_s2wear).
+  Original quirk (INFERRED, code 0x4100c4..0x410126): the loop runs to the old count. After a break in any slot but the last, it reaches the emptied last slot (condition -1), which always breaks again, so the count drops by one more for every emptied slot it reaches. With two items where the first breaks, the count becomes 0 while the second item still sits in slot 0. Opening the buy/sell sheet recounts the slots and repairs the count (0x4061ed).
   Original quirk: the message is built from slot 0 after the removal. When the only item breaks it reads catalogue record -1 (run leftovers_equipment_lastbreaks shows 'Camera equipment'). The text is string 220 '%s equipment' with the category name, so it reads 'Leisure equipment equipment'.
-- **Shooting** wears the studio camera and light to 99 % (movie).
+- **End of shooting** (0x4242f2) does not touch the studio camera and light. It frees the sex toys that studio used (+0xc = -1) and takes 5 off their condition (checked here: code 0x42435a..0x424383). The 99 % that the camera and light show in movie_shot and later saves comes from the daily 9:00 wear roll; the quality written at the end of shooting still used 100 % (+0x300 = 35, save movie_shot).
 
 ### 9.5 Props room globals (RAM)
 
@@ -805,7 +807,7 @@ Index 0 Lula Promotion Tour, 1 Ads, 2 Posters, 3 TV ads (DDF 0x3a controls 2-5).
 | +0x14 | Duration in days | 20, 40, 60, 45 |
 | +0x18 | Running | 0 / 1. Addresses 0x4595d1, 0x4595ed, 0x459609, 0x459625 |
 
-At the day end 0x42f2ba returns 25 per running campaign; 0x42ab22 stores it in 0x48507c (8.8). Every campaign has the same effect; only price and duration differ (marketing; save marketing_ads).
+At the day end 0x42f2ba returns 25 per running campaign; 0x42ab22 stores it in 0x48507c (8.8). 0x42f2ba also ends a campaign when the days since its start exceed +0x14 (running = 0, date cleared); that campaign still counts on that day (checked here: code 0x42f2e6..0x42f32c). Every campaign has the same effect; only price and duration differ (marketing; save marketing_ads).
 
 ### 10.2 Scandals (10 records of 16 bytes at 0x459629)
 
@@ -814,11 +816,11 @@ Prepared in the marketing office (hotspot 7, needs an advertising manager, job 1
 | Offset | Field | Values |
 |---|---|---|
 | +0x00 | Price | 35000, 28000, 64000, 12000, 80000, 15000, 70000, 30000, 10000, 180000 |
-| +0x04 | Points | for example scandal 0 = 5, 3 = 5 |
+| +0x04 | Points | 5, 5, 10, 5, 15, 5, 10, 10, 5, 30 (checked here: new-game init 0x403005..0x403123, save stage2) |
 | +0x08 | Prepared and paid. Never cleared, so each scandal can be used once per game | 0 / 1 |
 | +0x0c | Broken (in the papers) | 0 / 1 |
 
-- 0x42f334 at 10:00 rolls for prepared scandals and skips broken ones (+0x0c test at 0x42f367). When one breaks: newspaper headline string 1607 + index (rect 441,100,630,470), +0x0c = 1, and 0x458375 += points (save marketing_news: 0x458375 = 5). The roll probability was not documented; with the fixed runner clock the first prepared scandal broke on the first roll in all 12 runs.
+- 0x42f334 at 10:00 rolls for prepared scandals and skips broken ones (+0x0c test at 0x42f367). When one breaks: newspaper headline string 1607 + index (rect 441,100,630,470), +0x0c = 1, and 0x458375 += points (save marketing_news: 0x458375 = 5). The roll walks the scandals in index order. A prepared, unbroken scandal breaks when rand() % 100 > 50 (49 %), and the roll stops after the first break, so at most one scandal breaks per day (checked here: code 0x42f34d..0x42f39c). With the fixed runner clock the first prepared scandal broke on the first roll in all 12 runs.
 - 0x458375 is only read by Lula's flat (11).
 - Original quirk: the newspaper code 0x43015e always calls the room-31 leave function 0x42eaf2, not the current room's. A newspaper on the plot loads BAUTEN.TAF again without freeing it, and room 20 comes back in plot mode (marketing and verifier).
 
@@ -835,9 +837,20 @@ Room 26 loads PFOERTNE.TBF and its sound only when 0x4057d2(8) > 0. 'Fit out doo
 
 **Disagreement:** the marketing notes say the trash roll counts cleaning ladies "with status 1 only (0x4056a4(job 11, status 1))". Soundprops says status 1 in 0x4056a4 also matches 2, 3 and 5. The code agrees with soundprops (checked here: 0x4056f8..0x40570a).
 
-### 10.5 Black Cat agency and sabotage
+### 10.5 Sabotage: the Hell Devils (stage 2) and the Black Cat agency (stage 3)
 
-Stage 2 has a Black Cat agency (room 7, 'Sabotage hostile companies') with an 11:00 hook 0x431691 that uses 0x459815..0x459834; its layout is not documented. Stage-3 store sabotage is in 13.2.
+In stage 2, room 7 is the parking lot: the town hotspot 6 'To the parking lot' enters it (0x40a593). There the Hell Devils rockers take sabotage jobs ('Sabotage hostile companies', sheet callback 0x4314ef). Stage 3 reaches room 7 as the Black Cat agency (city hotspot 1, 0x40b3bc). The stage-2 job is kept in 0x459815..0x459834 (checked here: code 0x4312fb, 0x4313bc, 0x4314ef..0x43168c, 0x431691..0x4317b3):
+
+| Address | Field |
+|---|---|
+| 0x459815 | Target company 0..4 (control - 2). Names are strings 1805 + n: Drippin' Lips, 2 Tail Hearts, Lemon Juice, Double D, Burning Heels |
+| 0x459819 | Job ordered |
+| 0x45981d | Hit done |
+| 0x459821, 0x459825, 0x459829 | Order date |
+| 0x45982d | Duration in days = strength / 10 |
+| 0x459831 | Strength (Effect slider). The sheet shows strength * 10 sixpacks; the job costs strength * 500 $ (money check 0x40561d, else string 903) |
+
+Opening the sheet clears the block and sets the strength to 1. While a job waits for its hit, the hotspot answers 1802 'We never do more than one job at once!' instead of opening the sheet. At 11:00, a waiting job hits when rand() % 100 > 50: message 1804 'The %s company has been 'visited' by the Hell Devils!', 0x45981d = 1. After the hit, entering room 7 shows 1803 'The rockers have disappeared for a while.' and returns to the town. On each later 11:00 the hook lowers the target's 10 chart sales figures (0x45974d + 4 * (10 * target + k), 14.2) by 50 * strength, or sets a figure to 0 when it is 50 or less. It clears the block when the days since the order exceed the duration. Example (run agencies_blackcat_stage2): 930 sixpacks = 46500 $, strength 93. Stage-3 store sabotage is in 13.2.
 
 ---
 
@@ -861,25 +874,25 @@ Room 23 gauge 0x4842e4 (marketing): min(10, (min(100, [0x458371] * 30 / 100) + m
 ### 12.1 Clock and hours
 
 - Day 7:00 to 23:59. The stage-1 hourly hook [0x4550cc] = 0x408a87 counts the motel rent, the film development and the FBI countdown. The day end at 23:59 jumps to 7:00 and does not run the hook for the night hours (leftovers, engine).
-- `0x4090fb(n)` runs the hook n times (sessions, police).
+- `0x4090fb(n)` moves the clock n hours forward with 0x40716d and then runs the hook n times (sessions, police) (checked here: code 0x4090fb..0x40911c).
 - Opening hours: table 0x450f0c (u16 from, to), read by 0x40899b(place). Video store (7) and pawnshop (4) 10-20, sex store (5) and bar (9) 10-24, the rest 0-24.
 
 ### 12.2 Motel record (0x45573c)
 
 | Address | Offset | Field | Evidence |
 |---|---|---|---|
-| 0x455740 | +0x04 | Rent hours left. The hook counts it down; at 4 it sets the reminder; at 0 it sets evicted | patch s1rentfbi (4), leftovers_s1film (300) |
+| 0x455740 | +0x04 | Rent hours left. The hook counts it down; at 4 it sets the reminder; at 0 it sets evicted. The countdown stops while +0x30 = 2, and a brawl complaint sets it to 1, which the same hook call counts down to 0. Paying the rent +0x00 (100 $ at a new game, 0x403154) adds 17 hours, or 119 hours at the price [0x485b1c] when +0x08 is set (0x431064..0x43109e) | patch s1rentfbi (4), leftovers_s1film (300); checked here: code 0x408ae3, 0x408ad7 |
 | 0x455748 | +0x0c | Rent reminder. Shown by 0x408dea as 3111, or as 3118 when +0x14 is set | engine |
 | 0x45574c | +0x10 | Evicted | patch engine_s1evict |
-| 0x455750 | +0x14 | The owner told the cops. Set by the reception (0x430aa4, 0x430af1); 0x408dea never clears it, so the player is arrested again after release | patch engine_s1evict; engine verifier |
-| 0x455760 | +0x24 | Brawl countdown | engine |
+| 0x455750 | +0x14 | The owner told the cops. Raised from 0 to 1 by the motel reception at 0x430aef, only when it is 0 (0x430aa2), 0x455799 > 30 and the account >= 8000; the same code raises the rent +0x00 to 250 %. 0x408dea never clears it, so the player is arrested again after release | patch engine_s1evict; engine verifier; checked here |
+| 0x455760 | +0x24 | Brawl countdown: hours the motel owner is out of action, bought from the rocker on the parking lot (0x431a0c, string 4804 'The motel owner should be out of action for about %d hours..'; refused with 4808 while it runs). The hook counts it down | engine; checked here |
 | 0x455764 | +0x28 | Brawl count | engine |
-| 0x455768 | +0x2c | Brawl complaint (countdown ended with count >= 3) | engine |
-| 0x45576c | +0x30 | Byte, unknown | engine |
+| 0x455768 | +0x2c | Brawl complaint (countdown ended with count >= 3; the hook also sets the rent hours +0x04 to 1) | engine; checked here: code 0x408ad2..0x408add |
+| 0x45576c | +0x30 | Byte. 2 while the brawl countdown runs (set with it at 0x431a11, cleared at 0x408ac3 when it ends). While it is 2 the hook does not count the rent hours down, and the motel exterior and reception code test it too (0x42f476, 0x42f5a4, 0x430ec3) | engine; checked here |
 
 ### 12.3 Day check, police and FBI (0x408dea, checked here)
 
-The day check runs from room ticks with AL = room code (town 0, motel exterior 1, motel room 3, pawnshop 4, photo store 7, police 8 or 0xe). It returns 8 to change to room 8, the police cell.
+The day check runs from room ticks with AL = place code (town 0, motel exterior 1, motel reception 2, motel room 3, pawnshop 4, sex store 5, parking lot 6, video store 7, police 8 or 0xe, bar 9, bar toilet 0xa (room 27), 0xb (room 28), distributor 0xc). The same codes index the opening hours in 12.1. It returns 8 to change to room 8, the police cell.
 
 | Address | Field | Notes |
 |---|---|---|
@@ -923,8 +936,8 @@ List API (engine): 0x407a2e add, 0x407bbd remove current, 0x407b9f set current a
 
 | Address | Field |
 |---|---|
-| 0x455815 | Royalty sum: a royalties sale adds 6000 * q / 10 * 32 / 100 |
-| 0x45581d | Day of the royalties sale |
+| 0x455815 | Royalty sum: a royalties sale adds 6000 * q / 10 * 32 / 100 and sets 0x45581d to the day. The first hourly hook on another day adds the whole sum to 0x455819 and keeps sum - sum * 25 / 100; when that is below 10, the sum is cleared and 0x45581d set to -1 (checked here: code 0x408c86..0x408ce4, 0x412f70..0x412f80) |
+| 0x45581d | Day of month of the last royalty sale or payout, -1 for none. Only the day number is compared with 0x45569c |
 | 0x455819 | Royalty money due, paid out by 'Agent' (string 5212) |
 | 0x45e200 | Refusal flag (DDF 52 with 5211); RAM |
 | 0x45e20c, 0x45e210, 0x45e214, 0x45e218, 0x45e21c | 1 photos / 0 video; temporary sale list; selected row; amount; 1 royalties / 0 fixed price (RAM) |
@@ -952,13 +965,14 @@ Store i of city c is at 0x459835 + 0x528*c + 0xdc*i.
 | +0x14..+0x1c | Treatment date | leftovers |
 | +0x20 | Treatment days, -1 = no end | leftovers |
 | +0x24 | 15 department types | leftovers |
+| +0xa4, +0xa8, +0xac | Rental date of the player's store | checked here: code 0x417797; save store3 (2-1-1997) |
 | +0xb0 | Monthly rent (the player's store) | save store3 (7800) |
 | +0xbc | Capital or turnover. Rival stores above 10000000 get a random treatment at the day end | save store3 (50000); leftovers |
 | +0xc0, +0xd4 | Turnover fields | leftovers (sabotage changed them) |
 
 With the runner's fixed LULA_CLOCK, the player's first store in Los Angeles is store 0 at 0x45cbc5 (rent 0x45cc75, capital 0x45cc81), and the Drippin' Lips LA store is store 3 at 0x45ce59.
 
-**Disagreement:** the store3 and s3broke notes in saves.json say "the store record of store3 starts at 0x45cc69". The leftovers layout puts store 0 of city 10 at 0x45cbc5, and the store3 template agrees (owner 5 there; 0x45cc75 is +0xb0 and 0x45cc81 is +0xbc). The patched addresses are right; only the record start in the note is wrong.
+**Disagreement:** the s3broke note in saves.json says "the store record of store3 starts at 0x45cc69" (the store3 note gives no address). 0x45cc69 is +0xa4 of store 0, where the rental date starts. The leftovers layout puts store 0 of city 10 at 0x45cbc5, and the store3 template agrees (owner 5 there; 0x45cc75 is +0xb0 and 0x45cc81 is +0xbc). The patched addresses are right; only the record start in the note is wrong.
 
 Sabotage (leftovers): Black Cat -> Sabotage -> Intimidation -> store -> 8000 $ sets +0x10 = 0, the date and 7 days (save leftovers_s3sab). 0x422b6c ends a treatment at the day end when the days since its date exceed +0x20: +0x10 = -1, date cleared (patch leftovers_s3sabend).
 
@@ -979,11 +993,11 @@ The mansion table is 0x483ad4 + 12*i (rent, buy price, ...). The pool costs 2000
 
 ### 13.4 Parties
 
-From the s3party recipe: 0x45d191 party frequency (5 = weekly; the strings 256-261 run Yearly, Half-yearly, Every two months, Monthly, Every two weeks, Weekly), 0x45d195 buffet (20), 0x45d199 girls (36), 0x45d19d/0x45d1a1/0x45d1a5 last party date. Field meanings beyond the recipe note are INFERRED.
+From the s3party recipe: 0x45d191 party frequency (5 = weekly; the strings 256-261 run Yearly, Half-yearly, Every two months, Monthly, Every two weeks, Weekly), 0x45d195 buffet (20), 0x45d199 girls (36). 0x45d19d/0x45d1a1/0x45d1a5 is not the last party date: the OK of the party sheet writes today's date there (0x410a0c). The stage-3 10:00 hook 0x410c04 holds a party when buffet or girls is not 0 and the days since that date are a multiple of the period (frequency 0..5 = 360, 180, 60, 30, 14, 7 days). A party costs buffet * 200 + girls * 1000 $, shows string 272 'There's a party at your house this evening.' and adds 1 to the party counter 0x45d1a9 (checked here: code 0x410c04..0x410cbb; run office_stage3_party: account 1650000 -> 1610000 = 20 * 200 + 36 * 1000). The names buffet and girls come from the recipe note.
 
 ### 13.5 Other stage-3 fields
 
-0x45d0ed, 0x45d0f1, 0x45d0f5 are flags (0x410460 sets 0x45d0f5 = 1; it is 1 in store3 and 0 in s3office). Their meaning was not documented.
+0x45d0ed, 0x45d0f1 and 0x45d0f5 are flags (checked here). 0x45d0ed: central warehouse bought. With 10 or more stores the realtor asks string 526 'For more than 10 stores, you need a central warehouse. Buy it for $500,000?'; yes sets it and takes 500000 $ (0x416c20, 0x416e41). 0x45d0f1: the lady realtor's first visit is done. Setup 0x4168e0 calls 0x41730e(0) once and sets it; it is 1 in every stage-3 template. 0x45d0f5: Lula's present in the stage-3 office is opened. 0x410460 sets it; while it is 0, the office shows string 254 and string 255 'Don't run away honey, you have to open my present first!'. It is 0 in s3office and 1 in s3b and store3.
 
 ---
 
@@ -995,19 +1009,19 @@ From the s3party recipe: 0x45d191 party frequency (5 = weekly; the strings 256-2
 |---|---|---|
 | [0x4555e4] | Quit or leave the session | B.10 |
 | [0x4555f4] | Staff icon at 40,380. Set by room 22 setup when a planning job has more than one person, by the office setup (more than one secretary) and by hiring a second casting director; cleared by ChangeRoom. A click on its pixels sets the hovered hotspot 0x45d4d4 = 0xff | planning |
-| [0x4555fc] | Shared pause flag, about 18 writers: the hire animation, the studio equipment sheet, the distributor busy roll and others. While it is set the studio tick 0x42408f is skipped | casting, studio, cutcopy; checked here: code 0x405263 |
+| [0x4555fc] | Shared pause flag, 15 writers (18 references with the 3 reads at 0x405263, 0x4115b9, 0x4201ae): the hire animation, the studio equipment sheet, the distributor busy roll and others. While it is set the studio tick 0x42408f is skipped | casting, studio, cutcopy; checked here: code 0x405263 |
 | [0x45533c] | Per-tick accumulator written by 0x40a347. Used as a random source (studio events, building sale, interest rates at load) | studio |
 | 0x4553a8 / 0x4553b0 | Left / right click of this frame (latched by 0x436304/0x436336, copied by 0x436156) | soundprops |
 | 0x45d1b0 + 16*i, 0x45d4dc + 4*i, [0x45d4d0], [0x45d4d4] | Hotspot rects, label ids, count, hovered index | engine |
-| [0x45535c] | Room music id (0x40566e) | cutcopy (INFERRED) |
+| [0x45535c] | Room music id. 0x40566e stores it, and the clock 0x40a1f0 restarts that track when music channel 8 has stopped (0x40a2f7) | cutcopy; checked here: code 0x405679, 0x40a2c5..0x40a33a |
 
 ### 14.2 Video charts (in the saved block)
 
 | Address | Field |
 |---|---|
-| 0x4596c9 | 10 entries of 12 bytes: +0 title id, +4 = id / 10, +8 sales. Below 5 at +4, the title is string 2103 + id ('Do It Again Sam', ...); 5 marks one of the player's FILMB records (INFERRED) |
+| 0x4596c9 | 10 entries of 12 bytes: +0 title id, +4 group, +8 sales. For a built-in title, +0 is its index 0..49 in 0x45974d, +4 = index / 10 is its company (string 1805 + n) and the title is string 2103 + index ('Do It Again Sam', ...). +4 = 5 marks a player's laptop film: +0 is then its FILMB record index and +8 is copies sold * 30 / days (31-60 days: +0x114 * 60 / days, 61-90: +0x118 * 90 / days). Only records with code < -100, age 1..90 days and +0x110 > 0 take part (checked here: code 0x40c094..0x40c0c6, 0x40c265..0x40c304) |
 | 0x45974d | 50 dwords, sales figures of the built-in titles |
-| 0x4596b9, 0x4596bd | Set to 180000 and 30 by the new-game init (0x403119); meaning unknown |
+| 0x4596b9, 0x4596bd | Not chart fields: the price (180000) and points (30) of scandal 9 (0x459629 + 16 * 9, see 10.2), set by the new-game init (0x403119, 0x403123) |
 
 The charts are rebuilt by 0x40bfed at every stage-2 load and on the day end into a Monday. 0x42ab33 looks for an entry with +4 = 5 and the given record, for the warehouse chart term (checked here: code 0x40c094..0x40c0c6, 0x42ab33; saves stage2, movie_s2). The movie notes add that a laptop record enters the charts only with copies * 30 / days above the top-10 values, about 90000; 1633 copies a day cannot reach that.
 
@@ -1019,7 +1033,7 @@ Some code depends on state outside the save files. The critic notes list how to 
 |---|---|
 | CD dialog 0x402288, Browse 0x402510, GetOpenFileNameA 0x44cf60 | A CDROM.LOC naming a missing directory (for example `X:\NOWHERE\`) at the root of the `--save` overlay directory. Browse is at 225,167 and End Program at 333,167. Recipes cannot write CDROM.LOC |
 | DST transition 0x4493bb | Start clock on an EST5EDT switch day (1997-04-06 or 1997-10-26) through LULA_CLOCK or LULA_SCENARIO_CLOCK. The runner variable changes rand() and forces all templates to be rebuilt |
-| Slider drag 0x4158f3, 0x415efc | A held left button during a move. The runner's `click` sends down and up at once, and `move` carries no button state |
+| Slider drag 0x4158f3, 0x415efc | Reachable now. The runner has `down X Y` and `up X Y` script ops, and a `move` while the button is down carries it in wparam. Scenario office_slider_drag covers both (run office_slider_drag: 0x4158f3 188 hits, 0x415efc 107) |
 | TZ parsing 0x4496c8, 0x4496ec, 0x449815, 0x448fdf | A TZ entry in the runtime's fixed environment block (src/runtime/win32/kernel32.c) |
 | Display paths 0x44287d, 0x444e52 | A 15-bit display or a pitch other than 1280 reported by the runtime |
 | Debug 0x443196, 0x448a4c, 0x448a5d | The environment variable NGS-REVEAL |
@@ -1073,7 +1087,7 @@ File offset = address - 0x455620. The runner refuses a patch outside the file.
 ### 15.3 Rules that keep a patched save consistent
 
 - **Clock:** set `0x4556c0` to 0 together with any clock patch (the countdown was the only byte that differed between two builds of the same script, and it decides the studio event type). Patch the weekday 0x4556b8 together with the day. Months have 30 days.
-- **Slow clock:** 0x4556bc = 30 stops hourly events (the 13:00 sabotage box, 10:00 reports, applicant draws) from interrupting a script. Restore 3 when the scenario needs the normal speed.
+- **Slow clock:** 0x4556bc = 30 makes one game minute last 31 ticks of 60 ms, so a game hour takes about 112 s. Hourly events (the 13:00 sabotage box, 10:00 reports, applicant draws) still fire, but only when a script runs past the next full hour. Restore 3 (stage 2; stage 3 starts with 2) when the scenario needs the normal speed.
 - **Stage 2 money:** keep the account below 2000000, or the next day end moves to stage 3. The credit line cannot be patched (1.4).
 - **Counts:** when you fill a table, set its count too: movies 0x457b49, job ads 0x458255, applicants 0x458281, each equipment array's count dword.
 - **Equipment slots:** write all four dwords. Use the catalogue rating at +8, not the category.
@@ -1102,9 +1116,9 @@ File offset = address - 0x455620. The runner refuses a patch outside the file.
 | 13:00 roll | base: 13:00 | marketing: hours 1 and 13 | Both are in the code; hour 1 never comes in stage 2 |
 | Trash roll ladies | marketing: status 1 only | soundprops: 0x4056a4 status 1 also matches 2, 3, 5 | Soundprops (checked here) |
 | Rights sale call | warehouse: EDX = rand%3 | movie: EDX = offer | EDX = multiplier * offer (checked here: 0x41197b..0x4119d3) |
-| Store record start (store3) | saves.json note: 0x45cc69 | leftovers layout: 0x45cbc5 for store 0 of city 10 | Leftovers (checked here: save store3) |
+| Store record start (store3) | s3broke note in saves.json: 0x45cc69 (+0xa4 of store 0) | leftovers layout: 0x45cbc5 for store 0 of city 10 | Leftovers (checked here: save store3) |
 | Sound quality term | movie: "a stack slot that is never set" | movie verifier: set to 0 at 0x42dd03 and never changed | Same result; the verifier is exact |
 | Value bonus | movie: "else +5" | cutcopy, soundprops, movie verifier: +5 only when the value is <= 94 | <= 94 (code 0x411bd7) |
 | Lula flag on Cast Lula | casting: sets the flag of the selected state-1 movie | casting verifier: writes movie[list index] (0x420416) | Verifier |
-| Unidentified region 0x4596c9..0x45980f | base: unidentified simulation data, changes in every save | | Video charts plus room-7 state; changes because the charts are rebuilt at every stage-2 load (checked here) |
+| Unidentified region 0x4596c9..0x45980f | base: unidentified simulation data, changes in every save | | Video charts (0x4596c9..0x459814, 14.2). The room-7 job block starts after the region, at 0x459815. The region changes because the charts are rebuilt at every stage-2 load (checked here) |
 | Credit line | planning, marketing: 70000 in stage 2 | | True after every load; INIT_STUFE rewrites it (checked here) |

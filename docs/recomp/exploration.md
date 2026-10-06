@@ -56,7 +56,7 @@ Round 2 reached all of these:
 - The staffed paths of the marketing office: the `marketing_*` scenarios.
 - The branches helper 0x422b6c and the later effects of a sabotage: `leftovers_sabotage_dayend` and `leftovers_sabotage_expired`. The helpers 0x422bf8 and 0x422de5 had in fact run in round 1, in the simulation run L5, whose report was lost. No scenario covers them yet.
 - The motel "sex toy" hotspot: `leftovers_motel_toy`.
-- The stage-1 police room function 0x43323a had also run in round 1, in the districts runs, whose report was lost too. The round-1 scenarios `districts_police_arrest`, `districts_chicken_farm` and `districts_town_tour` reach it.
+- The stage-1 police room function 0x43323a had also run in round 1: in the districts runs, whose report was lost too, and in one bank run and one office run (`build/explore/bank_realtor/runs/s37`, `build/explore/office/r52.cov`). The round-1 scenarios `districts_police_arrest`, `districts_chicken_farm` and `districts_town_tour` reach it.
 - Of the 145 functions in "rooms, dialogs, simulation" that had not run, none is left. The last two (the slider drag) are covered by `office_slider_drag`.
 
 ## Notes on the process
@@ -77,7 +77,7 @@ Each agent ran at most two game processes at a time (`-j 2`). Round 2 added 90 s
 ### Shared save templates
 
 - `prod_s2slow`: the stage-2 save with a slow clock (31 timer calls per game minute instead of 4), so that the random 13:00 sabotage box (0x43070e) cannot interrupt a template script.
-- `prod_s2all`: the game itself rents all 13 production buildings at the realtor and saves on the WET plot. The account is then patched to 1500000, because 2000000 or more switches to stage 3 at the 19:00 day end (0x404b75).
+- `prod_s2all`: the game itself rents all 13 production buildings at the realtor and saves on the WET plot. The account is then patched to 1500000, because 2000000 or more switches to stage 3 at the day end after 19:59 (0x404b75).
 - `prod_s2staff`: `prod_s2all` plus one employee per job, patched into the staff table that follows the guest block in the save.
 
 The 13 `prod_enter_*` scenarios enter each production room once, and `prod_staff_departments` checks the staffed versions. These 14 runs reached 70 functions that no earlier run had reached. Most area recipes start from `prod_s2staff`.
@@ -137,7 +137,7 @@ The critic's table, plus a column for the state after the fixes. Live functions 
 
 - "Round-2 explorers" is the critic's "before": the merge of 468 coverage files in `build/explore` and `build/scenarios` after all area agents and the movie agent.
 - "+ critic's manual runs" adds the critic's two manual runs in `build/explore/critic/`: the CD dialog and a start on a daylight-saving switch day.
-- "Now" is the merge of the 470 coverage files on the evening of 2026-10-06, after the tooling fixes and with `office_slider_drag`. The slider drag adds 0x4158f3 and 0x415efc. memcpy (0x442be4) and 0x44c3c3 now have counters, and 0x44c3c3 now counts as a live function, so there are 1262.
+- "Now" is the merge of the 471 coverage files (316 in `build/explore`, 155 in `build/scenarios`) on the evening of 2026-10-06, after the tooling fixes and with `office_slider_drag`. The slider drag adds 0x4158f3 and 0x415efc. memcpy (0x442be4) and 0x44c3c3 now have counters, and 0x44c3c3 now counts as a live function, so there are 1262.
 
 Round 1 ended at 955 of 1261 (75.7 %), with 472 of 617 in "rooms, dialogs, simulation".
 
@@ -152,25 +152,25 @@ These are not runtime bugs. Do not fix them in the recompiled runtime: the goal 
 | Address | What the original does | Seen in |
 |---|---|---|
 | 0x41b9ba | The training slider passes min + value to its callback (in 0x41b8ac), which adds 1 again. Slider value 9 gives 11 days; the preset shows 5 days at value 5. | `casting_actors_file` |
-| 0x42036d | The Lula cast list never sets its headline, so it shows the template text "ListboxHeadline". It uses the list row as a movie index, both for the row colours (0x42052f) and for the Lula flag on OK (0x420416). | `casting_lula_cast` |
+| 0x42036d | The Lula cast list never sets its headline, so it shows the template text "ListboxHeadline". It uses the list row as a movie index, both for the "In planning"/"In production" label above the list (0x42052f, in the WM_CTLCOLORLISTBOX handler) and for the Lula flag on OK (0x420416). | `casting_lula_cast` |
 | 0x41c19b | After deleting an expired job ad, the applicant draw skips the ad that moved into the freed slot for that hour. | code only |
 | 0x41eaa7 | OK in the title list reloads the stored movie record, so unsaved changes on the sheet are lost. | `planning_screenplay` |
 | 0x41e912, 0x41e500 | Only 9 movies can be planned, although there are 10 records. The refused 10th title is still copied into title slot 9. | `planning_poor` (the copy: code only) |
 | 0x41eaa7 | With no movie, OK in the empty title list uses index -1 and copies "record -1" (0x45575d) into the work copy. | code only |
 | 0x41efd2 | The storyboard label "Basic price 10 minutes :" never gets a value: control 26 is empty in WET.DDF and the code never sets it. | `planning_storyboard` |
-| 0x41dd79 | Removing a person from a cast shifts the list but leaves the old last value and writes -1 one place after the new end (527, 17, 0 becomes 17, 0, -1). | `planning_fire_actor` |
-| 0x4282af | For a cast member not in status 2 it passes the list index, not the person, to 0x42568e, which still lowers the count (call at 0x4282c6). The cast is silently emptied, and START then says "you should cast at least two actors". Actors in training or sick lose their parts the same way. | `studio_cast_dropped` |
+| 0x41dd79 | Removing a person from a cast shifts the rest of the list down. The shift also copies the slot after the old end into the old last place, and -1 is then written into the slot after the old end, not at the new end (527, 17, 0 with count 2 becomes 17, 0, -1 with count 1). | `planning_fire_actor` |
+| 0x4282af | For a cast member not in status 2 it passes the list index, not the person, to 0x42568e, which still lowers the count (index loaded at 0x4282c6, call at 0x4282ca). The cast is silently emptied, and START then says "you should cast at least two actors". Actors in training or sick lose their parts the same way. | `studio_cast_dropped` |
 | 0x4248dc | OK in the film list without a selection assigns movie record 0, whatever its state. LB_SETCURSEL gets the record index, not the list row. | code only |
 | 0x423fc1 | The branch that shows string 2009 can never run. | code only |
 | 0x4242f2 | When shooting ends while the player is in the studio, the hotspot count stays 1, so only the exit works until the room is entered again. | `studio_shoot_end` |
-| 0x425a1e | A wrongly bought sex toy is paid and thrown away when the player answers no. Closing the buy sheet without buying still asks; yes appends an empty slot, reads catalog record -1 and adds 1 to the director's frustration. | `studio_props_buy`, a probe run |
-| 0x40716d | The clock jumps (the studio break, the 9:00 trash box, the 13:00 feminist and sabotage boxes) step the clock directly and skip the hourly hooks they pass: the studio hour countdown 0x425703 and the 10:00 scandal, copier and sound jobs. The break keeps the minute (8:30 becomes 9:30). | `studio_event_actor` (the skipped 10:00 jobs: code only) |
+| 0x425a1e | A wrongly bought sex toy is paid and thrown away when the player answers no. Closing the buy sheet without buying still asks, after reading catalog record -1; yes adds 1 to the director's frustration and appends the empty slot to the sex-toy store (the store append happens only while the props room is rented, flag 0x4559e9). | `studio_props_buy`, a probe run |
+| 0x40716d | The clock jumps (the studio break, the 9:00 trash box, the 13:00 feminist and sabotage boxes) step the clock directly and skip the hourly hooks they pass: the studio hour countdown 0x425703 and the 10:00 scandal roll, cutting job and sound job (0x42f334, 0x428e0a, 0x42ddff). The break keeps the minute (8:30 becomes 9:30). | `studio_event_actor` (the skipped 10:00 jobs: code only) |
 | 0x428e0a, 0x42ddff | Cutting and sound jobs end at 10:00 only when the days since the start are greater than the job's days (a strict >). A 2-day job started on day 1 ends on day 4, not day 3. | recipes `cutcopy_day3`, `cutcopy_cutdone`, `soundprops_day3`, `soundprops_sounddone`; `soundprops_sale_busy` |
-| 0x411a4c | Every valuation adds (sound + cutter quality) / 2 to the movie's +0x2fc again (0x411a92). Declining a distributor offer raises the next one ($76562, then $115780). | `movie_sale_rights` |
+| 0x411a4c | Every valuation adds (sound + cutter quality) / 2 to the movie's +0x2fc again (0x411a92). Declining a distributor offer raises the next one: the base offer rose from $76562 to $89062, and a random 30 % category bonus made the second offer $115780. | `movie_sale_rights` |
 | 0x411bff | On a category match it adds 30 % to the first sales window (+0x11c) but replaces the second and third with 30 % of themselves ("mov" instead of "add" at 0x411cd8 and 0x411d33). | `soundprops_sale_done`, recipe `movie_onsale` |
 | 0x411bff | The title is copied with strcpy into a stack buffer that is never cleared, so the FILMB.TMP bytes after the title differ between template builds. The game fields are the same. | recipe `warehouse_sale` (a) |
 | 0x42dcee | Sound quality divides by 3 a sum whose first term is a stack slot set to 0 at 0x42dd03 and never changed. | `soundprops_sale_done`, the movie chain |
-| 0x406261 | When a bought item lands in the last slot of the shared buy sheet, the count is not incremented and Buy is disabled. Reopening the sheet counts one slot past the array; for sound equipment that slot is the count itself. | code only |
+| 0x406261 | When a bought item lands in the last slot of the shared buy sheet, the count is not incremented and Buy is disabled, so the item in the last slot is never counted. Reopening the sheet does not repair this: the recount (0x406200) reads one slot past the array (for sound equipment that slot is the count itself) and reaches the capacity, and the sheet's init (0x40673b) then sets a full count back to capacity - 1. The recount after a sale (0x406597) also stops at capacity - 1. | code only |
 | 0x406261 | Hovering over a list arrow already scrolls the buy list (WM_DRAWITEM branch). | `warehouse_recreation` |
 | 0x42c5f8 | The props room registers 7 hotspots but sets the count to 6, so "Buy props" is never hit-tested. Its click case is only a ret anyway. | `soundprops_props_staff` |
 | WET.DDF, DDF 60 | The title "Films which need sound track:" wraps inside a 16 px high rectangle, so only "Films which need" is visible. | `soundprops_sound_track` |
@@ -186,9 +186,9 @@ These are not runtime bugs. Do not fix them in the recompiled runtime: the goal 
 | 0x418fc4 | Cancelling a studio lease sets the cast entries to -1 but keeps the cast count. Code that walks the cast without a -1 test (0x4282af) would index the staff table at -1. | code only |
 | 0x418fc4 | Cancelling a studio lease clears the studio record, camera and lighting included, with no refund. | `leftovers_studio_lease` (a) |
 | 0x418489 | A cancelled building's plot hotspot stays active until room 20 is set up again, because plot hotspots are registered only at setup. | `leftovers_studio_lease` |
-| 0x416c3c | With the buy-back guarantee the lady realtor always makes an offer (without it, only in 30 % of the tries). The offer is still the list price 850000 plus finished extensions minus up to 34 %, not the 935000 paid. | `leftovers_mansion_sale` |
+| 0x416c3c | With the buy-back guarantee the lady realtor always makes an offer (without it, only in 29 % of the tries: rand() % 100 > 70). The offer is still the list price 850000 plus finished extensions minus up to 34 %, not the 935000 paid. | `leftovers_mansion_sale` |
 | 0x416c3c | A mansion sale does not clear the price paid (0x45d0fd). | `leftovers_mansion_sale` |
-| WET.DDF offset 970026 | "Pawnstore things" is followed by about 85 0xff bytes, and the game draws them. | `leftovers_pawnshop_items` |
+| WET.DDF offset 970026 | "Pawnstore things " is followed by 83 0xff bytes before the terminating NUL, and the game draws them. | `leftovers_pawnshop_items` |
 | 0x408dea | The motel eviction check clears the evicted flag (+0x10) but never the "owner told the cops" flag (+0x14, 0x455750). | `engine_motel_evict` |
 | 0x443002 | `__exit` pushes ESI instead of the exit status in EBX (0x44301b), so "End Program" in the CD dialog exits with a garbage code (65552 here). | manual CD run |
 
@@ -233,6 +233,6 @@ Other open points:
 
 - Four functions ran only in the critic's manual runs, and the runner cannot reach them: the CD dialog 0x402288 and 0x402510 with the GetOpenFileNameA thunk 0x44cf60 (a recipe cannot write CDROM.LOC), and 0x4493bb, which runs only when the game starts on a daylight-saving switch day (`LULA_SCENARIO_CLOCK` is global, so it would change rand() and every template). Their coverage files are in `build/explore/critic/`.
 - At the time of writing, a few functions had run only in one-off exploration runs and in no scenario, for example 0x422bf8 and 0x422de5 (the round-1 simulation run L5) and 0x40a15c (the WM_DESTROY handler, reached in two round-1 office runs). Comparing the coverage of the scenario runs (`python3 tools/scenarios.py coverage`) with the merge that includes `build/explore` lists them all.
-- Branches inside covered functions that no run took: the copier capacity refusal in Accept (it needs a movie value of about 75000 or more), a match in 0x42ab33 (it needs a type-5 entry in 0x4596c9, whose writer was not found) and the random resignation at the day end (0x41da0d calling 0x41dd79).
+- Branches inside covered functions that no run took: the copier capacity refusal in Accept (it needs a movie value of about 75000 or more), a match in 0x42ab33 (it needs a type-5 entry in the video-chart table 0x4596c9, which the Monday video charts 0x40bfed write only when a laptop movie's sales score enters the top 10; no run sold enough copies) and the pay quit of an actor or actress at the day end (0x41da0d calling 0x41dd79 at 0x41dbb1).
 - Video is still on hold, and the font question from round 1 is still open. Round 2 adds one clipped text to it: DDF 42 shows only "Your photos are" of "Your photos are ready " with the substitute font.
 - The round-1 scenario `office_stage2_casting.txt` clicks "Look at applications" when there are no applicants. That hotspot is not registered then, so the click does nothing, although the `# expects:` line says the sheet opens. No check depends on it, but the text should be corrected.

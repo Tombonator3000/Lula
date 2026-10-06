@@ -2,7 +2,7 @@
 
 Repoet inneholder **144 utpakkede spillfiler** fra den oppgitte «Lula - The Sexy Empire (Repack) v2.rar», SHA-256-manifest, ressursverktøy, Ghidra-analyse og et testet Windows x86-byggemiljø for nye moduler.
 
-**Status:** WET.EXE er statisk rekompilert: hver instruksjon er maskinelt oversatt til C, og resultatet bygges sammen med en runtime som erstatter Windows-API-ene til et native Linux-program fra dette repoet. Den genererte C-koden er ikke lesbar kildekode; lesbar C erstatter den funksjon for funksjon i `src/reconstructed/`. Rekompilatoren er kontrollert instruksjon for instruksjon mot emulatoren unicorn (247 380 tilstander, ingen avvik). Hovedmenyen og første spillskjerm er identiske med originalen under Wine utenom tekst som tegnes med en annen font. Lagring og lasting virker, lyden i menyen er sample for sample lik originalens, og grafikk kan byttes ut via `--mods`. Skriptede gjennomspillinger har vært gjennom alle tre trinnene i spillet uten feilfeller, og 76 % av spillets levende funksjoner har kjørt ([utforskningen](docs/recomp/exploration.md)). De første funksjonene er erstattet med lesbar C. Video er satt til side, og spillet kjøres med `-novideo`. Se [rekompileringen](docs/recompilation.md).
+**Status:** WET.EXE er statisk rekompilert: hver instruksjon er maskinelt oversatt til C, og resultatet bygges sammen med en runtime som erstatter Windows-API-ene til et native Linux-program fra dette repoet. Den genererte C-koden er ikke lesbar kildekode; lesbar C erstatter den funksjon for funksjon i `src/reconstructed/`. Rekompilatoren er kontrollert instruksjon for instruksjon mot emulatoren unicorn (247 380 tilstander, ingen avvik). Hovedmenyen og første spillskjerm er identiske med originalen under Wine utenom tekst som tegnes med en annen font. Lagring og lasting virker, lyden i menyen er sample for sample lik originalens, og grafikk kan byttes ut via `--mods`. Skriptede gjennomspillinger har vært gjennom alle tre trinnene, også hele filmproduksjonen, uten feilfeller, og 89 % av spillets levende funksjoner har kjørt, alle spillrom og all simulering inkludert ([utforskningen](docs/recomp/exploration.md)). De første funksjonene er erstattet med lesbar C. Video er satt til side, og spillet kjøres med `-novideo`. Se [rekompileringen](docs/recompilation.md).
 
 ## Bygg og kjør på Linux
 
@@ -72,5 +72,7 @@ Startfilene ligger i `build/runtime-original/` og `build/runtime-hd1080/`. HD-pr
 - [Ressursformater og grafikkflyt](docs/asset-formats.md)
 - [Videre modernisering](docs/modernization.md)
 - [Utførte kontroller og grenser](docs/verification.md)
+- [Rekompileringen](docs/recompilation.md), [utforskningen av spillet](docs/recomp/exploration.md) og [spilltilstanden i minne og lagrede spill](docs/recomp/game-state.md)
+- [Scenariotester](tests/scenarios/README.md)
 
 Spillet og medfølgende repack-komponenter er tredjepartsdata. Nye verktøy og rapporter er holdt separat fra disse. Den opprinnelige RAR-filen er bevart; installasjonsprogrammet er ikke kjørt.
