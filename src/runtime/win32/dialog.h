@@ -22,6 +22,9 @@ uint32_t win_sys_color(int index);
 uint32_t win_now_ms(void);
 /* Show the host cursor while a modal host UI runs, even if the game hid it. */
 void win_modal_cursor(bool enter);
+/* Queue a WM_MOUSEMOVE at the current cursor position (window under the
+ * cursor changed). */
+void win_post_mouse_update(void);
 
 /* ---- dialog.c hooks used by user32.c ---- */
 /* BeginPaint/EndPaint on a dialog window; 0/false if hwnd is not one. */

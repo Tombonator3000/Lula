@@ -7,8 +7,9 @@
  *   LULA_HEADLESS=1         dummy video/audio drivers
  *   LULA_FRAMEDUMP=DIR      write presented frames as PPM (see LULA_FRAMEDUMP_MS)
  *   LULA_INPUT=FILE         scripted input: "<ms> move X Y | click X Y | rclick X Y |
- *                           key NAME | type WORD | quit" one per line, times since
- *                           start (NAME: RETURN, ESCAPE, F1..F12, a letter, ...)
+ *                           key NAME | type TEXT | dump | quit" one per line, times
+ *                           since start (NAME: RETURN, ESCAPE, F1..F12, a letter,
+ *                           ...; TEXT is the rest of the line, spaces included)
  *   LULA_SCALE=N            initial window scale (default 2)
  *   LULA_AUDIODUMP=FILE     also write the mixed audio to a WAV file
  */
@@ -281,7 +282,7 @@ static void mouse_button(int x, int y, int button, bool down)
 }
 
 /* ---------------------------------------------------------------- script */
-typedef struct ScriptEv { uint32_t t; char op[16]; int a, b; char name[32]; } ScriptEv;
+typedef struct ScriptEv { uint32_t t; char op[16]; int a, b; char name[256]; } ScriptEv;
 static ScriptEv *script;
 static int nscript, script_pos;
 
@@ -292,16 +293,31 @@ static void load_script(const char *path)
         RT_WARN("cannot read input script %s", path);
         return;
     }
-    char line[256];
-    while (fgets(line, sizeof line, f)) {
+    char *line = NULL;
+    size_t cap = 0;
+    while (getline(&line, &cap, f) >= 0) {
         ScriptEv e = {0};
-        int n = sscanf(line, "%u %15s %31s %d", &e.t, e.op, e.name, &e.b);
+        int pos = 0;
+        int n = sscanf(line, "%u %15s %n", &e.t, e.op, &pos);
         if (n < 2 || line[0] == '#')
             continue;
-        e.a = atoi(e.name);
+        if (strcmp(e.op, "type") == 0) {
+            /* The text is the rest of the line. */
+            const char *p = line + pos;
+            size_t len = strcspn(p, "\r\n");
+            while (len && (p[len - 1] == ' ' || p[len - 1] == '\t'))
+                len--;
+            if (len >= sizeof e.name)
+                len = sizeof e.name - 1;
+            memcpy(e.name, p, len);
+        } else {
+            sscanf(line + pos, "%255s %d", e.name, &e.b);
+            e.a = atoi(e.name);
+        }
         script = realloc(script, (size_t)(nscript + 1) * sizeof *script);
         script[nscript++] = e;
     }
+    free(line);
     fclose(f);
 }
 
@@ -318,6 +334,28 @@ static int vk_from_name(const char *n)
             return names[i].vk;
     if (strlen(n) == 1)
         return toupper((unsigned char)n[0]);
+    return 0;
+}
+
+static int vk_from_char(int ch)
+{
+    static const char punct[] = ";=,-./`[\\]'";
+    static const char shifted[] = ":+<_>?~{|}\"";
+    static const char digits_shifted[] = ")!@#$%^&*(";
+    static const uint8_t punct_vk[] = {0xba, 0xbb, 0xbc, 0xbd, 0xbe, 0xbf, 0xc0, 0xdb, 0xdc, 0xdd, 0xde};
+    if (isalpha(ch))
+        return toupper(ch);
+    if (isdigit(ch) || ch == ' ')
+        return ch;
+    if (!ch)
+        return 0;
+    const char *q;
+    if ((q = strchr(digits_shifted, ch)))
+        return '0' + (int)(q - digits_shifted);
+    if ((q = strchr(punct, ch)))
+        return punct_vk[q - punct];
+    if ((q = strchr(shifted, ch)))
+        return punct_vk[q - shifted];
     return 0;
 }
 
@@ -341,10 +379,11 @@ static void run_script(uint32_t now)
             key_event(vk, true, ch);
             key_event(vk, false, 0);
         } else if (strcmp(e->op, "type") == 0) {
-            /* Type a word: one key press per character (letters and digits). */
+            /* Type text: one key press per character, on the key a US layout
+             * uses for it (the shift key itself is not pressed). */
             for (const char *p = e->name; *p; p++) {
                 int ch = (unsigned char)*p;
-                int vk = isalpha(ch) ? toupper(ch) : isdigit(ch) ? ch : ch == ' ' ? 0x20 : 0;
+                int vk = vk_from_char(ch);
                 if (!vk)
                     continue;
                 key_event(vk, true, ch);
@@ -361,10 +400,18 @@ static void run_script(uint32_t now)
 }
 
 /* ---------------------------------------------------------------- loop */
+static bool dump_pending;   /* a frame was presented but not dumped yet */
+
+/* Called with frame_lock held. */
 static void dump_frame(uint32_t now)
 {
-    if (!dump_dir || (dump_interval && now - last_dump < dump_interval))
+    if (!dump_dir)
         return;
+    if (dump_interval && now - last_dump < dump_interval) {
+        dump_pending = true;
+        return;
+    }
+    dump_pending = false;
     last_dump = now;
     char path[4096];
     snprintf(path, sizeof path, "%s/frame_%05u_%07u.ppm", dump_dir, dump_seq++, now);
@@ -485,6 +532,10 @@ void rt_platform_run(void)
         if (dirty) {
             SDL_UpdateTexture(texture, NULL, frame, PLAT_W * 2);
             frame_dirty = false;
+            dump_frame(now);
+        } else if (dump_pending && now - last_dump >= dump_interval) {
+            /* A screen that was presented once and then stays (help pages,
+             * message boxes) is still dumped once the interval has passed. */
             dump_frame(now);
         }
         pthread_mutex_unlock(&frame_lock);

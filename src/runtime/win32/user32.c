@@ -205,6 +205,24 @@ void user32_input_mouse(int x, int y, int button, bool down)
     pthread_mutex_unlock(&q_lock);
 }
 
+/* Windows posts a mouse move when the window under the cursor changes, for
+ * example when a dialog, message box or menu closes. The game hit-tests
+ * clicks at the position of the last WM_MOUSEMOVE (it has no GetCursorPos),
+ * so without this a click after a dialog lands where the cursor was before
+ * the dialog opened. */
+void win_post_mouse_update(void)
+{
+    pthread_mutex_lock(&q_lock);
+    uint32_t lp = ((uint32_t)(uint16_t)last_mouse_y << 16) | (uint16_t)last_mouse_x;
+    if (qlen && queue[qlen - 1].m.message == WM_MOUSEMOVE) {
+        queue[qlen - 1].m.lparam = lp;
+        queue[qlen - 1].m.wparam = mouse_buttons;
+    } else if (main_hwnd) {
+        q_push_locked(main_hwnd, WM_MOUSEMOVE, mouse_buttons, lp, 0);
+    }
+    pthread_mutex_unlock(&q_lock);
+}
+
 void user32_input_key(int vk, bool down, int ch)
 {
     if (!main_hwnd)

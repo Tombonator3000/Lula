@@ -2479,6 +2479,7 @@ static void modal_loop(Cpu *c, Ui *u)
         }
     }
     win_modal_cursor(false);
+    win_post_mouse_update();
 }
 
 /* ---------------------------------------------------------------- USER32 dialog API */
