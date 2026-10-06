@@ -87,7 +87,9 @@ void rt_cpu_free(Cpu *c);
 /* ---- loader (rt_loader.c) ---- */
 bool rt_load_image(const char *exe_path);
 uint32_t rt_command_line(void);
-void rt_set_command_line(const char *args);
+/* Returns false if the game's parser (0x409f0f) could not take the line:
+ * it copies it into a 260-byte buffer and has room for 20 extra tokens. */
+bool rt_set_command_line(const char *args);
 
 /* ---- file system mapping (rt_vfs.c) ---- */
 void rt_vfs_init(const char *data_dir, const char *save_dir);

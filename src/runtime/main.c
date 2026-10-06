@@ -132,7 +132,11 @@ int main(int argc, char **argv)
     free(exe_host);
     if (!rt_load_image(exe))
         return 1;
-    rt_set_command_line(game_args);
+    if (!rt_set_command_line(game_args)) {
+        fprintf(stderr, "lula: the game arguments are too long for the game's command line parser "
+                "(at most 259 bytes including the game path, and at most 20 spaces)\n");
+        return 2;
+    }
     rt_platform_init();
 
     /* Guest code runs on a thread with a large host stack: guest recursion

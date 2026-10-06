@@ -49,10 +49,18 @@ static void *timer_main(void *arg)
         rt_gil_release();
         if (!(t->flags & TIME_PERIODIC))
             break;
-        /* Do not try to catch up after a long stall (the game was busy). */
-        struct timespec now;
+        /* Coalesce missed ticks (spec winmm-timing.md, R3): if the next
+         * deadline has already passed because the callback or the wait for
+         * the global lock took longer than a period, run once and reschedule
+         * from now instead of replaying the backlog in a burst. */
+        struct timespec now, due = next;
         clock_gettime(CLOCK_MONOTONIC, &now);
-        if (now.tv_sec > next.tv_sec + 1)
+        due.tv_nsec += ns;
+        while (due.tv_nsec >= 1000000000L) {
+            due.tv_nsec -= 1000000000L;
+            due.tv_sec++;
+        }
+        if (now.tv_sec > due.tv_sec || (now.tv_sec == due.tv_sec && now.tv_nsec >= due.tv_nsec))
             next = now;
     }
     pthread_mutex_lock(&mm_lock);

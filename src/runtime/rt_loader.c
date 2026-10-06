@@ -129,12 +129,21 @@ bool rt_load_image(const char *exe_path)
 /* ---- command line ---- */
 static uint32_t cmdline_addr;
 
-void rt_set_command_line(const char *args)
+bool rt_set_command_line(const char *args)
 {
     char buf[1024];
-    snprintf(buf, sizeof buf, "%s\\WET.EXE%s%s", rt_vfs_game_dir_dos(), args && *args ? " " : "",
-             args ? args : "");
+    int n = snprintf(buf, sizeof buf, "%s\\WET.EXE%s%s", rt_vfs_game_dir_dos(), args && *args ? " " : "",
+                     args ? args : "");
+    /* WinMain's parser copies the line into a 260-byte buffer without a
+     * length check and splits it on single spaces into 20 argv slots
+     * (spec kernel32.md, 0x409f0f). Refuse anything that would overflow. */
+    int spaces = 0;
+    for (const char *p = buf; *p; p++)
+        spaces += *p == ' ';
+    if (n < 0 || n >= 260 || spaces > 20)
+        return false;
     cmdline_addr = rt_guest_strdup(buf);
+    return true;
 }
 
 uint32_t rt_command_line(void)
