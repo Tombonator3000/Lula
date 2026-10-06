@@ -1,12 +1,16 @@
 # Gjøremål
 
+## Pågår
+
+- [ ] Runde 2 av utforskningen: filmproduksjonen i trinn 2 (rom 21-34) og de andre ukjørte funksjonene. Workflow med uavhengig kontroll per område.
+- [ ] Etter runde 2: bygge `build/game` på nytt med fontendringen og `TextOutA`-loggingen, og kjøre alle tester og scenarier.
+
 ## Neste
 
 - [ ] Video (CUT-filer, ActiveMovie via CoCreateInstance) og MCI. Venter på svar fra brukeren. Med "Play videos" slått på avslutter F1 i dag spillet ("End Program ??").
 - [ ] Nå de delene av spillet utforskningen ikke kom til: salg av ferdige filmer (WORK_ORDER_DLG, 0x40e19b), bemannet markedsavdeling, sabotasjens ettervirkninger, 145 funksjoner i rom/dialoger/simulering.
-- [ ] Fonten: finn ut hvilken font Windows 9x gir for "System Small" -14 fet (skjermbilde fra ekte Windows), og velg erstatning etter det.
+- [ ] Fonten: tegnplasseringen stemmer nå med Wine. Om ekte Windows 9x ga en smalere font for "System Small" -14 fet, krever et skjermbilde fra ekte Windows.
 - [ ] Rekonstruksjon i større skala, kontrollert med `lula-fncheck`. Blitterne er gitt til Codex (oppgave 4 i `docs/samarbeid-codex.md`); deretter 2D-grafikkmotoren og resten av Watcom-runtimen.
-- [ ] TAF-redigering (Codex, oppgave 2).
 - [ ] Logg direkte importkall i `--trace` (i dag logges bare indirekte kall og COM-metoder).
 - [ ] Lineær interpolasjon i lydmikseren (i dag nærmeste sample; påvirker bare lydkvalitet).
 - [ ] Windows-bygg av samme kildekode (MinGW 13 og SDL2 2.30.8 for MinGW finnes). Lav prioritet, originalen kjører allerede på Windows.
@@ -39,3 +43,6 @@
 - [x] 64 scenariotester kjørbare fra en fersk klone (`tools/scenarios.py`, 40 oppskrifter for lagrede spill, fast klokke med `LULA_CLOCK`).
 - [x] Sjelden krasj ved avslutning (lydtimeren kalte en lukket lydenhet) rettet.
 - [x] Codex-gjennomgangen av PR #2: timer, kommandolinje og README.
+- [x] TAF-redigering (Codex, PR #4) gjennomgått, rettet og flettet inn.
+- [x] GDI-tekst med hele piksler per tegn og uten kerning; menyteksten har samme kanter som under Wine.
+- [x] `TextOutA` logges på nivå 3 (tooltips, hjelpesider).

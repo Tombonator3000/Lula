@@ -26,8 +26,10 @@ Hele WET.EXE (Lula - The Sexy Empire, 1997) skal rekompileres og kjøre native p
 
 - Den rekompilerte versjonen kjører hele spillet på Linux. Skriptede gjennomspillinger har vært gjennom alle tre trinnene uten feilfeller; 955 av 1261 levende funksjoner har kjørt (`docs/recomp/exploration.md`).
 - Hovedmenyen: alle piksler utenfor bokstavene i menyknappene er identiske med originalen under Wine (RGB565).
-- Teksten tegnes med Liberation Sans Bold (fontnavnet spillet ber om er "System Small", høyde -14, vekt 700). Noen DDF-etiketter brytes eller klippes. Wine viser originalen med en font av samme størrelse, så fonten er ikke endret uten et skjermbilde fra ekte Windows.
-- Rekonstruert som lesbar C: memcpy og get-PC-stubben (Claude), fem ressursfunksjoner (Codex, PR #3, `docs/reconstruction/resource-readers.md`).
+- Teksten tegnes med Liberation Sans Bold (fontnavnet spillet ber om er "System Small", høyde -14, vekt 700), med hele piksler per tegn og uten kerning som i GDI. Menyteksten har da nøyaktig samme kanter som under Wine. 37 av 219 enlinjes DDF-etiketter blir for brede for rektangelet, også under Wine.
+- Spilltilstand for produksjonen (bygg, ansatte, filmer) er kartlagt av basisagenten i runde 2: 15 byggposter à 40 bytes fra 0x455849 (+0x10 leid/eid), ansattabell via [0x45555c] med 553 poster à 40 bytes. Detaljer kommer i dokumentasjonen etter runden.
+- Rekonstruert som lesbar C: memcpy og get-PC-stubben (Claude), fem ressursfunksjoner (Codex, PR #3, `docs/reconstruction/resource-readers.md`). Codex har også en portabel ressursmodul i `reconstruction/resources/` med TAF-redigering (PR #1 og #4, `docs/reconstruction/taf-editing.md`).
+- PR #2 ble slått inn i `main` på `7234f07`; alt senere ligger bare på grenen og trenger en ny PR. Codex' grener bygger på denne grenen, så historikken skal ikke skrives om (flett, ikke rebase).
 - Spillet treffer klikk der siste WM_MOUSEMOVE var (ingen GetCursorPos). Runtimen poster derfor en musebevegelse når en dialog, meldingsboks eller meny lukkes, slik Windows gjør.
 - Scenariene i `tests/scenarios/` laster lagrede spill. Lagrede spill skal ikke i Git, så `tools/scenarios.py saves` bygger dem fra `tests/scenarios/saves.json` (ca. 5 min). `tools/scenarios.py run` kjører alle 64 (ca. 29 min med `-j 3`). Runneren setter `LULA_CLOCK=1997-01-01T08:00:00`; flere scenarier er tilpasset de tilfeldige bydataene denne klokka gir.
 - Avslutning: hovedtråden tar den globale låsen før lyd og SDL stenges, med mindre en spilltråd ba om avslutningen (da holder den låsen allerede).
