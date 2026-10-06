@@ -72,7 +72,7 @@ Ikke ta 0x44403c, 0x444046 og 0x444050: det er x87-hjelpere (sin/cos) der CF gå
 Krav:
 
 - Samme regler som i oppgave 1: `RT_RECONSTRUCTED`, `RT_CHECK` med profil, nøyaktig samme registre, flagg som kallerne leser, stakk og minne. Profilene må gi gyldige bildebuffere (pekere, bredde, høyde, stride 0x500 og andre); bruk gjerne en filbasert eller syntetisk kontroll som i `tools/reconstruction/`.
-- Ytelse: 0x4458cc kalles millioner av ganger. Mål tiden for en ende-til-ende-kjøring før og etter (for eksempel `python3 -m unittest tests.test_recompiled_game.RecompiledGameTest -v` med `time`), og si fra hvis den lesbare versjonen er tregere.
+- Ytelse: 0x4458cc kalles millioner av ganger. Mål tiden for en ende-til-ende-kjøring før og etter (for eksempel `python3 -m unittest tests.test_recompiled_game -v` med `time`), og si fra hvis den lesbare versjonen er tregere.
 - Bildene skal være piksel-identiske: menyhash-testen og ny-spill-testen i `tests/test_recompiled_game.py` må være grønne. Når `tools/scenarios.py` er på plass i grenen (Claude jobber med det nå), kjør også `python3 tools/scenarios.py run` og sammenlign med en kjøring før endringen.
 - Dokumenter hver funksjon kort (hva den tegner, formatet på kilden) og legg en oversikt i `docs/reconstruction/blitters.md`.
 
