@@ -96,3 +96,10 @@ Kronologisk logg over alt som er gjort i repoet. Nyeste oppføring nederst. Tide
   - README-ordlyden: presisert hva den statiske rekompileringen er (maskinelt oversatt C pluss runtime, ikke lesbar kildekode) og hva som er testet.
 - Kontrollert i et eget worktree (`/home/user/lula-wt`, gjenskapt fra HEAD) så agentens pågående endringer ikke kom med: 7 ende-til-ende-tester grønne.
 - `docs/samarbeid-codex.md`: oppgave 1 markert ferdig, ny oppgave 4 er rekonstruksjon av blitterne (0x4458cc, 0x444d1d, 0x444b00 og flere), rangert etter antall kall i utforskningen.
+
+## 2026-10-06 05:20 UTC: scenariotester fra fersk klone, avslutningskrasj rettet
+
+- Agenten for scenariene er ferdig. Alle 64 scenarier kan nå kjøres fra en fersk klone: `tests/scenarios/saves.json` har 40 oppskrifter som bygger de lagrede spillene ved å spille og lappe (`python3 tools/scenarios.py saves`, ca. 5 min), og `python3 tools/scenarios.py run` kjører og bedømmer scenariene ut fra `# check:`- og `# reject:`-linjer. `tests/test_scenarios.py` kjører seks raske scenarier som del av testsuiten (`LULA_SCENARIOS=all` for alle). Ingen lagrede spill i Git.
+- Ny testkrok `LULA_CLOCK`: veggklokka starter på et fast tidspunkt. Spillet seeder `rand()` fra den, så tilfeldige hendelser (bank, distributør, bar, flyreiser) blir like hver gang. Flere scenarier er tilpasset de bydataene klokka 1997-01-01 08:00 gir.
+- Agenten fant en sjelden krasj (1 av ca. 250 kjøringer) ved avslutning: hovedtråden lukket SDL-lydenheten mens lydtimeren (2 ms, spillets lydsystem) kunne låse den samme enheten. Rettet: all spillkode stoppes før nedstengingen ved at hovedtråden tar den globale låsen, med mindre en spilltråd ba om avslutningen og allerede holder den. Agentens ekstra forsøk for denne krasjen er fjernet fra runneren, så en ny krasj blir synlig.
+- Kontroll: 40 avslutninger på tilfeldige tidspunkt under lyd, alle rene. Testsuiten 29 tester grønne, `lula-fncheck` 7 funksjoner grønne, 144 originalfiler uendret. Alle 64 scenarier bestått i én full kjøring (1717 s med `-j 3`), etter agentens tre fulle kjøringer med 64 av 64. Scenariene alene når 931 av 1261 levende funksjoner (73,8 %).
