@@ -1,0 +1,30 @@
+# seconds: 47
+# expects: ProdAll on the WET plot -> Sound studio building (403..510, 96..159) -> room 27 stage 2 (setup 0x42d711; TON_MUS.TAF / TON_SPK.TAF only with a sound engineer / dubber) -> "Dubbing monitor" (34..104, 178..244) loads TON_FLM.TAF -> "Buy equipment" (216..387, 343..480) -> sheet "Buy Sound equipment" (category 8, slots 0x458379) -> left thumb -> "To the other offices" (0..172, 256..480) -> WET plot. No lula[warn]/trap.
+# save: prod_s2all
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20, not in realtor mode) with every production building rented
+# check: (?s)ms: click 69 211.*CreateFileA\(DATA\\ANI\\TON_FLM\.TAF, read
+# check: (?s)ms: click 300 410.*DrawTextA\("Buy Sound equipment"
+# check: (?s)ms: click 80 400.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Sound studio building
+22000 move 460 120
+22500 click 460 120
+# Dubbing monitor
+25500 move 69 211
+26000 click 69 211
+# Buy equipment
+29000 move 300 410
+29500 click 300 410
+# left thumb of the equipment sheet
+32500 move 292 342
+33000 click 292 342
+# To the other offices
+36000 move 80 400
+36500 click 80 400
+40000 move 320 240

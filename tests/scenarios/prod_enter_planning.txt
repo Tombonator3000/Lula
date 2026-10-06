@@ -1,0 +1,27 @@
+# seconds: 43
+# expects: ProdAll on the WET plot -> Movie planning building (437..594, 244..351; the marketing building overlaps its top left and is tested first) -> room 22 stage 2 (setup 0x41de87, FILMPLAN.TAF) -> "Work on storyboard" (0..158, 96..291) -> info box "This is the place for the production designer, you haven't hired one!" -> thumb -> "To the other offices" (182..639, 0..84) -> WET plot. No lula[warn]/trap.
+# save: prod_s2all
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20, not in realtor mode) with every production building rented
+# check: (?s)ms: click 540 310.*CreateFileA\(DATA\\ANI\\FILMPLAN\.TAF, read
+# check: (?s)ms: click 80 190.*DrawTextA\("\s*This is the place for the production designer, you haven't hired one!\s*"
+# check: (?s)ms: click 400 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Movie planning building
+22000 move 540 310
+22500 click 540 310
+# Work on storyboard
+25500 move 80 190
+26000 click 80 190
+# thumb of the info box (318..372, 277..327)
+29000 move 340 300
+29500 click 340 300
+# To the other offices
+32500 move 400 40
+33000 click 400 40
+36500 move 320 240

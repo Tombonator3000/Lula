@@ -1,0 +1,91 @@
+# Load "Stage2" (slot 4, office, account 60000) -> To the overview -> Realtor -> Look at real estate
+# (room 20 in realtor mode, film strip of the buildings not yet rented at the top).
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 150 40
+22500 click 150 40
+26000 move 400 200
+26500 click 400 200
+30000 move 100 370
+30500 click 100 370
+# Strip tile 0 (16..117, 10..83) holds the first building not yet rented. Rent (161..329, 220..237)
+# on its info sheet, seven times: Reception, Cutting department, Sound studio, Copier, Movie studio,
+# Marketing office, Warehouse.
+34000 move 66 45
+34500 click 66 45
+37000 move 245 228
+37500 click 245 228
+40500 move 66 45
+41000 click 66 45
+43500 move 245 228
+44000 click 245 228
+47000 move 66 45
+47500 click 66 45
+50000 move 245 228
+50500 click 245 228
+53500 move 66 45
+54000 click 66 45
+56500 move 245 228
+57000 click 245 228
+60000 move 66 45
+60500 click 66 45
+63000 move 245 228
+63500 click 245 228
+66500 move 66 45
+67000 click 66 45
+69500 move 245 228
+70000 click 245 228
+73000 move 66 45
+73500 click 66 45
+76000 move 245 228
+76500 click 245 228
+# Now tile 0 is Lula's flat (building 8, left alone) and tile 1 (118..219) the next one: Movie planning,
+# Props, Casting office, Recreation room, Studio 2, Studio 3.
+79500 move 168 45
+80000 click 168 45
+82500 move 245 228
+83000 click 245 228
+86000 move 168 45
+86500 click 168 45
+89000 move 245 228
+89500 click 245 228
+92500 move 168 45
+93000 click 168 45
+95500 move 245 228
+96000 click 245 228
+99000 move 168 45
+99500 click 168 45
+102000 move 245 228
+102500 click 245 228
+105500 move 168 45
+106000 click 168 45
+108500 move 245 228
+109000 click 245 228
+112000 move 168 45
+112500 click 168 45
+115000 move 245 228
+115500 click 245 228
+# Office building (labelled "Back to the realtor" in realtor mode) -> realtor -> Back to the town
+# -> Office -> To the other WET buildings (room 20, every building clickable) -> F2 -> Save game
+# -> slot 4 (300,119) -> Save -> "ProdAll".
+119000 move 290 330
+119500 click 290 330
+122500 move 560 80
+123000 click 560 80
+126000 move 320 450
+126500 click 320 450
+129500 move 560 110
+130000 click 560 110
+134000 key F2
+136500 move 305 212
+137000 click 305 212
+139000 move 300 119
+139500 click 300 119
+141500 move 263 228
+142000 click 263 228
+144500 type ProdAll
+146000 key RETURN

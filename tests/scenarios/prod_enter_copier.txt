@@ -1,0 +1,37 @@
+# seconds: 54
+# expects: ProdAll on the WET plot -> Copier building (491..598, 129..192; the sound studio overlaps its top left and is tested first) -> room 30 stage 2 (setup 0x428f1f) -> "Copying monitor" (479..559, 226..306) loads COPY_FLM.TAF -> "Buy copying machines" (0..210, 194..389) -> sheet "Buy Copying machine" (category 2, slots 0x459289) -> left thumb -> "Hire copying girl" (256..474, 70..354, clicked outside the unlabelled hotspot 1 at 308..390, 157..215 that loads COPY_RAT.TAF) -> "You haven't got any staff in this department" -> thumb -> "To the other offices" (0..640, 0..66) -> WET plot. No lula[warn]/trap.
+# save: prod_s2all
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20, not in realtor mode) with every production building rented
+# check: (?s)ms: click 519 266.*CreateFileA\(DATA\\ANI\\COPY_FLM\.TAF, read
+# check: (?s)ms: click 100 290.*DrawTextA\("Buy Copying machine"
+# check: (?s)ms: click 300 300.*DrawTextA\("\s*You haven't got any staff in this department\s*"
+# check: (?s)ms: click 320 30.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Copier building
+22000 move 560 175
+22500 click 560 175
+# Copying monitor
+25500 move 519 266
+26000 click 519 266
+# Buy copying machines
+29000 move 100 290
+29500 click 100 290
+# left thumb of the equipment sheet
+32500 move 292 342
+33000 click 292 342
+# Hire copying girl
+36000 move 300 300
+36500 click 300 300
+# thumb
+39500 move 340 300
+40000 click 340 300
+# To the other offices
+43000 move 320 30
+43500 click 320 30
+47000 move 320 240

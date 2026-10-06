@@ -1,0 +1,34 @@
+# seconds: 50
+# expects: ProdAll on the WET plot -> Props building (152..288, 357..459; the office building overlaps its top right and is tested first) -> room 32 stage 2 (setup 0x42c28f, REQUISIT.TAF) -> "Buy sets" (413..640, 53..407) -> sheet "Buy Stage props" (category 7, slots 0x459145, count 0x459285) -> left thumb -> "Hire assistants" (18..70, 75..192) -> "You haven't got any staff in this department" (department 13) -> thumb -> "To the other offices" (0..254, 212..480) -> WET plot. ("Buy props", 70..215 x 131..209, does nothing: its jump-table case 6 in 0x42c4ec returns at once.) No lula[warn]/trap.
+# save: prod_s2all
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20, not in realtor mode) with every production building rented
+# check: (?s)ms: click 180 420.*CreateFileA\(DATA\\ANI\\REQUISIT\.TAF, read
+# check: (?s)ms: click 520 230.*DrawTextA\("Buy Stage props"
+# check: (?s)ms: click 44 130.*DrawTextA\("\s*You haven't got any staff in this department\s*"
+# check: (?s)ms: click 120 400.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Props building
+22000 move 180 420
+22500 click 180 420
+# Buy sets
+25500 move 520 230
+26000 click 520 230
+# left thumb of the equipment sheet
+29000 move 292 342
+29500 click 292 342
+# Hire assistants
+32500 move 44 130
+33000 click 44 130
+# thumb
+36000 move 340 300
+36500 click 340 300
+# To the other offices
+39500 move 120 400
+40000 click 120 400
+43500 move 320 240

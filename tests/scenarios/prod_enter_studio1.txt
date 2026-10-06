@@ -1,0 +1,35 @@
+# seconds: 50
+# expects: ProdAll on the WET plot -> Studio 1 building (163..294, 195..290) -> room 24 stage 2 (case 0x404530: pre-call 0x423071 with EDX = 0, setup 0x423104; stud_dia.TAF and STUD_ANI.TAF, title "STUDIO 1") -> "Choose lighting" (105..234, 74..202) -> equipment sheet "Buy Lighting" / "Sell Lighting" (0x406121 category 0) -> left thumb -> "Assign director" (213..432, 182..392) -> "You haven't got any staff in this department" -> thumb -> "To the other offices" (0..640, 0..80) -> WET plot. No lula[warn]/trap.
+# save: prod_s2all
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20, not in realtor mode) with every production building rented
+# check: (?s)ms: click 230 250.*CreateFileA\(DATA\\DIALOG\\stud_dia\.TAF, read.*CreateFileA\(DATA\\ANI\\STUD_ANI\.TAF, read
+# check: DrawTextA\("STUDIO 1"
+# check: (?s)ms: click 170 140.*DrawTextA\("Buy Lighting"
+# check: (?s)ms: click 320 290.*DrawTextA\("\s*You haven't got any staff in this department\s*"
+# check: (?s)ms: click 320 40.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Studio 1 building
+22000 move 230 250
+22500 click 230 250
+# Choose lighting
+25500 move 170 140
+26000 click 170 140
+# left thumb of the equipment sheet
+29000 move 292 342
+29500 click 292 342
+# Assign director
+32500 move 320 290
+33000 click 320 290
+# thumb
+36000 move 340 300
+36500 click 340 300
+# To the other offices
+39500 move 320 40
+40000 click 320 40
+43500 move 320 240

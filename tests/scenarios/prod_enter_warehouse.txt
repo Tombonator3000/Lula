@@ -1,0 +1,34 @@
+# seconds: 50
+# expects: ProdAll on the WET plot -> Warehouse building (24..143, 249..337) -> room 25 stage 2 (pre-call 0x42b518 with EDX = 1 because the previous room is 20, setup 0x429bed; LAG_FLM.TAF is loaded only by the monitor) -> "Warehouse monitor" (420..509, 183..266) loads LAG_FLM.TAF (click handler 0x429d58 case 1) -> monitor off -> "Process orders" (341..478, 263..395) -> "You haven't got any staff in this department" (no warehousewoman, department 7) -> thumb -> "To the other offices" (243..640, 0..172) -> WET plot. On the plot the monitor click would have hit the marketing building, hence the reject. No lula[warn]/trap.
+# save: prod_s2all
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20, not in realtor mode) with every production building rented
+# check: (?s)ms: click 464 224.*CreateFileA\(DATA\\ANI\\LAG_FLM\.TAF, read
+# check: (?s)ms: click 410 330.*DrawTextA\("\s*You haven't got any staff in this department\s*"
+# check: (?s)ms: click 440 80.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# reject: CreateFileA\(DATA\\ANI\\WERBUNG\.TAF
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Warehouse building
+22000 move 80 300
+22500 click 80 300
+# Warehouse monitor on
+25500 move 464 224
+26000 click 464 224
+# Warehouse monitor off
+29000 move 464 224
+29500 click 464 224
+# Process orders
+32500 move 410 330
+33000 click 410 330
+# thumb
+36000 move 340 300
+36500 click 340 300
+# To the other offices
+39500 move 440 80
+40000 click 440 80
+43500 move 320 240

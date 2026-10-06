@@ -1,0 +1,27 @@
+# seconds: 43
+# expects: ProdAll loads on the WET plot (room 20) -> Casting office building (365..522, 335..442) -> room 21 stage 2 (setup 0x41a0a8, CAST_DET.TAF) -> "Produce cost figures" (89..183, 222..282) opens PERSONALKOSTEN_LIST_BOX_DLG -> OK -> "To the other offices" (421..518, 81..244) -> WET plot again (BAUTEN.TAF). No lula[warn]/trap.
+# save: prod_s2all
+# note: "ProdAll" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20, not in realtor mode) with every production building rented
+# check: (?s)ms: click 440 400.*CreateFileA\(DATA\\ANI\\CAST_DET\.TAF, read
+# check: (?s)ms: click 136 252.*DialogBoxParamA\(PERSONALKOSTEN_LIST_BOX_DLG\)
+# check: (?s)ms: click 470 160.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# main menu -> Load Game -> ProdAll -> Load (WET plot, room 20)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Casting office building on the plot
+22000 move 440 400
+22500 click 440 400
+# Produce cost figures -> staff cost list dialog
+25500 move 136 252
+26000 click 136 252
+# OK
+29000 move 300 290
+29500 click 300 290
+# To the other offices
+32500 move 470 160
+33000 click 470 160
+36500 move 320 240
