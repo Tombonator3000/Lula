@@ -1,0 +1,12 @@
+# seconds: 15
+# expects: CDROM.LOC points to a CD drive that does not exist (X:\NOWHERE\), so the start-up CD check (0x402209) opens CD_NOT_FOUND_DLG ("CD Finder", dialog procedure 0x402288) before the main menu. Clicking "End Program" shows the game's own error box "User error / CD NOT FOUND!" (closed with OK), the settings are written to WET.1ST, and __exit 0x443002 calls ExitProcess(65552) (it passes ESI as well as the status in EBX, original behaviour), so the process exit status is 16. No lula[trap]; the only lula[warn] is the logged MessageBox.
+# save: cd_missing
+# note: the template has no save game, only the CDROM.LOC overlay file
+# check: dialog CD_NOT_FOUND_DLG
+# check: ExitProcess\(65552\)
+# exit: 16
+# check: CD NOT FOUND!
+# allow: MessageBox "": User error
+# covers: 0x402288
+3000 move 334 167
+3500 click 334 167

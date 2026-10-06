@@ -8,6 +8,12 @@
     "Order: copy the parent, run the script, delete W_DEBUG.DAT, copy_slot, patch, check."
   ],
 
+  "cd_missing": {
+    "from": null,
+    "note": "An empty save dir with a CDROM.LOC that points to a CD drive that does not exist, so the start-up CD check fails and opens CD_NOT_FOUND_DLG.",
+    "files": {"CDROM.LOC": "X:\\NOWHERE\\"},
+    "check": {"files": ["CDROM.LOC"]}
+  },
   "s1base": {
     "from": null,
     "note": "New game, saved at once in the stage-1 town (about 7:40, account 500) as 'Base' in slot 4.",
@@ -286,6 +292,12 @@
     "note": "Tuesday 21:00, one game minute per tick, store capital 500 $ (the store record of store3 starts at 0x45cc69: 0x45cc75 rent 7800, 0x45cc81 capital; the explorers' store sat at 0x45cf15, the record depends on the random city data).",
     "patch": {"0x4556a8": 21, "0x4556ac": 0, "0x4556bc": 0, "0x4556c0": 0, "0x45cc81": 500},
     "check": {"slot": 4, "stage": 3, "hour": 21, "0x45cc81": 500}
+  },
+  "s3month": {
+    "from": "store3",
+    "note": "Store3 on the last day of January (the game's months have 30 days), a Sunday (weekday 0x4556b8 = 6), at 20:40: the stage-3 day end at 22:00 starts a new month (0x422bf8, day == 1) and a new week (0x422de5, weekday == 0).",
+    "patch": {"0x45569c": 30, "0x4556b8": 6, "0x4556a8": 20, "0x4556ac": 40},
+    "check": {"slot": 4, "stage": 3, "day": 30, "hour": 20, "minute": 40, "0x4556b8": 6}
   },
   "s3cap": {
     "from": "store3",

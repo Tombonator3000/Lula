@@ -43,7 +43,7 @@ GRACE = 30          # seconds after the scripted quit before a run is killed
 SAVE_BASE = 0x455620
 BAD_LINE = re.compile(r'lula\[(warn|trap|fatal)\]')
 
-HEADER = re.compile(r'#\s*(seconds|save|check|reject|allow|covers|flaky|expects|random|note)\s*:\s?(.*)$')
+HEADER = re.compile(r'#\s*(seconds|save|check|reject|allow|covers|exit|flaky|expects|random|note)\s*:\s?(.*)$')
 INPUT_LINE = re.compile(r'^\d+\s+(move|click|rclick|down|up|key|type|dump|quit)\b')
 
 _print_lock = threading.Lock()
@@ -63,6 +63,7 @@ class Scenario:
         self.save = None
         self.checks, self.rejects, self.allows = [], [], []
         self.covers = []            # function entries that must have run
+        self.exit = 0               # expected exit status when the game ends itself
         self.flaky = None
         self.lines = []
         self.errors = []
@@ -86,6 +87,8 @@ class Scenario:
                         self.rejects.append(re.compile(val))
                     elif key == 'allow':
                         self.allows.append(re.compile(val))
+                    elif key == 'exit':
+                        self.exit = int(val.split()[0], 0)
                     elif key == 'covers':
                         self.covers += [int(x, 16) for x in val.replace(',', ' ').split()]
                     elif key == 'flaky':
@@ -216,7 +219,7 @@ def ran_functions(cov):
     return ran
 
 
-def judge(rc, log, checks=(), rejects=(), allows=(), covers=(), cov=None):
+def judge(rc, log, checks=(), rejects=(), allows=(), covers=(), cov=None, exit_status=0):
     """List of problems (empty = pass)."""
     problems = []
     text = log.read_bytes().decode('latin-1')
@@ -224,8 +227,8 @@ def judge(rc, log, checks=(), rejects=(), allows=(), covers=(), cov=None):
         problems.append('timeout: killed')
     elif rc < 0:
         problems.append(f'signal {-rc}')
-    elif rc != 0:
-        problems.append(f'exit status {rc}')
+    elif rc != exit_status:
+        problems.append(f'exit status {rc}' + (f' (expected {exit_status})' if exit_status else ''))
     for line in text.splitlines():
         if BAD_LINE.search(line) and not any(a.search(line) for a in allows):
             problems.append(line.strip()[:160])
@@ -342,6 +345,10 @@ def read_slot(d, slot):
 
 
 def check_save(d, check):
+    problems = [f'{f} missing' for f in check.get('files', []) if not (d / f).is_file()]
+    check = {k: v for k, v in check.items() if k != 'files'}
+    if not check:              # only files to check (a template without a save)
+        return problems
     slot = check.get('slot', 4)
     info = read_slot(d, slot)
     if info is None:
@@ -349,7 +356,6 @@ def check_save(d, check):
     if not data_file(d, slot).is_file():
         return [f'slot {slot}: {data_file(d, slot).relative_to(d)} missing']
     data = save_file(d, slot).read_bytes()
-    problems = []
     for k, v in check.items():
         if k == 'slot':
             continue
@@ -383,6 +389,11 @@ def build_save(recipes, name):
         problems += judge(rc, log, allows=allows)
     for junk in ('W_DEBUG.DAT',):
         (work / junk).unlink(missing_ok=True)
+    for rel, text in r.get('files', {}).items():
+        # Extra game files in the overlay, e.g. a CDROM.LOC that points nowhere.
+        dest = work / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(text.encode('latin-1'))
     for spec in r.get('copy_slot', []):
         a, b = spec['from'], spec['to']
         for f in (save_file, data_file):
@@ -529,7 +540,7 @@ def run_scenario(sc, keep, frames):
     (d / 'log.input.txt').rename(d / 'input.txt')
     if not keep:
         shutil.rmtree(save, ignore_errors=True)
-    problems = judge(rc, log, sc.checks, sc.rejects, sc.allows, sc.covers, d / f'{sc.name}.cov')
+    problems = judge(rc, log, sc.checks, sc.rejects, sc.allows, sc.covers, d / f'{sc.name}.cov', sc.exit)
     if not sc.checks:
         problems.append('no "# check: REGEX" line')
     return problems, wall

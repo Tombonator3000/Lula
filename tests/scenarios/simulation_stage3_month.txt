@@ -1,0 +1,30 @@
+# seconds: 75
+# expects: stage-3 save "Store3" (one rented Little junk store in Los Angeles) patched to Sunday, the last day of January (day 30; the game's months have 30 days), 20:40 -> To the branches -> Balance sheet -> thumbs up -> 22:00 ends the day and the month while in the branches room: "And another busy day comes to an end." and the daily costs, then the monthly store work of stage 3 (0x422bf8, run when the new day is the 1st) and the weekly one (0x422de5, run when the new weekday is 0), which the round-1 simulation run L5 reached only once without a scenario. No lula[warn]/trap.
+# save: s3month
+# note: "Store3" is the Load-dialog entry at 300,119 (slot 4)
+# check: DrawTextA\("\s*Monthly rental costs   :\s*"
+# check: DrawTextA\("\s*And another busy day comes to an end\.\s*"
+# covers: 0x422bf8 0x422de5
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+21000 move 530 290
+21500 click 530 290
+27000 move 341 436
+27500 click 341 436
+31000 move 535 440
+31500 click 535 440
+40000 move 330 300
+40500 click 330 300
+44000 move 330 300
+44500 click 330 300
+48000 move 341 436
+48500 click 341 436
+53000 move 535 440
+53500 click 535 440
+58000 move 595 455
+58500 click 595 455
+64000 move 300 420

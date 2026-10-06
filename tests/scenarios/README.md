@@ -79,6 +79,8 @@ slack between steps and before `# seconds`.
   (`TrackPopupMenu at 100,40 -> command 100`), saves it writes
   (`CreateFileA\(DATA\\SAVE\\SAVEGAME\.  1, write`).
 - `# reject: REGEX`: must not match anywhere (regression tests).
+- `# exit: N`: the game ends itself with exit status N (for example 16 after
+  ExitProcess(65552) on the CD error path); default 0.
 - `# covers: 0xADDR ...`: these recompiled functions must have run (read from
   the run's coverage file). Use it when the log cannot show the effect, for
   example a slider drag.
@@ -150,10 +152,13 @@ with its log in `build/scenarios/saves/.logs/NAME.txt`.
   (0x45568c account, 0x455690 room, 0x455694 stage, 0x45569c day, 0x4556a0
   month, 0x4556a8 hour, 0x4556ac minute, 0x4556b8 weekday, 0x4556bc minutes
   per tick).
+- `files`: `{"CDROM.LOC": "X:\\NOWHERE\\"}` writes extra files (Latin-1 text)
+  into the template, which is an overlay over the game directory.
 - `copy_slot`: `[{"from": 2, "to": 4}]` copies `SAVEGAME.  2` and
   `STF1DAT.  2` to slot 4 (applied before `patch`).
 - `check`: `{"slot", "stage", "room", "name", "account", "day", "month",
-  "year", "hour", "minute"}` plus `"0xADDRESS": dword` keys (or a list of
+  "year", "hour", "minute"}` plus `"0xADDRESS": dword` keys and `"files": [paths
+  that must exist]` (or a list of
   such objects), asserted at the end.
 
 Build steps: copy the parent, run the script, delete `W_DEBUG.DAT`, copy
