@@ -7,7 +7,9 @@
  *   LULA_HEADLESS=1         dummy video/audio drivers
  *   LULA_FRAMEDUMP=DIR      write presented frames as PPM (see LULA_FRAMEDUMP_MS)
  *   LULA_INPUT=FILE         scripted input: "<ms> move X Y | click X Y | rclick X Y |
- *                           key NAME | type TEXT | dump | quit" one per line, times
+ *                           down X Y | up X Y | key NAME | type TEXT | dump | quit"
+ *                           one per line (down/up press and release the left
+ *                           button, so moves in between drag), times
  *                           since start (NAME: RETURN, ESCAPE, F1..F12, a letter,
  *                           ...; TEXT is the rest of the line, spaces included)
  *   LULA_SCALE=N            initial window scale (default 2)
@@ -380,6 +382,8 @@ static void run_script(uint32_t now)
             mouse_x = e->a;
             mouse_y = e->b;
             user32_input_mouse(e->a, e->b, 0, false);
+        } else if (strcmp(e->op, "down") == 0 || strcmp(e->op, "up") == 0) {
+            mouse_button(e->a, e->b, 1, e->op[0] == 'd');
         } else if (strcmp(e->op, "click") == 0 || strcmp(e->op, "rclick") == 0) {
             int button = e->op[0] == 'r' ? 3 : 1;
             mouse_button(e->a, e->b, button, true);

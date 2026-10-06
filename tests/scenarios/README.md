@@ -56,6 +56,7 @@ slack between steps and before `# seconds`.
 # check: DialogBoxParamA\(EINZAHLEN_DLG\)
 # check: DrawTextA\("-43000 \$"
 # reject: REGEX
+# covers: 0x4158f3 0x415efc
 # allow: REGEX
 # flaky: why this scenario can still fail now and then
 # random: notes about random events
@@ -78,10 +79,14 @@ slack between steps and before `# seconds`.
   (`TrackPopupMenu at 100,40 -> command 100`), saves it writes
   (`CreateFileA\(DATA\\SAVE\\SAVEGAME\.  1, write`).
 - `# reject: REGEX`: must not match anywhere (regression tests).
+- `# covers: 0xADDR ...`: these recompiled functions must have run (read from
+  the run's coverage file). Use it when the log cannot show the effect, for
+  example a slider drag.
 - `# allow: REGEX`: a `lula[warn]` line matching it does not fail the run.
 - `# flaky: reason`: the runner retries a failed run once.
-- Input lines: `<ms> move X Y | click X Y | rclick X Y | key NAME | type TEXT |
-  dump | quit`, times in ascending order (see the comment at the top of
+- Input lines: `<ms> move X Y | click X Y | rclick X Y | down X Y | up X Y |
+  key NAME | type TEXT | dump | quit` (`down`/`up` press and release the left
+  button; `move` lines in between drag, for example a slider thumb), times in ascending order (see the comment at the top of
   `src/runtime/platform_sdl.c`). `type` takes the rest of the line.
 
 A run fails on a non-zero exit status, a signal, a timeout (the game did not

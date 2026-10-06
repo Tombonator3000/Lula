@@ -43,8 +43,8 @@ GRACE = 30          # seconds after the scripted quit before a run is killed
 SAVE_BASE = 0x455620
 BAD_LINE = re.compile(r'lula\[(warn|trap|fatal)\]')
 
-HEADER = re.compile(r'#\s*(seconds|save|check|reject|allow|flaky|expects|random|note)\s*:\s?(.*)$')
-INPUT_LINE = re.compile(r'^\d+\s+(move|click|rclick|key|type|dump|quit)\b')
+HEADER = re.compile(r'#\s*(seconds|save|check|reject|allow|covers|flaky|expects|random|note)\s*:\s?(.*)$')
+INPUT_LINE = re.compile(r'^\d+\s+(move|click|rclick|down|up|key|type|dump|quit)\b')
 
 _print_lock = threading.Lock()
 
@@ -62,6 +62,7 @@ class Scenario:
         self.seconds = None
         self.save = None
         self.checks, self.rejects, self.allows = [], [], []
+        self.covers = []            # function entries that must have run
         self.flaky = None
         self.lines = []
         self.errors = []
@@ -85,6 +86,8 @@ class Scenario:
                         self.rejects.append(re.compile(val))
                     elif key == 'allow':
                         self.allows.append(re.compile(val))
+                    elif key == 'covers':
+                        self.covers += [int(x, 16) for x in val.replace(',', ' ').split()]
                     elif key == 'flaky':
                         self.flaky = val or 'yes'
                 except (ValueError, re.error) as e:
@@ -202,7 +205,18 @@ def run_game(save_dir, lines, seconds, workdir, log_name, cov=None, frames=None)
     return rc, wall, log
 
 
-def judge(rc, log, checks=(), rejects=(), allows=()):
+def ran_functions(cov):
+    """Entries with a non-zero count in a LULA_COVERAGE file."""
+    ran = set()
+    if cov and Path(cov).is_file():
+        for line in Path(cov).read_text().splitlines():
+            parts = line.split()
+            if len(parts) == 2 and parts[1] != '0':
+                ran.add(int(parts[0], 16))
+    return ran
+
+
+def judge(rc, log, checks=(), rejects=(), allows=(), covers=(), cov=None):
     """List of problems (empty = pass)."""
     problems = []
     text = log.read_bytes().decode('latin-1')
@@ -223,6 +237,11 @@ def judge(rc, log, checks=(), rejects=(), allows=()):
         m = r.search(text)
         if m:
             problems.append(f'reject: {r.pattern} matched "{m.group(0)[:80]}"')
+    if covers:
+        ran = ran_functions(cov)
+        missing = [a for a in covers if a not in ran]
+        if missing:
+            problems.append('covers: did not run ' + ' '.join(f'{a:#x}' for a in missing))
     return problems
 
 
@@ -510,7 +529,7 @@ def run_scenario(sc, keep, frames):
     (d / 'log.input.txt').rename(d / 'input.txt')
     if not keep:
         shutil.rmtree(save, ignore_errors=True)
-    problems = judge(rc, log, sc.checks, sc.rejects, sc.allows)
+    problems = judge(rc, log, sc.checks, sc.rejects, sc.allows, sc.covers, d / f'{sc.name}.cov')
     if not sc.checks:
         problems.append('no "# check: REGEX" line')
     return problems, wall
@@ -584,7 +603,8 @@ def cmd_recheck(args):
             print(f'{s.name:42} no log')
             continue
         m = re.search(r'lula\[fatal\] signal (\d+)', log.read_bytes().decode('latin-1'))
-        problems = s.errors + judge(-int(m.group(1)) if m else 0, log, s.checks, s.rejects, s.allows)
+        problems = s.errors + judge(-int(m.group(1)) if m else 0, log, s.checks, s.rejects, s.allows,
+                                    s.covers, RUNS / s.name / f'{s.name}.cov')
         if not s.checks:
             problems.append('no "# check: REGEX" line')
         bad += bool(problems)

@@ -115,6 +115,7 @@ def main(argv=None):
                   f'(entry {live.entry_live.get(a, 0):#x}, return {live.ret_live.get(a, 0):#x})',
                   file=sys.stderr)
     decls += [f'uint32_t lifted_{e:08x}(Cpu *c);' for e in sorted(replaced)]
+    lifter.counted_at_call = set(replaced)
     write_if_changed(out / 'gen_decls.h', '\n'.join(decls) + '\n')
 
     files = []

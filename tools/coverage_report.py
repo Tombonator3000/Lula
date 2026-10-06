@@ -55,7 +55,16 @@ def dead_functions():
     text = spec.read_text(encoding='utf-8')
     start = text.find('## Appendix B. Dead recompiler entries')
     end = text.find('\n## ', start + 10)
-    return {int(m, 16) for m in re.findall(r'`0x([0-9a-f]{6})`', text[start:end])}
+    dead = set()
+    for line in text[start:end].splitlines():
+        found = re.findall(r'`0x([0-9a-f]{6})`', line)
+        # A note names the dead entry first and then the reason, e.g.
+        # "`0x44c478` appears dead only because `0x44c3c3` is blacklisted";
+        # the address in the reason is live code.
+        if line.startswith('Note:'):
+            found = found[:1]
+        dead.update(int(m, 16) for m in found)
+    return dead
 
 
 def all_functions(gen_dir):

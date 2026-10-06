@@ -47,6 +47,9 @@ class Lifter:
         self.unsupported = {}
         # Function entry -> index into rt_cov[] (per-function call counters).
         self.coverage_index = {e: i for i, e in enumerate(sorted(program.functions))}
+        # Hand-reconstructed functions have no RT_COV of their own; their
+        # direct callers count them instead (set by __main__).
+        self.counted_at_call = set()
 
     # ----------------------------------------------------------- operands
     def reg(self, r):
@@ -343,7 +346,7 @@ class Lifter:
         if ins.flow == 'jmp':
             t = ins.targets[0]
             if t in f.tailcalls:
-                return [f'return f_{t:08x}(c);']
+                return [*self.cov_at_call(t), f'return f_{t:08x}(c);']
             return [self.goto(ins, t)]
         op = ins.ops[0]
         if ins.iat is not None:
@@ -355,6 +358,11 @@ class Lifter:
             return [f'{{ uint32_t t = {src}; switch (t) {{ {cases} default: return rt_jump_indirect(c, t); }} }}']
         return [f'return rt_jump_indirect(c, {self.rd(op)});']
 
+    def cov_at_call(self, t):
+        if t in self.counted_at_call and self.coverage_index is not None:
+            return [f'RT_COV({self.coverage_index[t]});']
+        return []
+
     def i_call(self, f, ins):
         ret = ins.next
         if ins.flow == 'call':
@@ -363,7 +371,7 @@ class Lifter:
                 callee = f'f_{t:08x}(c)'
             else:
                 callee = f'rt_call_indirect(c, {hx(t)})'
-            return [f'PUSH32({hx(ret)});', f'ra = {callee};', self.mismatch(ret)]
+            return [*self.cov_at_call(t), f'PUSH32({hx(ret)});', f'ra = {callee};', self.mismatch(ret)]
         op = ins.ops[0]
         if ins.iat is not None:
             return [f'PUSH32({hx(ret)});', f'ra = {self.host[ins.iat]}(c);', self.mismatch(ret)]

@@ -1,0 +1,28 @@
+# seconds: 40
+# expects: New game -> F2 opens the options sheet (DDF 36) over the town -> the left button is pressed on the Volume slider track, the mouse is dragged up and down with the button held, and released. While the button is held the DDF modal loop 0x4156ea calls the drag handler 0x4158f3, which moves the thumb through 0x415efc. Thumbs up closes the sheet. No lula[warn]/trap.
+# save: none
+# check: DrawTextA\("\s*Game speed
+# check: script \d+ ms: down 165 300
+# check: script \d+ ms: up 165 230
+# covers: 0x4158f3 0x415efc
+12000 move 505 88
+12500 click 505 88
+19000 key F2
+22000 move 165 300
+22500 down 165 300
+23000 move 165 290
+23300 move 165 275
+23600 move 165 260
+23900 move 165 245
+24200 move 165 260
+24500 move 165 230
+25000 up 165 230
+27000 move 108 360
+27500 down 108 360
+28000 move 120 360
+28300 move 140 360
+28600 move 160 360
+29000 up 160 360
+31000 move 328 368
+31500 click 328 368
+34000 move 300 300

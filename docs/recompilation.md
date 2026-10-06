@@ -56,7 +56,7 @@ build/game/lula [--data DIR] [--save DIR] [--mods DIR] [--trace] [--verbose] -- 
 |---|---|
 | `LULA_HEADLESS=1` | Ingen vindu eller lydenhet (SDL dummy-drivere). |
 | `LULA_FRAMEDUMP=DIR` | Skriver viste bilder som PPM, ett per `LULA_FRAMEDUMP_MS` (standard 1000). Et bilde som vises én gang og blir stående (hjelpesider, meldingsbokser) skrives også. Bildene er 900 KB hver, så bruk kroken sparsomt. |
-| `LULA_INPUT=FIL` | Skriptet input, én linje per hendelse: `<ms> move X Y`, `click X Y`, `rclick X Y`, `key NAVN`, `type TEKST` (resten av linja, med mellomrom og tegnsetting), `dump` (skriv hvert bilde fra nå), `quit`. Linjer som begynner med `#` er kommentarer. |
+| `LULA_INPUT=FIL` | Skriptet input, én linje per hendelse: `<ms> move X Y`, `click X Y`, `rclick X Y`, `down X Y` / `up X Y` (venstre knapp holdes nede, så `move` imellom drar), `key NAVN`, `type TEKST` (resten av linja, med mellomrom og tegnsetting), `dump` (skriv hvert bilde fra nå), `quit`. Linjer som begynner med `#` er kommentarer. |
 | `LULA_COVERAGE=FIL` | Skriver hvilke rekompilerte funksjoner som har kjørt (adresse og antall kall), hvert annet sekund og ved avslutning. Slå sammen med `tools/coverage_report.py`. |
 | `LULA_MSGBOX_AUTO=1` | Meldingsbokser svarer med standardknappen med en gang (for hodeløse tester). |
 | `LULA_AUDIODUMP=FIL` | Skriver den miksede lyden til en WAV-fil. |
