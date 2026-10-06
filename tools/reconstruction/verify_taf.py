@@ -29,6 +29,10 @@ def run(argv: list[str | Path], *, okay: bool = True) -> subprocess.CompletedPro
     if okay != (result.returncode == 0):
         raise AssertionError(f"Unexpected result ({result.returncode}): {argv}\n"
                              f"{result.stdout}{result.stderr}")
+    # UBSan keeps running after a report (exit status 0), and an ASan abort on
+    # an expected rejection also exits non-zero, so check the output itself.
+    if "runtime error:" in result.stderr or "AddressSanitizer" in result.stderr:
+        raise AssertionError(f"Sanitizer report: {argv}\n{result.stderr}")
     return result
 
 
@@ -46,7 +50,7 @@ def metadata_equal(before: bytes, after: bytes) -> None:
 def verify(cli: Path, checker: Path) -> dict:
     paths = sorted(p for p in (ROOT / "original/app").rglob("*") if p.suffix.lower() == ".taf")
     if len(paths) != 78:
-        raise AssertionError(f"Expected78 original TAF files; found{len(paths)}")
+        raise AssertionError(f"Expected 78 original TAF files; found {len(paths)}")
     frames = nonempty = empty = changed = rejected = 0
     sentinel_path = sentinel_index = None
     with tempfile.TemporaryDirectory(prefix="lula-taf-verify-") as directory:

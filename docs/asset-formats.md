@@ -12,7 +12,7 @@ Formatobservasjonene er egne kontroller av binærdata. For sammenligning ble for
 | TAP | 5 / 985 payloads | Samme NGS-container; lyd kan trekkes ut som WAV | Person-/utstyrsdata er fortsatt ugjennomsiktige binærposter |
 | DDF | 1 / 90 payloads | Samme NGS-container; bytebevarende deling og repakking | Spilldata/layout-feltenes semantikk er ikke ferdig kartlagt |
 | TBF | 5 separate + 334 i TGP | Dekoding av modus 0/2; eksport/import via PPM, RGB565 og samme dimensjon | Andre modi og større dimensjoner er ikke autorisert av formatbevisene |
-| TAF | 78 / 989 rammer | Verifisert rammegrense, RGB565-RLE, metadata; byteidentisk deling/repakking | Repakking av endrede TAF-rammer er bevisst avvist |
+| TAF | 78 / 989 rammer | Verifisert rammegrense, RGB565-RLE, metadata; byteidentisk deling/repakking; eksport/import av rammer via PPM med samme dimensjon (`export-taf`/`import-taf`, se [TAF-redigering](reconstruction/taf-editing.md)) | Dimensjonene kan ikke endres |
 | CUT | 43 | Alle er vanlige RIFF/AVI med riktig totalstørrelse | Ingen videoavspilling, bildeeksport eller rekomprimering utført av dette verktøyet |
 
 TAP-lyd består av 107 WAV-payloads med typeord 27. Totalt inneholder NGS-filene 334 poster med type 1, 880 med type 24, 88 med type 21 og 107 med type 27. Typeord og rekkefølge bevares; filendelsen alene avgjør ikke hva payloaden er.
@@ -47,7 +47,7 @@ Det finnes ingen uidentifiserte mellomrom eller restbytes i disse originalene. R
 
 RGB565 er en little-endian 16-bit piksel med R i bit 11–15, G i bit 5–10 og B i bit 0–4. PPM-eksporten utvider 5/6-bit verdier ved bitreplikasjon. Importen kvantiserer tilbake til RGB565; alle 65 536 mulige pikselverdier er testet med eksakt tilbakeføring.
 
-Modus 0 består av rå pikselord. Modus 2 består av kommandoord: `0x0000..0xefff` gjentar neste pikselord det oppgitte antallet ganger; `0xf000..0xffff` etterfølges av `65536 - kommando` bokstavelige pikselord. En nullkommando konsumerer det neste pikselordet uten å produsere piksler. Dekoderen krever nøyaktig oppgitt pikselantall og fullstendig konsumert strøm.
+Modus 0 består av rå pikselord. Modus 2 består av kommandoord som spillets dekoder (0x43fa48) leser med fortegn: `0x0000..0x7fff` gjentar neste pikselord det oppgitte antallet ganger; `0x8001..0xffff` etterfølges av `65536 - kommando` bokstavelige pikselord. `0x8000` avvises. Ingen originalfil bruker kommandoer i området `0x8000..0xefff`. En nullkommando konsumerer det neste pikselordet uten å produsere piksler. Dekoderen krever nøyaktig oppgitt pikselantall og fullstendig konsumert strøm.
 
 Alle 339 originalbilder er validert: 122 rå og 217 komprimerte. Uendret PPM-import returnerer original-TBF-en byteidentisk, også når kompresjonen bruker andre gyldige kommandoer enn vår encoder. Et endret bilde beholder originalmodus og header og får en ny validert pikselstrøm.
 
@@ -55,13 +55,13 @@ Verktøyet tillater foreløpig bare samme dimensjon som originalmalen. Å øke v
 
 ## TAF: rammer, metadata og tom sluttramme
 
-Headeren inneholder `TAF\0`, u16 versjon 16, u16 rammetall og u32 summen av dekodede RGB565-bytes. Bytes 12–779 er et bevart 768-byte område; verdiene er ikke brukt som palett for RGB565-dekodingen. Ved offset 780 ligger u32 absolutt start på første ramme. Originalenes første ramme begynner ved 787; bytes 784–786 bevares uten semantisk tolkning.
+Headeren inneholder `TAF\0`, u16 versjon 16, u16 rammetall og u32 summen av dekodede RGB565-bytes. Bytes 12–779 er et bevart 768-byte område; verdiene er ikke brukt som palett for RGB565-dekodingen. Ved offset 780 ligger u32 absolutt start på første ramme. Originalenes første ramme begynner ved 787. U16 ved offset 784 er antallet tabeller etter rammene (1 eller 2; spillet leser det ved 0x43ed88), og byte 786 bevares uten tolkning.
 
 Hver normalramme inneholder u16 modus 2, u16 bredde, u16 høyde, u32 absolutt rammeslutt, u32 absolutt start på pikselstrømmen og ett uidentifisert flaggbyte. Strømstart er `rammestart + 15`. Pikselstrømmen følger samme verifiserte RGB565-RLE som TBF modus 2.
 
 `BUTCH.TAF` har én siste ramme med 0x0 dimensjoner. Den har bare 14 bytes: begge offsetfeltene peker én byte forbi faktisk rammeslutt. Dette særtilfellet er kontrollert eksplisitt og beholdes byteidentisk; ingen piksler produseres.
 
-Etter rammene følger `rammetall * 4` uidentifiserte metadatabytes. 53 filer har i tillegg en like stor tabell med u32 absolutte rammestarts som er validert mot de leste rammene; 25 filer mangler denne tilleggstabellen. Samlet dekodet størrelse er 38 536 884 bytes. Uidentifiserte metadata og flagg gjør at TAF-redigering fortsatt krever mer spillanalyse. Verktøyet avviser endrede rammer og gir en presis feil.
+Etter rammene følger `rammetall * 4` uidentifiserte metadatabytes. 53 filer har i tillegg en like stor tabell med u32 absolutte rammestarts som er validert mot de leste rammene; 25 filer mangler denne tilleggstabellen. Samlet dekodet størrelse er 38 536 884 bytes. Den første tabellen holder plasseringsverdier per ramme og bevares uendret ved redigering. Endrede rammer kan importeres med samme dimensjon; ramme- og strømoffsets og den eventuelle andre tabellen flyttes da etter de nye strømstørrelsene ([TAF-redigering](reconstruction/taf-editing.md)).
 
 ## Konkret, nøytral grafikkrute
 
@@ -93,4 +93,4 @@ python3 -m unittest discover -s tests -p test_assets.py -v
 
 17 tester bestod mot denne utpakkingen: alle 10 NGS-containere, alle 339 TBF-bilder, 78 TAF-filer med 989 rammer og 43 CUT/AVI-filer, samt syntetiske kontroller av endrede payloadstørrelser, uendret kompresjon, alle RGB565-farger, ugyldige offsetfelt, over-/underløp, usikre manifeststier og beskyttelse av eksisterende filer. Original-corpus-testene hoppes eksplisitt over når proprietære originaler ikke finnes lokalt; de øvrige testene kjører fortsatt.
 
-Dette er en verifisert ressursverktøykjede. Det gjenstår å verifisere endret grafikk i spillet, kartlegge DDF/layout, støtte trygg TAF-redigering og gjenoppbygge spillogikken fra reversert kode før en faktisk modernisert spillrekompilering kan rapporteres som ferdig.
+Dette er en verifisert ressursverktøykjede. Det gjenstår å kartlegge DDF/layout og gjenoppbygge spillogikken fra reversert kode før en faktisk modernisert spillrekompilering kan rapporteres som ferdig.

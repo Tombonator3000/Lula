@@ -26,7 +26,9 @@ def taf(empty=False, indexed=True):
     pixel_data = struct.pack("<HH", 3, 0x1234)
     struct.pack_into("<4sHHI", prefix, 0, b"TAF\0", 16, 2 if empty else 1, 6)
     struct.pack_into("<I", prefix, 780, first)
-    prefix[784:787] = b"\x02\x00\x01"
+    # Word at 784 = number of trailer tables (the game reads it at 0x43ed88);
+    # the byte after it is kept as is.
+    prefix[784:787] = struct.pack("<H", 2 if indexed else 1) + b"\x01"
     frame = struct.pack("<HHHII", 2, 3, 1, first + 15 + len(pixel_data), first + 15)
     frame += b"\x83" + pixel_data
     offsets = [first]

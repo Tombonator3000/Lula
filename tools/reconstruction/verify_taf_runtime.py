@@ -9,6 +9,7 @@ import argparse
 import importlib.util
 import json
 import os
+import shutil
 import struct
 import subprocess
 import sys
@@ -72,6 +73,7 @@ def main():
         if not captures:
             raise RuntimeError(f"{name} presented no frame")
         outputs[name] = [read_rgb565(p) for p in captures[-4:]]
+        shutil.rmtree(frames)      # about 30 MB of PPM frames per run
     baseline_max = max(frame.count(color) for frame in outputs["original"])
     modified_counts = [frame.count(color) for frame in outputs["modified"]]
     # The cursor becomes exactly one original-size solid rectangle. Reject a
