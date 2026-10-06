@@ -232,20 +232,24 @@ static uint16_t blend565(uint16_t dst, uint16_t src, int a)
     return (uint16_t)((r << 11) | (g << 5) | b);
 }
 
+/* GDI places each glyph at a whole-pixel advance (the integer widths that
+ * GetCharWidth reports) and TextOut/DrawText apply no pair kerning, so the
+ * width of a string is the sum of rounded per-glyph advances. */
+static int glyph_advance(Font *f, int ch)
+{
+    int adv, lsb;
+    stbtt_GetCodepointHMetrics(&f->ff->info, ch, &adv, &lsb);
+    return (int)((float)adv * f->scale + 0.5f);
+}
+
 static int text_width(Font *f, const char *s, int n)
 {
     if (!f || !f->ff)
         return n * 7;
-    float x = 0;
-    for (int i = 0; i < n; i++) {
-        int adv, lsb;
-        int ch = (unsigned char)s[i];
-        stbtt_GetCodepointHMetrics(&f->ff->info, ch, &adv, &lsb);
-        x += (float)adv * f->scale;
-        if (i + 1 < n)
-            x += f->scale * (float)stbtt_GetCodepointKernAdvance(&f->ff->info, ch, (unsigned char)s[i + 1]);
-    }
-    return (int)(x + 0.5f);
+    int x = 0;
+    for (int i = 0; i < n; i++)
+        x += glyph_advance(f, (unsigned char)s[i]);
+    return x;
 }
 
 static int line_height(Font *f)
@@ -302,12 +306,11 @@ static void draw_text(DC *d, int x, int y, const char *s, int n, const int32_t c
         }
     }
     int baseline = y + font_ascent(f);
-    float pen = (float)x;
+    int pen = x;
     for (int i = 0; i < n; i++) {
         int ch = (unsigned char)s[i];
-        int adv, lsb, x0, y0, x1, y1;
-        stbtt_GetCodepointHMetrics(&f->ff->info, ch, &adv, &lsb);
-        float sub = pen - (float)(int)pen;
+        int x0, y0, x1, y1;
+        float sub = 0;
         stbtt_GetCodepointBitmapBoxSubpixel(&f->ff->info, ch, f->scale, f->scale, sub, 0, &x0, &y0, &x1, &y1);
         int gw = x1 - x0, gh = y1 - y0;
         if (gw > 0 && gh > 0 && gw < 256 && gh < 256) {
@@ -319,7 +322,7 @@ static void draw_text(DC *d, int x, int y, const char *s, int n, const int32_t c
                     continue;
                 uint16_t *row = (uint16_t *)(g_mem + surf->mem + (uint32_t)py * surf->pitch);
                 for (int bx = 0; bx < gw; bx++) {
-                    int px = (int)pen + x0 + bx;
+                    int px = pen + x0 + bx;
                     if (px < cx0 || px >= cx1)
                         continue;
                     int a = bmp[by * gw + bx];
@@ -329,15 +332,13 @@ static void draw_text(DC *d, int x, int y, const char *s, int n, const int32_t c
                 }
             }
         }
-        pen += (float)adv * f->scale;
-        if (i + 1 < n)
-            pen += f->scale * (float)stbtt_GetCodepointKernAdvance(&f->ff->info, ch, (unsigned char)s[i + 1]);
+        pen += glyph_advance(f, ch);
     }
     if (f->underline) {
         int uy = baseline + 1;
         if (uy >= cy0 && uy < cy1) {
             uint16_t *row = (uint16_t *)(g_mem + surf->mem + (uint32_t)uy * surf->pitch);
-            for (int xx = x; xx < (int)pen; xx++)
+            for (int xx = x; xx < pen; xx++)
                 if (xx >= cx0 && xx < cx1)
                     row[xx] = color;
         }

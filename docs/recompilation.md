@@ -87,7 +87,7 @@ Testen `tests/test_recompiled_game.py` gjør det samme automatisk med en grønn 
 
 - Bygg med CMake, GCC 13 og SDL 2.30 på Ubuntu 24.04.
 - Hodeløs kjøring med `-novideo` følger samme rekkefølge av Win32- og DirectX-kall som originalen under Wine fram til hovedmenyen.
-- Hovedmenyen: alle 307 200 piksler sammenlignet i RGB565 mot Wine-referansen. Avvikene (3344 piksler) ligger bare i bokstavene på de fem knappene. Spillet ber om fonten "System Small", som ikke finnes. Runtimen bruker Liberation Sans Bold, Wine valgte en annen erstatning.
+- Hovedmenyen: alle 307 200 piksler sammenlignet i RGB565 mot Wine-referansen. Avvik finnes bare i bokstavene på de fem knappene. Tekstens venstre- og høyrekant er identisk med Wine på alle fem knappene, siden runtimen plasserer tegn slik GDI gjør (hele piksler per tegn, ingen kerning). De 2728 pikslene som fortsatt avviker, skyldes at Wine tegner med fargede ClearType-kanter fra vertsmaskinen. Spillet ber om fonten "System Small", som ikke finnes; runtimen bruker Liberation Sans Bold, som har samme tegnbredder som Arial.
 - Første spillskjerm etter "New game": bare tekst med vertsfont og klokkeslettet avviker fra Wine-referansen. Spillklokken går like fort som i originalen (målt 4,1 mot 4,3 spillminutter per sekund over samme tidsrom, innenfor måleusikkerheten).
 - Grafikkutskifting via `--mods` (se over).
 - Automatiske ende-til-ende-tester: `python3 -m unittest tests.test_recompiled_game -v`.
@@ -101,7 +101,7 @@ Testen `tests/test_recompiled_game.py` gjør det samme automatisk med en grønn 
 ## Ikke verifisert ennå
 
 - Deler av spillflyten: salg av ferdige filmer og noen sene hendelser er ikke nådd (se [utforskningen](recomp/exploration.md)).
-- Fonten: spillet ber om "System Small", som ikke finnes. Noen etiketter brytes eller klippes med erstatningsfonten. Uten et skjermbilde fra ekte Windows vet vi ikke hvilken font originalen fikk.
+- Fonten: spillet ber om "System Small", som ikke finnes. Med Arial-bredder og GDI-plassering får 37 av 219 enlinjes DDF-etiketter tekst som er bredere enn rektangelet, slik at teksten brytes eller klippes, akkurat som under Wine. Om ekte Windows 95 ga en smalere font, vet vi ikke uten et skjermbilde derfra.
 - Lyd på en ekte lydenhet. Miksen er sammenlignet med originalens samples, men ikke lyttet på.
 - Video (`.CUT`-filer) og MCI er bevisst satt til side. Med `-novideo` hopper spillet over videoene.
 - Windows-bygg av den samme koden.

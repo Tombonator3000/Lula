@@ -880,7 +880,7 @@ outside this scope.
 
 ## 20. Open questions and risks
 
-1. **Realized GDI font** (§18.2): the LOGFONT face "System Small" (-14, bold) does not exist. The layout spacing
+1. **Realized GDI font** (§18.2): the LOGFONT face "System Small" (-14, bold) does not exist. Update 2026-10-06: the Wine capture's button texts have exactly the extents of Arial-metric bold at a 14 px em with whole-pixel advances and no kerning, which the runtime now reproduces. The layout spacing
    suggests a smaller font than Arial Bold 14. This needs a reference capture.
 2. **WM_DESTROY during play** returns to the main menu with a dead hwnd (§10). The host must choose a
    close policy.
