@@ -228,8 +228,16 @@ def judge(rc, log, checks=(), rejects=(), allows=()):
 
 # -------------------------------------------------------------------- saves
 def load_recipes():
-    recipes = json.loads(RECIPES.read_text(encoding='utf-8'))
-    recipes = {k: v for k, v in recipes.items() if not k.startswith('_')}
+    # saves.json plus any tests/scenarios/saves/*.json (one file per area, so
+    # recipes for different areas can be written independently).
+    recipes = {}
+    for path in [RECIPES, *sorted((SCEN_DIR / 'saves').glob('*.json'))]:
+        for k, v in json.loads(path.read_text(encoding='utf-8')).items():
+            if k.startswith('_'):
+                continue
+            if k in recipes:
+                raise SystemExit(f'{path.name}: recipe {k!r} is already defined in another file')
+            recipes[k] = v
     for name, r in recipes.items():
         if r.get('from') is not None and r['from'] not in recipes:
             raise SystemExit(f'saves.json: {name}: unknown "from" {r["from"]!r}')

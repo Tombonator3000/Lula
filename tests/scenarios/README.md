@@ -106,6 +106,10 @@ needs the cursor somewhere else therefore needs its own `move` first.
 
 ## Save recipes (`saves.json`)
 
+Recipes live in `saves.json` and in any `saves/*.json` (one file per area, so
+areas can add recipes without touching each other's files; a name may be
+defined only once across all files).
+
 `python3 tools/scenarios.py saves [NAME ...] [--force] [-j N]` builds templates
 into `build/scenarios/saves/NAME` in dependency order, several at a time. A
 template is rebuilt when its recipe, its script file or its parent changed
