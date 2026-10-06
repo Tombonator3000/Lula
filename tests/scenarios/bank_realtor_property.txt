@@ -1,0 +1,66 @@
+# seconds: 100
+# expects: stage-2 realtor (room 6) -> "Look at real estate" (room 20 building plot); cutting department info sheet: buy-back guarantee toggled on (buy price 120000 -> 128571 $) and off again, Buy -> building appears, account 60000 -> -60000; sound studio: Buy refused ("Unfortunately you haven't got enough money!"), Rent accepted; leave via the centre building (back to the realtor), re-enter; owned building -> "Sell real estate" -> "The realtor isn't interested right now."; rented building -> "Cancel lease" -> "You can't cancel till next month."; back to the realtor and the town.
+# save: stage2
+# note: "Stage2" is the Load-dialog entry at 300,119 (slot 4)
+# check: CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+# check: DrawTextA\("\s*128571 \$\s*"
+# check: DrawTextA\("\s*Unfortunately you haven't got enough money!\s*"
+# check: DrawTextA\("\s*The realtor isn't interested right now\.\s*"
+# check: DrawTextA\("\s*You can't cancel till next month\.\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office -> overview -> Realtor (356..458, 136..262) -> Look at real estate (0..220, 330..407)
+22000 move 150 40
+22500 click 150 40
+26000 move 400 200
+26500 click 400 200
+30000 move 100 370
+30500 click 100 370
+# film strip tile 2 = cutting department: guarantee on, off, Buy
+34000 move 167 45
+34500 click 167 45
+37000 move 194 292
+37500 click 194 292
+39000 move 194 292
+39500 click 194 292
+41000 move 243 325
+41500 click 243 325
+# next tile 2 = sound studio: Buy (refused), close the info box, then Rent
+45000 move 167 45
+45500 click 167 45
+48000 move 243 325
+48500 click 243 325
+51000 move 344 312
+51500 click 344 312
+54000 move 245 229
+54500 click 245 229
+# centre building = back to the realtor; then Look at real estate again
+58000 move 290 330
+58500 click 290 330
+62000 move 100 370
+62500 click 100 370
+# owned building (top left): Sell real estate -> refusal box -> thumb (closes both)
+66000 move 340 125
+66500 click 340 125
+69500 move 307 240
+70000 click 307 240
+73000 move 344 312
+73500 click 344 312
+# rented building (top right): Cancel lease -> refusal box -> thumb, then the sheet's thumb
+76500 move 440 125
+77000 click 440 125
+80000 move 310 231
+80500 click 310 231
+83000 move 344 312
+83500 click 344 312
+86000 move 315 300
+86500 click 315 300
+# centre building -> realtor -> Back to the town (490..639, 0..176)
+90000 move 290 330
+90500 click 290 330
+94000 move 560 80
+94500 click 560 80

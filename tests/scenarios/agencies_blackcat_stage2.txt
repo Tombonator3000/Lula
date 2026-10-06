@@ -1,0 +1,46 @@
+# seconds: 100
+# expects: stage-2 save "Stage2" -> office -> To the overview -> "To the parking lot" (186..250,125..246) enters room 7 stage 2 (Black Cat agency / Hell Devils rockers, setup 0x4312fb) -> "Sabotage hostile companies" opens the beer sheet (DDF 0x3d, callback 0x4314ef: "Aim:" five rival companies, "10 Sixpacks = 500 $", Effect slider) -> cancel with the toilet icon (no money spent, account 60000) -> reopen -> aim 2 Tail Hearts -> Effect slider clicks: 710 Sixpacks = 35500 $, then 930 Sixpacks = 46500 $ -> thumbs up: account 60000 -> 13500 -> "Sabotage hostile companies" again -> info box "We never do more than one job at once!" (string 1802) -> thumb -> "To the town" -> town overview. If the clock passes 11:00 the job may run (0x431691, 49 % chance, rand seeded from time()): "The 2 Tail Hearts company has been 'visited' by the Hell Devils!". No lula[warn]/trap.
+# save: stage2
+# note: "Stage2" is the Load-dialog entry at 300,119 (slot 4)
+# check: DrawTextA\("\s*10 Sixpacks\s*"
+# check: DrawTextA\("\s*710 Sixpacks\s*"
+# check: DrawTextA\("\s*= 46500 \$\s*"
+# check: DrawTextA\("\s*We never do more than one job at once!\s*"
+# main menu -> Load Game -> Stage2 -> Load (stage-2 office)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office -> To the overview -> To the parking lot (room 7)
+22000 move 150 40
+22500 click 150 40
+26000 move 218 185
+26500 click 218 185
+# Sabotage hostile companies (320..630, 91..480) -> beer sheet; cancel with the toilet icon
+30000 move 475 285
+30500 click 475 285
+33500 move 462 365
+34000 click 462 365
+# reopen, pick aim 2 (2 Tail Hearts), move the Effect slider twice, thumbs up
+37000 move 475 285
+37500 click 475 285
+40500 move 153 147
+41000 click 153 147
+43500 move 460 287
+44000 click 460 287
+46500 move 485 287
+47000 click 485 287
+49500 move 385 365
+50000 click 385 365
+# a second job is refused: info box, close with its thumb
+54000 move 475 285
+54500 click 475 285
+58000 move 340 306
+58500 click 340 306
+# To the town (0..640, 0..80)
+62000 move 320 40
+62500 click 320 40
+66000 move 300 420
+95000 move 320 300

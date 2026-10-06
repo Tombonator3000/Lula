@@ -1,0 +1,50 @@
+# seconds: 76
+# expects: stage 3: realtor -> city map -> bank; EINZAHLEN shows Account 2600000 (account + 100000 credit), deposit 2550000 -> Cur.acct -50000 / Invst.acct 2550000; city map -> lady realtor -> "Rent sex store" -> Sex'n sell superstore (Free Objects : 2) -> first lot -> rent sheet (Rent ... $ per month) -> Rent -> yes/no "A store this big needs $200000 startup capital. Rent the shop?" -> yes -> "Unfortunately you haven't got enough money!"; sheet closed, Free Objects stays 2.
+# save: stage3
+# note: "Stage3" is the Load-dialog entry at 300,119 (slot 4)
+# check: DrawTextA\("\s*-50000 \$\s*"
+# check: DrawTextA\("\s*2550000 \$\s*"
+# check: DrawTextA\("\s*A store this big needs \$200000 startup capital\. Rent the shop\?\s*"
+# check: DrawTextA\("\s*Unfortunately you haven't got enough money!\s*"
+# random: about 15 % of "Do business with the bank" clicks hit a random bank event (0x413381: "Get lost! Can't you see I'm busy!", "Offer the bank manager to let Lula help out??"; rand() is seeded from time()), the remaining steps then miss. The runner's fixed LULA_CLOCK makes the outcome repeatable; with it the event does not occur here.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# realtor -> Back to the town (0..640, 0..176) -> To the bank (top portrait)
+21000 move 500 100
+21500 click 500 100
+25000 move 410 50
+25500 click 410 50
+# Do business with the bank -> Pay in 2550000
+29000 move 200 200
+29500 click 200 200
+32000 move 222 313
+32500 click 222 313
+35000 type 2550000
+36500 key RETURN
+39000 move 430 240
+39500 click 430 240
+# bank -> Back to the town (339..640, 14..201) -> To the lady realtor (third portrait)
+42000 move 490 100
+42500 click 490 100
+46000 move 400 215
+46500 click 400 215
+# Rent sex store (24..232, 185..374) -> 4th film tile (418..518, 21..96) -> first lot (0..34, 180..214)
+50000 move 128 280
+50500 click 128 280
+54000 move 468 58
+54500 click 468 58
+57000 move 17 197
+57500 click 17 197
+# Rent (153,397) -> yes (318,305) -> refusal -> thumb -> close the rent sheet (298,410)
+60000 move 153 397
+60500 click 153 397
+63000 move 318 305
+63500 click 318 305
+66000 move 344 312
+66500 click 344 312
+69000 move 298 410
+69500 click 298 410

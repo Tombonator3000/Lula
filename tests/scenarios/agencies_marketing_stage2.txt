@@ -1,0 +1,39 @@
+# seconds: 66
+# expects: stage-2 save "Mkt2" (stage-2 marketing office rented from the realtor's "marketing" tile, account 60000, no staff hired) loads straight into room 31 stage 2 (WERBUNG.TAF, setup 0x42eb33) -> "Assign advertising boss" -> "You haven't got any staff in this department" (938, 0x4057d2(0x13) finds no staff) -> thumb -> "Assign switchboard operator" (clicked at 476,100: the unlabelled hotspot 2 = 444..505, 150..190 lies inside it and is tested first) -> same refusal -> thumb -> "Start advertising" -> refusal -> thumb -> "Start scandals" -> refusal -> thumb -> "To the other offices" -> property (room 20) with the WET buildings. No lula[warn]/trap.
+# save: mkt2
+# note: "Mkt2" is the Load-dialog entry at 300,119 (slot 4); made from stage2: overview -> Realtor -> Look at real estate -> "marketing" tile -> Rent -> office -> To the other WET buildings -> marketing building -> F2 save into slot 4
+# check: CreateFileA\(DATA\\ANI\\WERBUNG\.TAF, read
+# check: DrawTextA\("\s*You haven't got any staff in this department\s*"
+# check: (?s)ms: click 227 242.*You haven't got any staff in this department
+# check: (?s)ms: click 320 450.*CreateFileA\(DATA\\ANI\\BAUTEN\.TAF
+# main menu -> Load Game -> Mkt2 -> Load (marketing office)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Assign advertising boss (33..139, 49..251) -> refusal -> thumb
+22000 move 86 150
+22500 click 86 150
+25500 move 340 315
+26000 click 340 315
+# Assign switchboard operator (429..524, 67..231, above hotspot 2) -> refusal -> thumb
+29000 move 476 100
+29500 click 476 100
+32500 move 340 315
+33000 click 340 315
+# Start advertising (383..640, 243..346) -> refusal -> thumb
+36000 move 560 290
+36500 click 560 290
+39500 move 340 315
+40000 click 340 315
+# Start scandals (158..297, 206..278) -> refusal -> thumb
+43000 move 227 242
+43500 click 227 242
+46500 move 340 315
+47000 click 340 315
+# To the other offices (0..640, 308..480)
+50000 move 320 450
+50500 click 320 450
+54000 move 320 200

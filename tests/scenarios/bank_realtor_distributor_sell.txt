@@ -1,0 +1,37 @@
+# seconds: 58
+# expects: stage-2 distributor with one finished movie "TestMovie" (synthetic save): "Sell movie rights" opens STANDARD_LIST_BOX_DLG (headline "Sell movie rights", movie listed and selected), OK -> yes/no box "The distributor offers you a fixed price of $N. Sell?" -> yes -> "The money will be transferred by tomorrow!"; then "Grant movie licenses" -> "Unfortunately you have no movies to sell!" (rights already sold). About 19 % of runs hit the random busy-distributor event on entry instead (see bank_realtor_distributor_nomovies.txt).
+# save: stage2_movie
+# note: "Stage2" is the Load-dialog entry at 300,119 (slot 4); stage2 with movie record 0 patched to state 3, title TestMovie
+# check: DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1
+# check: DrawTextA\("\s*The distributor offers you a fixed price of \$\d+\. Sell\?\s*"
+# check: DrawTextA\("\s*The money will be transferred by tomorrow!\s*"
+# check: DrawTextA\("\s*Unfortunately you have no movies to sell!\s*"
+# random: about 19 % of distributor entries hit the busy-distributor event (0x4111e1, rand() seeded from time()). The runner's fixed LULA_CLOCK makes the outcome repeatable; with it the distributor is not busy here.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 150 40
+22500 click 150 40
+26000 move 554 190
+26500 click 554 190
+# Sell movie rights -> list dialog -> OK (115,243)
+30000 move 152 335
+30500 click 152 335
+33000 move 115 243
+33500 click 115 243
+# yes (thumb, 318,305) -> confirmation -> thumb
+36000 move 318 305
+36500 click 318 305
+39000 move 344 312
+39500 click 344 312
+# Grant movie licenses -> refusal -> thumb
+42000 move 440 258
+42500 click 440 258
+45000 move 344 312
+45500 click 344 312
+# To the town
+49000 move 90 45
+49500 click 90 45

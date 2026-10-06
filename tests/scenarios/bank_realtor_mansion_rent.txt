@@ -1,0 +1,33 @@
+# seconds: 50
+# expects: stage-3 lady realtor: Mansion 'Like It' offer sheet -> Rent -> "Mansion is rented for a week." (account 2500000 -> 2490000); "Look at what's offered" again -> "The lease for your present property doesn't run out for 7 day(s)."; back to the realtor's office.
+# save: stage3
+# note: "Stage3" is the Load-dialog entry at 300,119 (slot 4)
+# check: DrawTextA\("\s*Mansion is rented for a week\.\s*"
+# check: DrawTextA\("\s*The lease for your present property doesn't run out for 7 day\(s\)\.\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+21000 move 300 300
+21500 click 300 300
+25000 move 160 110
+25500 click 160 110
+29000 move 320 250
+29500 click 320 250
+# Rent (211,325) -> info box -> thumb (also closes the offer sheet)
+32000 move 211 325
+32500 click 211 325
+35000 move 344 312
+35500 click 344 312
+# Look at what's offered again -> lease refusal -> thumb
+38000 move 320 250
+38500 click 320 250
+41000 move 344 312
+41500 click 344 312
+# To the office -> Back to the realtor's office
+44000 move 320 20
+44500 click 320 20
+47500 move 520 400
+48000 click 520 400

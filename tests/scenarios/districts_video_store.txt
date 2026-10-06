@@ -1,0 +1,70 @@
+# seconds: 92
+# expects: stage-1 save at 10:00 -> Video store (room 32: FOTOS1/MAN_ANI TAFs) -> Salesman (talk animation) -> Accessories -> DDF "Buy accessory :" (video camera, spotlight, camera, film, cassette, "Have films developed", "Selected accessories costs : 0 $") -> camera -> list dialog "Cameras:" (Castor AX 80 150$, Pokian X 200 400$, Pokian Plus 1200$, Pokian Super Horny 2300$) + "Shopping list:" -> item 2, Buy (shopping list shows Pokian X 200, Back button) -> thumb -> "Selected accessories costs : 400 $" -> spotlight -> "Spotlights:" list, item 1, Buy, thumb -> film -> "Miniature films:" list, item 1, Buy, thumb -> thumb pays ("$... was deducted from your account") -> thumb -> Accessories again -> "Have films developed" -> development dialog (no films yet) -> close -> To the town. No lula[warn]/trap.
+# save: s1town10
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000
+# check: CreateFileA\(DATA\\ANI\\FOTOS1\.TAF, read
+# check: DrawTextA\("\s*Cameras:\s*"
+# check: DrawTextA\("\s*Miniature films:\s*"
+# check: DrawTextA\("\s*\$\d+ was deducted from your account\s*"
+# check: DrawTextA\("\s*Films in development:\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Video store (497..627, 124..285)
+22000 move 562 250
+22500 click 562 250
+# Salesman (106..204, 17..218)
+26000 move 155 110
+26500 click 155 110
+# Accessories (52..463, 239..359)
+29000 move 250 300
+29500 click 250 300
+# camera -> Cameras list, item 2, Buy, thumb (back to the accessory sheet)
+33000 move 150 290
+33500 click 150 290
+36500 move 150 181
+37000 click 150 181
+38500 move 155 342
+39000 click 155 342
+41000 move 292 342
+41500 click 292 342
+# spotlight -> Spotlights list, item 1, Buy, thumb
+44500 move 215 185
+45000 click 215 185
+48000 move 150 165
+48500 click 150 165
+50000 move 155 342
+50500 click 155 342
+52500 move 292 342
+53000 click 292 342
+# film roll -> Miniature films list, item 1, Buy, thumb
+56000 move 75 345
+56500 click 75 345
+59500 move 150 165
+60000 click 150 165
+61500 move 155 342
+62000 click 155 342
+64000 move 292 342
+64500 click 292 342
+# thumb: pay, then the info box
+67500 move 377 375
+68000 click 377 375
+71000 move 344 312
+71500 click 344 312
+# Accessories again -> Have films developed
+74500 move 250 300
+75000 click 250 300
+78000 move 505 70
+78500 click 505 70
+# close whatever is open (thumb / list thumb / toilet)
+81500 move 292 342
+82000 click 292 342
+84000 move 447 375
+84500 click 447 375
+# To the town (0..283, 395..479)
+87500 move 140 437
+88000 click 140 437
+91000 move 300 300

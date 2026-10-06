@@ -1,0 +1,48 @@
+# seconds: 80
+# expects: stage-3 save "Store3" (Los Angeles city map, one rented WET store in the "Suburbs" (the store depends on the random city data, see saves.json), account 1600000) -> "To the advertising agency" (room 31 stage 3, setup 0x42fa1c) -> "Sign contract for advertising" (0x42fab3 finds a status-5 store, DDF 0x56, callback 0x42fbeb) -> "Advtng" sheet: Newspaper 15000 $, Radio 75000 $, Posters 20000 $, TV 300000 $, Movie 45000 $, store grid Suburbs / Near city center / City center -> select our store -> Newspaper + Posters: Total 15000 $ -> 35000 $ -> "Start advertising for selected store" -> "The advertising budget is now $35000 per month." (1653) -> thumb -> sheet again -> Posters off, TV on: Total 315000 $ -> Start -> "The advertising budget is now $315000 per month." -> thumb -> thumbs up closes the sheet -> "To the town" -> city map. No lula[warn]/trap.
+# save: store3
+# note: "Store3" is the Load-dialog entry at 300,119 (slot 4); made from s3b: lady realtor -> Rent sex store -> Little junk store -> Rent -> $50000 startup capital -> saved from F2 into slot 4
+# check: CreateFileA\(DATA\\ANI\\ST3_SHOP\.TAF, read
+# check: DrawTextA\("\s*Advting\s*"
+# check: DrawTextA\("\s*The advertising budget is now \$35000 per month\.\s*"
+# check: DrawTextA\("\s*The advertising budget is now \$315000 per month\.\s*"
+# main menu -> Load Game -> Store3 -> Load (city map)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# advertising agency button (fourth portrait, 366.., 259..) -> Sign contract for advertising (365..483, 35..476)
+23000 move 420 300
+23500 click 420 300
+27000 move 420 250
+27500 click 420 250
+# select the store (Suburbs, left cell, with the runner's fixed LULA_CLOCK), Newspaper ads, Posters, Start advertising
+31000 move 472 177
+31500 click 472 177
+34000 move 58 142
+34500 click 58 142
+37000 move 58 225
+37500 click 58 225
+40000 move 213 440
+40500 click 213 440
+44000 move 340 306
+44500 click 340 306
+# Posters off, TV ads on, Start advertising again
+48000 move 472 177
+48500 click 472 177
+51000 move 58 225
+51500 click 58 225
+54000 move 58 267
+54500 click 58 267
+57000 move 213 440
+57500 click 213 440
+61000 move 340 306
+61500 click 340 306
+# thumbs up closes the sheet; To the town (0..277, 0..480)
+65000 move 530 437
+65500 click 530 437
+69000 move 140 240
+69500 click 140 240
+73000 move 300 420

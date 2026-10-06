@@ -1,0 +1,120 @@
+# seconds: 122
+# expects: stage-1 save at 10:00 -> Bar. The three blackmail victims (spots 8/9/10, bar table 0x450f8c) are each present with 30 % chance per bar visit (setup 0x425c85, time-seeded RNG), so the scenario tries all three spots, re-rolls once via Toilet <-> Bar and tries spots 8 and 9 again (~83 % to meet at least one victim). For a present victim: victim card (photo, name, married, age, income; Lula and photo icons, thumb) -> Lula icon: seduction (video skipped with -novideo, clock +2 h, Lula icon greys out) -> photo icon -> blackmail letter DDF 0x31 ("GOTCHA !!! ... <amount> $ into da envelop an bring im into da bar toilet Tomorra") -> amount slider -> letter thumb -> the card now shows a mailbox -> mailbox (send, victim state 3) -> "The blackmail letter has been sent" -> right-clicks close everything. All dialog clicks are placed where the bare bar has no hotspot, and right-click (DDF cancel) is a no-op in the room, so absent victims only waste time. Ends with To the town. No lula[warn]/trap.
+# save: s1town10
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000
+# check: CreateFileA\(DATA\\ANI\\BARLEUTE\.TAF, read
+# check: DrawTextA\("\s*GOTCHA
+# check: DrawTextA\("\s*The blackmail letter has been sent
+# random: the victims are rolled on every bar visit (rand() seeded from time()). With the runner's fixed LULA_CLOCK the first two visits have none, hence the two re-rolls at the start; the next two visits have victims.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Bar
+22000 move 304 230
+22500 click 304 230
+# two quick re-rolls first (Toilet, Bar): with the runner's fixed LULA_CLOCK the first two bar visits have no victim
+25000 move 114 107
+25400 click 114 107
+28000 move 500 440
+28400 click 500 440
+31000 move 114 107
+31400 click 114 107
+34000 move 500 440
+34400 click 500 440
+# round 1: victim 8 (419..485, 191..319); Lula icon (515,115); photo icon (515,260); letter slider (240,277); letter thumb (160,350); mailbox (200,365); info thumb (344,305); right-clicks
+37500 move 452 255
+37900 click 452 255
+39500 move 515 115
+39900 click 515 115
+41500 move 515 260
+41900 click 515 260
+43500 move 240 277
+43900 click 240 277
+44500 move 160 350
+44900 click 160 350
+46500 move 200 365
+46900 click 200 365
+48500 move 344 305
+48900 click 344 305
+50000 rclick 300 450
+51000 rclick 300 450
+# round 1: victim 9 (317..393, 316..425); Lula icon (515,115); photo icon (515,260); letter slider (240,277); letter thumb (160,350); mailbox (200,365); info thumb (344,305); right-clicks
+52000 move 355 370
+52400 click 355 370
+54000 move 515 115
+54400 click 515 115
+56000 move 515 260
+56400 click 515 260
+58000 move 240 277
+58400 click 240 277
+59000 move 160 350
+59400 click 160 350
+61000 move 200 365
+61400 click 200 365
+63000 move 344 305
+63400 click 344 305
+64500 rclick 300 450
+65500 rclick 300 450
+# round 1: victim 10 (475..544, 326..455); Lula icon (515,115); photo icon (515,260); letter slider (240,277); letter thumb (160,350); mailbox (200,365); info thumb (344,305); right-clicks
+66500 move 510 390
+66900 click 510 390
+68500 move 515 115
+68900 click 515 115
+70500 move 515 260
+70900 click 515 260
+72500 move 240 277
+72900 click 240 277
+73500 move 160 350
+73900 click 160 350
+75500 move 200 365
+75900 click 200 365
+77500 move 344 305
+77900 click 344 305
+79000 rclick 300 450
+80000 rclick 300 450
+# re-roll the bar: Toilet, then Bar
+81000 move 114 107
+81400 click 114 107
+84000 move 500 440
+84400 click 500 440
+# round 2: victim 8 (419..485, 191..319); Lula icon (515,115); photo icon (515,260); letter slider (240,277); letter thumb (160,350); mailbox (200,365); info thumb (344,305); right-clicks
+87000 move 452 255
+87400 click 452 255
+89000 move 515 115
+89400 click 515 115
+91000 move 515 260
+91400 click 515 260
+93000 move 240 277
+93400 click 240 277
+94000 move 160 350
+94400 click 160 350
+96000 move 200 365
+96400 click 200 365
+98000 move 344 305
+98400 click 344 305
+99500 rclick 300 450
+100500 rclick 300 450
+# round 2: victim 9 (317..393, 316..425); Lula icon (515,115); photo icon (515,260); letter slider (240,277); letter thumb (160,350); mailbox (200,365); info thumb (344,305); right-clicks
+101500 move 355 370
+101900 click 355 370
+103500 move 515 115
+103900 click 515 115
+105500 move 515 260
+105900 click 515 260
+107500 move 240 277
+107900 click 240 277
+108500 move 160 350
+108900 click 160 350
+110500 move 200 365
+110900 click 200 365
+112500 move 344 305
+112900 click 344 305
+114000 rclick 300 450
+115000 rclick 300 450
+# To the town
+116000 move 120 450
+116500 click 120 450
+119500 move 300 300

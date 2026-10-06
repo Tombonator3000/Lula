@@ -1,0 +1,42 @@
+# seconds: 70
+# expects: loading the patched stage-1 save (account 120000, flags 0x455841/0x455845 = 1) lets the stage-1 end check 0x408dea call INIT_STUFE(2): the stage-2 office (room 5, SEKR_ANI.TAF) appears -> Laptop opens DDF 54 (Game options / Put movies on sale) -> "Put movies on sale" -> info box "You haven't got any finished movies!" -> thumbs up -> "Game options" opens the options dialog from the laptop -> thumbs up -> laptop thumbs up -> Secretary -> "Because you haven't hired a secretary, you can't undress one!" -> Broom cupboard -> "That's just a junk room." -> Secretary again -> "To the other WET buildings" -> room 20 (BAUTEN.TAF, the WET plot with the office building). No lula[warn]/trap.
+# save: s1flag
+# note: "Office1" (patched) is the Load-dialog entry at 300,81 (slot 1)
+# check: CreateFileA\(DATA\\ANI\\SEKR_ANI\.TAF, read
+# check: DrawTextA\("\s*You haven't got any finished movies!\s*"
+# check: DrawTextA\("\s*Because you haven't hired a secretary, you can't undress one!\s*"
+# check: DrawTextA\("\s*That's just a junk room\.\s*"
+# check: CreateFileA\(DATA\\ANI\\BAUTEN\.TAF, read
+12000 move 505 40
+12500 click 505 40
+15000 move 300 81
+15500 click 300 81
+17000 move 263 228
+17500 click 263 228
+24000 move 277 260
+24500 click 277 260
+27000 move 390 210
+27500 click 390 210
+30000 move 340 305
+30500 click 340 305
+33000 move 225 210
+33500 click 225 210
+36000 move 328 368
+36500 click 328 368
+39000 move 320 300
+39500 click 320 300
+42000 move 350 230
+42500 click 350 230
+45000 move 340 305
+45500 click 340 305
+48000 move 440 150
+48500 click 440 150
+51000 move 340 305
+51500 click 340 305
+54000 move 340 360
+54500 click 340 360
+57000 move 340 305
+57500 click 340 305
+60000 move 560 100
+60500 click 560 100
+65000 move 300 400

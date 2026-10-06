@@ -1,0 +1,51 @@
+# seconds: 66
+# expects: stage-1 save at 10:00 -> Sex store (stage-1 room 4, SHOP1_~1.TAF, hotspots 0x40c648) -> Sex toys -> DDF "What's it to be?" (toy picture, thumb, toilet) -> thumb -> list dialog "Sex toys:" (10 items: Sumer Dildo Neon 50$ ... Prema All 100$) + "Shopping list:" -> item 1, Buy, item 4, Buy -> thumb pays -> info "$... was deducted from your account" (account 20000 -> lower) -> thumb -> Sex toys again -> toilet (cancel) -> Salesman spot (only clickable at one animation frame, usually a no-op; when hit: "If anything's going right now, it's home videos.") -> To the town. No lula[warn]/trap.
+# save: s1town10
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000
+# check: CreateFileA\(DATA\\ANI\\SHOP1_~1\.TAF, read
+# check: DrawTextA\("\s*What's it to be\?\s*"
+# check: DrawTextA\("\s*Sex toys:\s*"
+# check: DrawTextA\("\s*\$\d+ was deducted from your account\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Sex store (143..309, 275..398)
+22000 move 226 336
+22500 click 226 336
+# Sex toys (266..639, 317..433)
+26000 move 450 380
+26500 click 450 380
+# "What's it to be?" -> thumb
+29500 move 397 362
+30000 click 397 362
+# list: item 1, Buy, item 4, Buy, thumb of the shopping list
+32500 move 150 165
+33000 click 150 165
+34500 move 155 342
+35000 click 155 342
+36500 move 150 214
+37000 click 150 214
+38500 move 155 342
+39000 click 155 342
+41000 move 578 342
+41500 click 578 342
+# info box "$... was deducted" -> thumb
+44500 move 344 312
+45000 click 344 312
+# Sex toys again -> toilet (cancel)
+48000 move 450 380
+48500 click 450 380
+51500 move 462 362
+52000 click 462 362
+# Salesman (134..240, 61..264)
+55000 move 187 160
+55500 click 187 160
+58000 move 344 312
+58500 click 344 312
+# To the town (0..215, 343..479)
+61500 move 100 410
+62000 click 100 410
+65000 move 300 300

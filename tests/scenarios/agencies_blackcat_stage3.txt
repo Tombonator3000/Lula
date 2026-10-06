@@ -1,0 +1,69 @@
+# seconds: 100
+# expects: stage-3 save "Mansion3b" (Los Angeles, account 1650000) -> office -> To the overview (city map, CITIES/CTY_MEN) -> "To the Black Cat agency" (room 7 stage 3, setup 0x431c1b) -> "Sabotage hostile companies" -> "Sabotage" sheet (DDF 0x54, callback 0x431dbd): Kind of treatment Customersupport 15000 $, Nuclear 1st strike 500000 $, Intimidation 8000 $ -> Start operation without a store -> info box "You haven't chosen a store yet!" (the sheet is hidden while the box shows) -> thumb -> back on the still open Sabotage sheet -> Choose store -> "Aimsearch" city view with the rival logos -> Drippin' Lips store (its only Los Angeles store; with the runner's fixed LULA_CLOCK the rival stores sit at Drippin' Lips 288,108 and 2 Tail Hearts 210,160 / 397,110, Double D has none here): store name, "Trnovr: 0 $" -> thumbs up -> Start operation -> "Store is 'treated' for 7 days." (account 1650000 -> 1642000) -> thumb -> sheet now says "All stores are already being sabotaged" (1855: 0x4322d1 finds no untreated Drippin' Lips store) -> Lemon Juice: "No stores in the city" (1851) -> 2 Tail Hearts: treatment buttons again -> Choose store -> the left of its two stores -> thumbs up -> Start operation -> "Store is 'treated' for 7 days." (account 1634000) -> thumb -> toilet closes the sheet -> "To the town" -> city map. No lula[warn]/trap.
+# save: s3b
+# note: "Mansion3b" is the Load-dialog entry at 300,107 (slot 3)
+# check: DrawTextA\("\s*You haven't chosen a store yet!\s*"
+# check: (?s)ms: click 288 108.*Store is 'treated' for 7 days\.
+# check: DrawTextA\("\s*All stores are already being sabotaged\s*"
+# check: DrawTextA\("\s*No stores in the city\s*"
+# check: (?s)ms: click 210 160.*Store is 'treated' for 7 days\.
+# main menu -> Load Game -> Mansion3b -> Load (stage-3 office)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 107
+15500 click 300 107
+17500 move 263 228
+18000 click 263 228
+# office: To the overview (0..200, 0..300) -> city map; Black Cat button (second portrait, 365.., 96..)
+24000 move 100 150
+24500 click 100 150
+28000 move 420 135
+28500 click 420 135
+# Sabotage hostile companies (322..455, 12..209)
+32000 move 390 100
+32500 click 390 100
+# kinds of treatment: Customersupport, Nuclear 1st strike, Intimidation
+35500 move 185 181
+36000 click 185 181
+38000 move 185 325
+38500 click 185 325
+40500 move 185 134
+41000 click 185 134
+# Start operation without a store -> info box, thumb -> back on the sheet
+43000 move 283 446
+43500 click 283 446
+46500 move 340 306
+47000 click 340 306
+# Choose store -> Aimsearch -> Drippin' Lips -> thumbs up -> Start operation -> info box -> thumb
+50000 move 179 389
+50500 click 179 389
+53500 move 288 108
+54000 click 288 108
+56500 move 530 437
+57000 click 530 437
+59500 move 283 446
+60000 click 283 446
+63000 move 340 306
+63500 click 340 306
+# Drippin' Lips has no untreated store left; Lemon Juice has none in Los Angeles; 2 Tail Hearts has two
+66500 move 48 250
+67000 click 48 250
+69500 move 48 182
+70000 click 48 182
+# Choose store -> Aimsearch -> the left 2 Tail Hearts store -> thumbs up -> Start operation -> info box -> thumb
+72500 move 179 389
+73000 click 179 389
+76000 move 210 160
+76500 click 210 160
+79000 move 530 437
+79500 click 530 437
+82000 move 283 446
+82500 click 283 446
+85500 move 340 306
+86000 click 340 306
+# toilet closes the Sabotage sheet; To the town (0..285, 0..311)
+89000 move 592 440
+89500 click 592 440
+92500 move 140 150
+93000 click 140 150
+96500 move 300 420

@@ -38,13 +38,53 @@ WINAPI_FN(kernel32, GetTickCount)
     RET(0, (uint32_t)(ms - start));
 }
 
+/* LULA_CLOCK=YYYY-MM-DDTHH:MM:SS (test hook): the wall clock starts at that
+ * local time on the first call and then advances in real time. The game reads
+ * the wall clock only through time() -> GetLocalTime for its srand() seed, so
+ * a fixed start makes rand() repeatable between runs. */
+static bool fixed_clock(struct timespec *ts)
+{
+    static int state = -1;          /* -1 unknown, 0 real clock, 1 fixed */
+    static int64_t start_ms, base_ms;
+    struct timespec mono;
+    clock_gettime(CLOCK_MONOTONIC, &mono);
+    int64_t now = (int64_t)mono.tv_sec * 1000 + mono.tv_nsec / 1000000;
+    if (state < 0) {
+        const char *env = getenv("LULA_CLOCK");
+        struct tm tm = {0};
+        state = 0;
+        if (env && *env) {
+            if (sscanf(env, "%d-%d-%dT%d:%d:%d", &tm.tm_year, &tm.tm_mon, &tm.tm_mday,
+                       &tm.tm_hour, &tm.tm_min, &tm.tm_sec) == 6) {
+                tm.tm_year -= 1900;
+                tm.tm_mon -= 1;
+                base_ms = (int64_t)timegm(&tm) * 1000;
+                start_ms = now;
+                state = 1;
+            } else {
+                RT_WARN("LULA_CLOCK=%s: expected YYYY-MM-DDTHH:MM:SS", env);
+            }
+        }
+    }
+    if (state == 0)
+        return false;
+    int64_t ms = base_ms + (now - start_ms);
+    ts->tv_sec = (time_t)(ms / 1000);
+    ts->tv_nsec = (long)(ms % 1000) * 1000000;
+    return true;
+}
+
 WINAPI_FN(kernel32, GetLocalTime)
 {
     uint32_t st = ARG(0);
     struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
     struct tm tm;
-    localtime_r(&ts.tv_sec, &tm);
+    if (fixed_clock(&ts)) {
+        gmtime_r(&ts.tv_sec, &tm);   /* the fixed time is already local time */
+    } else {
+        clock_gettime(CLOCK_REALTIME, &ts);
+        localtime_r(&ts.tv_sec, &tm);
+    }
     W16(st + 0, (uint16_t)(tm.tm_year + 1900));
     W16(st + 2, (uint16_t)(tm.tm_mon + 1));
     W16(st + 4, (uint16_t)tm.tm_wday);

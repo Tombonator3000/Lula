@@ -1,0 +1,86 @@
+# seconds: 118
+# expects: stage-1 save at 10:00 -> Bar -> Toilet (room 27: DOWN1.TBF, KLOSPRIT/PISSED TAFs). The drunk man is present with 50 % chance per visit (setup 0x42e20c, game RNG is time-seeded), so the visit is repeated five times (Toilet <-> Bar, ~97 % to meet him): Drunk man -> yes/no "You really gonna beat him up?" -> thumb: beating sound, the man lies on the floor -> click him again: a random item (Money, Lighter, Watch, Gold tooth, Teeth, Wristwatch) appears at the bottom -> click the item (money goes to the account) -> "Bar" back to the bar. After one beating he stays away (0x45580d = 4..9 h), so the remaining visits show the empty toilet and their clicks are no-ops. Ends with To the town. No lula[warn]/trap.
+# save: s1town10
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000
+# check: CreateFileA\(DATA\\BACK\\DOWN1\.TBF, read
+# check: CreateFileA\(DATA\\ANI\\KLOSPRIT\.TAF, read
+# check: DrawTextA\("\s*You really gonna beat him up\?\s*"
+# random: the drunk man is rolled on every toilet visit (rand() seeded from time()). With the runner's fixed LULA_CLOCK he is there on the fourth visit.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Bar
+22000 move 304 230
+22500 click 304 230
+# visit 1: Toilet door (90..138, 57..157), Drunk man (131..262, 67..366), thumb, search (131..384, 289..418), item (300..392, 410..479), Bar (395..639, 404..479)
+25500 move 114 107
+26000 click 114 107
+28500 move 196 200
+29000 click 196 200
+31000 move 318 305
+31500 click 318 305
+34000 move 230 350
+34500 click 230 350
+36500 move 346 445
+37000 click 346 445
+39000 move 500 440
+39500 click 500 440
+# visit 2: Toilet door (90..138, 57..157), Drunk man (131..262, 67..366), thumb, search (131..384, 289..418), item (300..392, 410..479), Bar (395..639, 404..479)
+42500 move 114 107
+43000 click 114 107
+45500 move 196 200
+46000 click 196 200
+48000 move 318 305
+48500 click 318 305
+51000 move 230 350
+51500 click 230 350
+53500 move 346 445
+54000 click 346 445
+56000 move 500 440
+56500 click 500 440
+# visit 3: Toilet door (90..138, 57..157), Drunk man (131..262, 67..366), thumb, search (131..384, 289..418), item (300..392, 410..479), Bar (395..639, 404..479)
+59500 move 114 107
+60000 click 114 107
+62500 move 196 200
+63000 click 196 200
+65000 move 318 305
+65500 click 318 305
+68000 move 230 350
+68500 click 230 350
+70500 move 346 445
+71000 click 346 445
+73000 move 500 440
+73500 click 500 440
+# visit 4: Toilet door (90..138, 57..157), Drunk man (131..262, 67..366), thumb, search (131..384, 289..418), item (300..392, 410..479), Bar (395..639, 404..479)
+76500 move 114 107
+77000 click 114 107
+79500 move 196 200
+80000 click 196 200
+82000 move 318 305
+82500 click 318 305
+85000 move 230 350
+85500 click 230 350
+87500 move 346 445
+88000 click 346 445
+90000 move 500 440
+90500 click 500 440
+# visit 5: Toilet door (90..138, 57..157), Drunk man (131..262, 67..366), thumb, search (131..384, 289..418), item (300..392, 410..479), Bar (395..639, 404..479)
+93500 move 114 107
+94000 click 114 107
+96500 move 196 200
+97000 click 196 200
+99000 move 318 305
+99500 click 318 305
+102000 move 230 350
+102500 click 230 350
+104500 move 346 445
+105000 click 346 445
+107000 move 500 440
+107500 click 500 440
+# To the town
+110500 move 120 450
+111000 click 120 450
+114000 move 300 300

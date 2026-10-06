@@ -1,0 +1,52 @@
+# seconds: 76
+# expects: stage-1 save with 0x455791 = 1 (Lula wants a partner) and rent 0x455740 = 30 h: town -> Police first (so the town is re-entered and the flying bird cannot turn the Chicken farm click into a shot) -> To the town -> Chicken farm -> Ma -> DDF "Sign up girls for next session" (girl card with photo, name, age, measurements, "For $400, <name> will do just about anything for you", page arrows) -> next girl, previous girl -> thumb -> info "The girl is yours for a day. She's waiting in your room" -> thumb -> "$<price> was deducted from your account" -> thumb -> Ma again (Lula no longer wants a partner) -> info "Lula doesn't want a partner right now" -> thumb -> To the town. No lula[warn]/trap.
+# save: s1partner
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000, 0x455791 = 1, 0x455740 = 30
+# check: DrawTextA\("\s*Sign up girls for next session\s*"
+# check: DrawTextA\("\s*For \$\d+, \w+ will do just about anything for you\s*"
+# check: DrawTextA\("\s*The girl is yours for a day\. She's waiting in your room\s*"
+# check: DrawTextA\("\s*\$\d+ was deducted from your account\s*"
+# check: DrawTextA\("\s*Lula doesn't want a partner right now\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Police (366..475, 155..250): "Don't you think you'll be back here soon enough?" -> thumb -> To the town (472..639, 282..479)
+22000 move 420 240
+22500 click 420 240
+26000 move 344 312
+26500 click 344 312
+29000 move 550 380
+29500 click 550 380
+# Chicken farm (276..378, 58..126), within a few seconds of entering the town
+32500 move 327 92
+33000 click 327 92
+# Ma (513..633, 235..394)
+36500 move 570 310
+37000 click 570 310
+# next girl, previous girl, thumb
+40000 move 381 300
+40500 click 381 300
+42500 move 56 300
+43000 click 56 300
+45000 move 381 362
+45500 click 381 362
+# "The girl is yours for a day..." -> thumb; "$... was deducted from your account" -> thumb
+48500 move 344 312
+49000 click 344 312
+52000 move 344 312
+52500 click 344 312
+# Ma again -> "Lula doesn't want a partner right now" -> thumb
+56000 move 570 310
+56500 click 570 310
+59500 move 344 312
+60000 click 344 312
+# toilet in case the sign-up sheet opened again
+63000 move 450 362
+63500 click 450 362
+# To the town (0..129, 334..479)
+67000 move 60 400
+67500 click 60 400
+71500 move 300 300

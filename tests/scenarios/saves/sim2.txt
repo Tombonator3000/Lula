@@ -1,0 +1,19 @@
+# Load "Stage2" (slot 4, patched: fast clock, Sunday 1-7-1997 15:30) -> To the overview
+# -> F2 -> Save game -> slot 4 (300,119) "Sim2".
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 150 40
+22500 click 150 40
+25000 key F2
+28000 move 305 212
+28500 click 305 212
+31000 move 300 119
+31500 click 300 119
+33500 move 263 228
+34000 click 263 228
+36500 type Sim2
+38000 key RETURN

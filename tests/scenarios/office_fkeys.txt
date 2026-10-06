@@ -1,0 +1,21 @@
+# seconds: 48
+# expects: New game -> F7 shows the version overlay "Version: 1.690000 F DEBUG_DAT" top right (printf %f of the float at 0x455624) -> F8 writes "   0.PCX" (640x480, RLE, matches the screen) into the save root -> F1 (help video, skipped with -novideo: no visible change) -> F7 hides, V shows, V hides the overlay (each with MessageBeep) -> F3/F6 do nothing -> second F8 writes "   1.PCX" -> F2 options -> End game -> session ends: INIT_GAME_VARS runs again (~6.5 s black/no-present gap of 200 vblank pairs) -> town re-init -> main menu (Load Game / New game / See intro / See intro help videos / End game). No lula[warn]/trap.
+# save: none
+# check: CreateFileA\(   0\.PCX, write
+# check: CreateFileA\(   1\.PCX, write
+# check: (?s)ms: click 305 276.*CreateFileA\(DATA\\ANI\\BIRD1\.TAF.*DrawTextA\("\s*New game
+12000 move 505 88
+12500 click 505 88
+19000 key F7
+21000 key F8
+23000 key F1
+26000 key F7
+28000 key V
+30000 key V
+31000 key F3
+32000 key F6
+33000 key F8
+35000 key F2
+37500 move 305 276
+38000 click 305 276
+41000 move 300 300

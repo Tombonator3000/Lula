@@ -1,0 +1,69 @@
+# seconds: 100
+# expects: stage-3 save "Store3" with the account patched to 50000000 -> city map -> "To the airport" -> USA map now shows the launch tower near Houston (0x42af61 registers hotspot 11 = Houston dot 320..352, 321..353 only when [0x45568c] >= 50000000) -> Houston -> room 30 stage 3 (launch site, NASA02.TBF, setup 0x429445): "Click on the girl to start the shuttle!" -> "To the map" (0..640, 0..176) -> USA map -> Houston again -> clicks below the "To the map" strip until one hits the flying girl -> end sequence 0x410ebf: ADDGPX.TGP / ADDSND.TAP party slideshow (one present per slide, so the frame dump only gets a new frame every ~6 s) -> ESCAPE -> yes/no "CONGRATULATIONS you have completed all three stages! Do you want to play again?" (1151) -> toilet ("no") -> 0x42950e sets [0x4555e4] = 1 -> the game state is reset (stage-1 town "Monday 1-1-1997 7:00 Account: 500" is drawn once, ~7 s without frames while stage-1 assets load) -> main menu (WET_BEGIN_DLG). The thumb ("yes, play again") would only return to the launch site. No lula[warn]/trap.
+# save: rich3
+# note: "Store3" is the Load-dialog entry at 300,119 (slot 4); store3 with 0x45568c = 50000000
+# check: CreateFileA\(DATA\\BACK\\NASA02\.TBF, read
+# check: DrawTextA\("\s*Click on the girl to start the shuttle!\s*"
+# check: CreateFileA\(DATA\\SOUND\\ADDSND\.TAP, read
+# check: DrawTextA\("\s*CONGRATULATIONS you have completed all three stages!
+# check: (?s)CONGRATULATIONS.*CreateFileA\(DATA\\ANI\\BIRD1\.TAF
+# main menu -> Load Game -> Store3 -> Load (city map)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# To the airport -> Houston (launch site) -> To the map -> Houston again
+23000 move 170 380
+23500 click 170 380
+27000 move 336 337
+27500 click 336 337
+31000 move 320 80
+31500 click 320 80
+35000 move 336 337
+35500 click 335 337
+# the girl flies around the rocket; click a grid of points below the "To the map" strip until one hits her (0x404926 sprite test) -> end slideshow
+38700 move 120 370
+39000 click 120 370
+39500 move 260 420
+39800 click 260 420
+40300 move 400 370
+40600 click 400 370
+41100 move 540 420
+41400 click 540 420
+41900 move 120 420
+42200 click 120 420
+42700 move 260 370
+43000 click 260 370
+43500 move 400 420
+43800 click 400 420
+44300 move 540 370
+44600 click 540 370
+45100 move 120 370
+45400 click 120 370
+45900 move 260 420
+46200 click 260 420
+46700 move 400 370
+47000 click 400 370
+47500 move 540 420
+47800 click 540 420
+48300 move 120 420
+48600 click 120 420
+49100 move 260 370
+49400 click 260 370
+49900 move 400 420
+50200 click 400 420
+50700 move 540 370
+51000 click 540 370
+51500 move 120 370
+51800 click 120 370
+52300 move 260 420
+52600 click 260 420
+53100 move 400 370
+53400 click 400 370
+# let the slideshow run, then ESCAPE ends it (0x410ebf) -> "CONGRATULATIONS you have completed all three stages! Do you want to play again?" yes/no (1151)
+80000 key ESCAPE
+# answer "no" (toilet): 0x42950e sets [0x4555e4] = 1 -> back to the main menu
+84000 move 400 305
+84500 click 400 305

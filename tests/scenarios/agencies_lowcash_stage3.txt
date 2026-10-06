@@ -1,0 +1,50 @@
+# seconds: 84
+# expects: stage-3 save "Store3" with the account patched to -99800 (the credit line of 100000 is kept, so 0x40561d sees 200 $ available) -> city map -> "To the Black Cat agency" -> "Sabotage hostile companies" -> Choose store -> Drippin' Lips store -> thumbs up -> Start operation (Intimidation 8000 $) -> "Unfortunately you haven't got enough money!" (903, path 0x431f5a; account unchanged) -> thumb -> toilet -> "To the town" -> "To the airport" -> Chicago -> flight sheet "Ticket: 700 $" -> thumbs up -> "Unfortunately you haven't got enough money!" (0x42b0fe) -> thumb -> the flight sheet is still open (redrawn over the room; the parts of the larger info box outside it stay on screen until the sheet closes, the same incremental redraw as everywhere in the DDF engine) -> toilet -> USA map, no plane -> "To the town" (136..640, 0..96) -> city map; account still -99800. No lula[warn]/trap.
+# save: poor3
+# note: "Store3" is the Load-dialog entry at 300,119 (slot 4); store3 with 0x45568c = -99800; patching 0x455684 has no effect, the credit line comes back as 100000
+# check: DrawTextA\("\s*Aimsearch\s*"
+# check: (?s)ms: click 288 108.*Unfortunately you haven't got enough money!
+# check: DrawTextA\("\s*Travltime:\s*"
+# check: (?s)ms: click 400 338.*Unfortunately you haven't got enough money!
+# main menu -> Load Game -> Store3 -> Load (city map)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Black Cat agency -> Sabotage -> Choose store -> Drippin' Lips -> thumbs up -> Start operation -> refusal -> thumb
+23000 move 420 135
+23500 click 420 135
+27000 move 390 100
+27500 click 390 100
+30500 move 179 389
+31000 click 179 389
+34000 move 288 108
+34500 click 288 108
+37000 move 530 437
+37500 click 530 437
+40000 move 283 446
+40500 click 283 446
+43500 move 340 306
+44000 click 340 306
+# toilet closes the sheet; To the town (0..285, 0..311)
+47000 move 592 440
+47500 click 592 440
+50500 move 140 150
+51000 click 140 150
+# To the airport -> Chicago -> thumbs up -> refusal -> thumb
+54500 move 170 380
+55000 click 170 380
+58500 move 413 163
+59000 click 413 163
+62000 move 400 338
+62500 click 400 338
+65500 move 340 306
+66000 click 340 306
+# the flight sheet stays open after the refusal: toilet closes it; To the town (136..640, 0..96)
+69500 move 432 338
+70000 click 432 338
+73500 move 400 50
+74000 click 400 50
+78000 move 320 300

@@ -1,0 +1,47 @@
+# seconds: 75
+# expects: New game -> town -> Motel -> Reception -> motel owner rent dialog (DDF): "Rental for one day", thumbs up, "$100 was deducted" info box (account 500 -> 400) -> back out -> Motel room (stage-1 office, room 5: LULA_ZIM/ZIM_DET/GIRL_FLM/VER_ICON TAFs load) -> click Lula twice (pose animation) -> Suitcase opens the options dialog (DDF 36) -> Music/Sound toggles off and on -> thumbs up closes -> TV / Finished sessions spots (no dialog without equipment/sessions) -> "To the motel". No lula[warn]/trap.
+# save: none
+# check: DrawTextA\("\s*\$100 was deducted from your account\s*"
+# check: CreateFileA\(DATA\\ANI\\LULA_ZIM\.TAF, read
+# check: DrawTextA\("\s*Game speed
+12000 move 505 88
+12500 click 505 88
+19000 move 77 145
+19500 click 77 145
+23000 move 374 311
+23500 click 374 311
+27000 move 200 180
+27500 click 200 180
+30500 move 78 306
+31000 click 78 306
+32500 move 380 366
+33000 click 380 366
+35500 move 340 305
+36000 click 340 305
+38500 move 40 200
+39000 click 40 200
+42500 move 455 180
+43000 click 455 180
+47000 move 189 286
+47500 click 189 286
+50500 move 189 286
+51000 click 189 286
+54000 move 465 196
+54500 click 465 196
+57000 move 130 110
+57500 click 130 110
+59000 move 130 155
+59500 click 130 155
+61000 move 130 110
+61500 click 130 110
+63000 move 130 155
+63500 click 130 155
+65000 move 328 368
+65500 click 328 368
+67500 move 325 75
+68000 click 325 75
+69500 move 585 427
+70000 click 585 427
+71500 move 570 200
+72000 click 570 200
+74500 move 300 300

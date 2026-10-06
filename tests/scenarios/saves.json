@@ -1,0 +1,296 @@
+{
+  "_comment": [
+    "Save templates for tests/scenarios/*.txt, built by tools/scenarios.py saves into build/scenarios/saves/NAME.",
+    "from: parent template (null = empty save dir). script: input lines (list) or a file in tests/scenarios/saves/.",
+    "seconds: when the builder quits the game. slot: the SAVEGAME slot that patch applies to (default 4).",
+    "patch: {address: int (little-endian dword) or string (raw bytes)}, address = guest VA, file offset = address - 0x455620.",
+    "check: {slot, stage, room, name, account, day, month, year, hour, minute, \"0xADDRESS\": dword} asserted after the build (a list for several slots).",
+    "Order: copy the parent, run the script, delete W_DEBUG.DAT, copy_slot, patch, check."
+  ],
+
+  "s1base": {
+    "from": null,
+    "note": "New game, saved at once in the stage-1 town (about 7:40, account 500) as 'Base' in slot 4.",
+    "script": [
+      "11500 move 505 88", "12000 click 505 88",
+      "22000 key F2",
+      "25000 move 305 212", "25500 click 305 212",
+      "28000 move 300 119", "28500 click 300 119",
+      "30500 move 263 228", "31000 click 263 228",
+      "33500 type Base",
+      "35000 key RETURN"
+    ],
+    "seconds": 38,
+    "check": {"slot": 4, "stage": 1, "room": 1, "name": "Base"}
+  },
+  "s1town10": {
+    "from": "s1base",
+    "note": "Stage-1 town at 10:00 (all places open), account 20000.",
+    "patch": {"0x4556a8": 10, "0x4556ac": 0, "0x45568c": 20000},
+    "check": {"slot": 4, "stage": 1, "room": 1, "hour": 10, "account": 20000}
+  },
+  "s1fbi": {
+    "from": "s1town10",
+    "note": "FBI countdown 0x455831 = 40: FBI car in town, Dealer Don always in the bar.",
+    "patch": {"0x455831": 40},
+    "check": {"slot": 4, "stage": 1}
+  },
+  "s1rich": {
+    "from": "s1fbi",
+    "note": "Account 70000: buying Don's identity ends stage 1.",
+    "patch": {"0x45568c": 70000},
+    "check": {"slot": 4, "stage": 1, "account": 70000}
+  },
+  "s1rentfbi": {
+    "from": "s1town10",
+    "note": "Rent 0x455740 = 4 h, FBI countdown 40, 0x455799 = 40 (motel: 'Pay the rental first!', blackmail, rent reminder).",
+    "patch": {"0x455740": 4, "0x455831": 40, "0x455799": 40},
+    "check": {"slot": 4, "stage": 1}
+  },
+  "s1partner": {
+    "from": "s1town10",
+    "note": "0x455791 = 1 (Lula wants a partner), rent 30 h (chicken farm sign-up).",
+    "patch": {"0x455791": 1, "0x455740": 30},
+    "check": {"slot": 4, "stage": 1}
+  },
+  "s1arrest": {
+    "from": "s1town10",
+    "note": "0x455829 = 3: arrested (police cell).",
+    "patch": {"0x455829": 3},
+    "check": {"slot": 4, "stage": 1}
+  },
+  "s1chick": {
+    "from": "s1town10",
+    "note": "0x45583d = 1: one more bird kill pays the $500 reward.",
+    "patch": {"0x45583d": 1},
+    "check": {"slot": 4, "stage": 1}
+  },
+  "s1late": {
+    "from": "s1town10",
+    "note": "Clock 23:50 (day end a few seconds after loading).",
+    "patch": {"0x4556a8": 23, "0x4556ac": 50},
+    "check": {"slot": 4, "stage": 1, "hour": 23, "minute": 50}
+  },
+  "s1fbi2": {
+    "from": "s1town10",
+    "note": "FBI countdown 0x455831 = 2, clock 10:40 (arrest at 12:00).",
+    "patch": {"0x455831": 2, "0x4556ac": 40},
+    "check": {"slot": 4, "stage": 1, "hour": 10, "minute": 40}
+  },
+  "s1noon": {
+    "from": "s1town10",
+    "note": "Clock 11:30 (Lula's bar shift starts at 12:00).",
+    "patch": {"0x4556a8": 11, "0x4556ac": 30},
+    "check": {"slot": 4, "stage": 1, "hour": 11, "minute": 30}
+  },
+
+  "stage1_goal": {
+    "from": "s1base",
+    "note": "Stage-1 save patched so that the stage-1 end check passes on loading (account 60000, flags 0x455841/0x455845 = 1).",
+    "patch": {"0x45568c": 60000, "0x455841": 1, "0x455845": 1, "0x455831": 0},
+    "check": {"slot": 4, "stage": 1, "account": 60000}
+  },
+  "stage2": {
+    "from": "stage1_goal",
+    "note": "Loading stage1_goal switches to the stage-2 office (8:00, account 60000); saved by the game as 'Stage2'.",
+    "script": [
+      "11500 move 505 40", "12000 click 505 40",
+      "15000 move 300 119", "15500 click 300 119",
+      "17500 move 263 228", "18000 click 263 228",
+      "24000 key F2",
+      "27000 move 305 212", "27500 click 305 212",
+      "30000 move 300 119", "30500 click 300 119",
+      "32500 move 263 228", "33000 click 263 228",
+      "35500 type Stage2",
+      "37000 key RETURN"
+    ],
+    "seconds": 40,
+    "check": {"slot": 4, "stage": 2, "room": 5, "name": "Stage2", "account": 60000}
+  },
+  "stage2_rich": {
+    "from": "stage2",
+    "note": "Account 2500000 and clock 18:55: the day end switches to stage 3.",
+    "patch": {"0x45568c": 2500000, "0x4556a8": 18, "0x4556ac": 55},
+    "check": {"slot": 4, "stage": 2, "account": 2500000}
+  },
+  "stage2_movie": {
+    "from": "stage2",
+    "note": "Movie record 0 (0x455aa1) = finished movie 'TestMovie' (state +0x14c = 3, some quality values 60), movie count 0x457b49 = 1.",
+    "patch": {
+      "0x457b49": 1,
+      "0x455aa1": "TestMovie\u0000",
+      "0x455bed": 3,
+      "0x455d99": 60, "0x455d9d": 60, "0x455da1": 60, "0x455dad": 60
+    },
+    "check": {"slot": 4, "stage": 2}
+  },
+  "stage3": {
+    "from": "stage2_rich",
+    "note": "The game itself reaches stage 3 (Los Angeles realtor, room 6, 2-1-1997) and saves it as 'Stage3'.",
+    "script": "stage3.txt",
+    "seconds": 68,
+    "check": {"slot": 4, "stage": 3, "room": 6, "name": "Stage3"}
+  },
+  "s2bust": {
+    "from": "stage2",
+    "note": "Account -100000 (credit line 70000), 18:30, one game minute per tick.",
+    "patch": {"0x45568c": -100000, "0x4556a8": 18, "0x4556ac": 30, "0x4556bc": 0, "0x4556c0": 0},
+    "check": {"slot": 4, "stage": 2, "account": -100000}
+  },
+  "s2month": {
+    "from": "stage2",
+    "note": "Sunday 1-30-1997 19:00 (month change at the next day end).",
+    "patch": {"0x45569c": 30, "0x4556a8": 19, "0x4556ac": 0, "0x4556b8": 6},
+    "check": {"slot": 4, "stage": 2, "day": 30, "hour": 19, "minute": 0}
+  },
+  "s2year": {
+    "from": "stage2",
+    "note": "Sunday 12-30-1997 18:00, one game minute per tick (year change at the next day end).",
+    "patch": {"0x45569c": 30, "0x4556a0": 12, "0x4556a8": 18, "0x4556ac": 0, "0x4556b8": 6, "0x4556bc": 0, "0x4556c0": 0},
+    "check": {"slot": 4, "stage": 2, "day": 30, "month": 12, "hour": 18, "minute": 0}
+  },
+  "s2fast": {
+    "from": "stage2",
+    "note": "stage2 with one game minute per 60 ms tick (0x4556bc = 0, four times the normal speed).",
+    "patch": {"0x4556bc": 0},
+    "check": {"slot": 4, "stage": 2}
+  },
+  "s2fast_sunday": {
+    "from": "s2fast",
+    "note": "s2fast moved to Sunday 1-7-1997 15:30 (weekday 6), the input of sim2.",
+    "patch": {"0x45569c": 7, "0x4556b8": 6, "0x4556a8": 15, "0x4556ac": 30},
+    "check": {"slot": 4, "stage": 2, "day": 7}
+  },
+  "sim2": {
+    "from": "s2fast_sunday",
+    "note": "Saved by the game in the stage-2 overview as 'Sim2' after the clock ran a while; the clock is then set to 17:08. Stands in for the explorers' sim2, which the 6-day run build/explore/simulation/scripts/L3.txt wrote.",
+    "script": "sim2.txt",
+    "seconds": 41,
+    "patch": {"0x4556a8": 17, "0x4556ac": 8},
+    "check": {"slot": 4, "stage": 2, "room": 1, "name": "Sim2", "day": 7, "hour": 17}
+  },
+  "mkt2": {
+    "from": "stage2",
+    "note": "stage2 with the marketing office rented, saved in the marketing building (room 31) as 'Mkt2'.",
+    "script": "mkt2.txt",
+    "seconds": 78,
+    "check": {"slot": 4, "stage": 2, "room": 31, "name": "Mkt2"}
+  },
+
+  "office1": {
+    "from": null,
+    "note": "New game, motel room rented, saved in the motel room (room 5, stage 1) as 'Office1' in slot 1.",
+    "script": "office1.txt",
+    "seconds": 66,
+    "slot": 1,
+    "check": {"slot": 1, "stage": 1, "room": 5, "name": "Office1"}
+  },
+  "s1flag": {
+    "from": "office1",
+    "note": "Slot 1 patched with account 120000 and flags 0x455841/0x455845 = 1: loading it switches to the stage-2 office.",
+    "slot": 1,
+    "patch": {"0x45568c": 120000, "0x455841": 1, "0x455845": 1},
+    "check": {"slot": 1, "stage": 1, "room": 5, "account": 120000}
+  },
+  "s1flag3": {
+    "from": "office1",
+    "note": "Slot 1 patched with account 2500000, the stage-1 goal flags and clock 18:40: stage 2 at once, stage 3 at the 19:00 day end.",
+    "slot": 1,
+    "patch": {"0x45568c": 2500000, "0x455841": 1, "0x455845": 1, "0x4556a8": 18, "0x4556ac": 40},
+    "check": {"slot": 1, "stage": 1, "room": 5, "account": 2500000, "hour": 18, "minute": 40}
+  },
+  "s1room10": {
+    "from": "office1",
+    "note": "Slot 1 patched to 10:00 and account 20000 (input of s1eq).",
+    "slot": 1,
+    "patch": {"0x4556a8": 10, "0x4556ac": 0, "0x45568c": 20000},
+    "check": {"slot": 1, "stage": 1, "room": 5, "hour": 10}
+  },
+  "s1eq": {
+    "from": "s1room10",
+    "note": "Photo equipment bought at the Video store, saved in the motel room as 'Equipped' in slot 2.",
+    "script": "s1eq.txt",
+    "seconds": 104,
+    "check": {"slot": 2, "stage": 1, "room": 5, "name": "Equipped"}
+  },
+  "s2cast": {
+    "from": "s1flag",
+    "note": "Stage 2 with the casting office rented, saved in the casting office (room 21) as 'Casting2' in slot 2.",
+    "script": "s2cast.txt",
+    "seconds": 83,
+    "check": {"slot": 2, "stage": 2, "room": 21, "name": "Casting2"}
+  },
+  "s2cast9": {
+    "from": "s2cast",
+    "note": "Slot 2 clock set back to 9:05 (input of s2lula).",
+    "slot": 2,
+    "patch": {"0x4556a8": 9, "0x4556ac": 5},
+    "check": {"slot": 2, "stage": 2, "room": 21, "hour": 9}
+  },
+  "s2lula": {
+    "from": "s2cast9",
+    "note": "Lula's flat rented, saved there (room 23) as 'LulaFlat' in slot 3.",
+    "script": "s2lula.txt",
+    "seconds": 84,
+    "check": {"slot": 3, "stage": 2, "room": 23, "name": "LulaFlat"}
+  },
+  "s3office": {
+    "from": "s1flag3",
+    "note": "The game goes from stage 1 through stage 2 to stage 3, buys the mansion and saves the stage-3 office (room 5) as 'Mansion3' in slot 2.",
+    "script": "s3office.txt",
+    "seconds": 102,
+    "check": {"slot": 2, "stage": 3, "room": 5, "name": "Mansion3"}
+  },
+  "s3party": {
+    "from": "s3office",
+    "note": "Slot 2 with a weekly party plan (0x45d191 = 5, buffet 20, girls 36, last party 3-1-1997), clock 20:45, fastest game speed (0x4556bc = 1).",
+    "slot": 2,
+    "patch": {"0x45d191": 5, "0x45d195": 20, "0x45d199": 36, "0x45d19d": 3, "0x45d1a1": 1, "0x45d1a5": 1997,
+              "0x4556a8": 20, "0x4556ac": 45, "0x4556bc": 1},
+    "check": {"slot": 2, "stage": 3, "room": 5, "hour": 20, "minute": 45}
+  },
+  "s3b": {
+    "from": "s3office",
+    "note": "The secretary's present opened, saved as 'Mansion3b' in slot 3.",
+    "script": "s3b.txt",
+    "seconds": 47,
+    "check": {"slot": 3, "stage": 3, "room": 5, "name": "Mansion3b"}
+  },
+  "store3": {
+    "from": "s3b",
+    "note": "A 'Little junk store' rented in the Los Angeles suburbs (7800 $ a month, $50000 startup capital; the store on offer depends on the random city data, see LULA_CLOCK), saved on the city map (room 1) as 'Store3' in slot 4.",
+    "script": "store3.txt",
+    "seconds": 78,
+    "check": {"slot": 4, "stage": 3, "room": 1, "name": "Store3", "account": 1600000, "0x45cc75": 7800, "0x45cc81": 50000}
+  },
+  "store3am": {
+    "from": "store3",
+    "note": "Clock 8:00.",
+    "patch": {"0x4556a8": 8, "0x4556ac": 0},
+    "check": {"slot": 4, "stage": 3, "hour": 8}
+  },
+  "rich3": {
+    "from": "store3",
+    "note": "Account 50000000 (launch site unlocked).",
+    "patch": {"0x45568c": 50000000},
+    "check": {"slot": 4, "stage": 3, "account": 50000000}
+  },
+  "poor3": {
+    "from": "store3",
+    "note": "Account -99800 (credit line 100000 leaves 200 $).",
+    "patch": {"0x45568c": -99800},
+    "check": {"slot": 4, "stage": 3, "account": -99800}
+  },
+  "s3broke": {
+    "from": "store3",
+    "note": "Tuesday 21:00, one game minute per tick, store capital 500 $ (the store record of store3 starts at 0x45cc69: 0x45cc75 rent 7800, 0x45cc81 capital; the explorers' store sat at 0x45cf15, the record depends on the random city data).",
+    "patch": {"0x4556a8": 21, "0x4556ac": 0, "0x4556bc": 0, "0x4556c0": 0, "0x45cc81": 500},
+    "check": {"slot": 4, "stage": 3, "hour": 21, "0x45cc81": 500}
+  },
+  "s3cap": {
+    "from": "store3",
+    "note": "Tuesday 20:40.",
+    "patch": {"0x4556a8": 20, "0x4556ac": 40},
+    "check": {"slot": 4, "stage": 3, "hour": 20, "minute": 40}
+  }
+}

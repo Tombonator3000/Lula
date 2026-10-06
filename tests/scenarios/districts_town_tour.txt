@@ -1,0 +1,52 @@
+# seconds: 84
+# expects: New game -> stage-1 town (registering 0x40ac4e; BIRD1/CHICKEN/FBI_CAR/FADKREUZ TAFs, dawn palette, clock ~7:30, account 500). Before 10:00 the Bar, Video store and Pawnstore are closed (opening-hours table 0x450f0c), so their clicks are no-ops. Police (room 8): info "Don't you think you'll be back here soon enough?" -> thumb -> police office -> To the town. Chicken farm (room 28) -> Ma -> "Lula doesn't want a partner right now" -> thumb -> To the town. Parking lot (room 7, rockers) -> To the town. Motel (room 31) -> To the town. Distributor (room 3) -> To the town (each visit advances the clock, ~10:00 by the end; the town palette turns to day). Places are entered within a few seconds of (re)entering the town, before the flying bird can switch the cursor to the crosshair. No lula[warn]/trap.
+# save: none
+# check: DrawTextA\("\s*Don't you think you'll be back here soon enough\?\s*"
+# check: DrawTextA\("\s*Lula doesn't want a partner right now\s*"
+# check: CreateFileA\(DATA\\ANI\\MOT_ANI\.TAF, read
+# check: CreateFileA\(DATA\\ANI\\VER_ANI1\.TAF, read
+12000 move 505 88
+12500 click 505 88
+# Bar (closed before 10:00)
+21000 move 304 230
+21500 click 304 230
+# Police (366..475, 155..250) -> info box -> thumb -> To the town (472..639, 282..479)
+24000 move 420 240
+24500 click 420 240
+28000 move 344 312
+28500 click 344 312
+31500 move 550 380
+32000 click 550 380
+# Video store and Pawnstore (closed before 10:00)
+35000 move 562 250
+35500 click 562 250
+37000 move 60 300
+37500 click 60 300
+# Chicken farm (276..378, 58..126) -> Ma -> "Lula doesn't want a partner right now" -> thumb -> To the town
+39000 move 327 92
+39500 click 327 92
+43000 move 570 310
+43500 click 570 310
+46500 move 344 312
+47000 click 344 312
+50000 move 60 400
+50500 click 60 400
+# Parking lot (450..577, 355..464) -> To the town (0..90, 0..243)
+53500 move 513 410
+54000 click 513 410
+57500 move 45 120
+58000 click 45 120
+# Motel (4..151, 94..197) -> To the town (0..70, 154..479)
+61000 move 77 190
+61500 click 77 190
+65000 move 35 300
+65500 click 35 300
+# Distributor (382..477, 69..151) -> To the town (0..292, 398..479)
+68500 move 430 140
+69000 click 430 140
+73000 move 140 440
+73500 click 140 440
+# tooltips: Sex store, Parking lot
+77000 move 226 336
+79000 move 513 410
+81500 move 300 300

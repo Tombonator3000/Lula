@@ -1,0 +1,35 @@
+# seconds: 62
+# expects: stage-2 save after renting "Lula's flat" (the broom cupboard now leads to room 23, LULA_ANI/LULA_BAR/LULA_SCH) -> "Cast Lula for movie" -> "There's no movie in production yet!" -> thumbs up -> "Buy a present for Lula": vertical film strip (DDF) "Exclusive perfume 500 $" -> second item, down arrow, up arrow, third item (title/price change) -> thumbs up -> "To the office" -> stage-2 office -> Broom cupboard -> back in Lula's flat. No lula[warn]/trap.
+# save: s2lula
+# note: "LulaFlat" is the Load-dialog entry at 300,107 (slot 3)
+# check: DrawTextA\("\s*There's no movie in production yet!\s*"
+# check: DrawTextA\("\s*Exclusive perfume\s*"
+# check: DrawTextA\("\s*Pedigree pussy \(not shaved\)\s*"
+# check: (?s)ms: click 80 130.*SEKR_ANI\.TAF.*ms: click 440 150.*CreateFileA\(DATA\\ANI\\LULA_ANI\.TAF
+12000 move 505 40
+12500 click 505 40
+15000 move 300 107
+15500 click 300 107
+17000 move 263 228
+17500 click 263 228
+21000 move 505 405
+21500 click 505 405
+24500 move 340 305
+25000 click 340 305
+27500 move 565 400
+28000 click 565 400
+30500 move 272 250
+31000 click 272 250
+33000 move 275 406
+33500 click 275 406
+35500 move 275 93
+36000 click 275 93
+38000 move 272 350
+38500 click 272 350
+40500 move 430 350
+41000 click 430 350
+44000 move 80 130
+44500 click 80 130
+48500 move 440 150
+49000 click 440 150
+53000 move 300 470

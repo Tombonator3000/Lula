@@ -1,0 +1,48 @@
+# seconds: 62
+# expects: New game -> F2 opens the options dialog (DDF 36) over the town -> Samplerate opens the "Set Digital Output" popup (TrackPopupMenu at 100,40, 16 formats, current one checked); ESCAPE cancels; reopen and pick "8.000 kHz, 8-Bit, Mono" by mouse (command 100); reopen, DOWN x3 + RETURN picks command 101 (the disabled title is highlightable); check mark moves -> Music/Sound toggles, Play videos on and off again, 160x120 / Full-screen radios -> Volume slider (down then up), Balance slider far left, Game speed slider far right -> thumbs up closes; clock runs again. Log shows "TrackPopupMenu ... cancelled 0", "command 100", "command 101". No lula[warn]/trap.
+# save: none
+# check: DrawTextA\("\s*Game speed
+# check: TrackPopupMenu at 100,40 -> cancelled 0
+# check: TrackPopupMenu at 100,40 -> command 100
+# check: TrackPopupMenu at 100,40 -> command 101
+12000 move 505 88
+12500 click 505 88
+19000 key F2
+21500 move 165 197
+22000 click 165 197
+24000 move 300 450
+25000 key ESCAPE
+27000 move 165 197
+27500 click 165 197
+29500 move 160 87
+30000 click 160 87
+32000 move 165 197
+32500 click 165 197
+34500 move 300 450
+35000 key DOWN
+35500 key DOWN
+36000 key DOWN
+36500 key RETURN
+38500 move 130 110
+39000 click 130 110
+40500 move 130 155
+41000 click 130 155
+# Play videos on and off again (videos stay off in every scenario)
+42500 move 400 124
+43000 click 400 124
+43700 click 400 124
+44500 move 400 201
+45000 click 400 201
+46500 move 400 278
+47000 click 400 278
+48500 move 165 300
+49000 click 165 300
+50500 move 165 225
+51000 click 165 225
+52500 move 108 360
+53000 click 108 360
+54500 move 510 345
+55000 click 510 345
+56500 move 328 368
+57000 click 328 368
+60000 move 300 300

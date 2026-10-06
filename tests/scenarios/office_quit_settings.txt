@@ -1,0 +1,25 @@
+# seconds: 90
+# expects: New game -> F2 options: Samplerate popup -> "8.000 kHz, 8-Bit, Mono" (command 100), Music off, Volume slider moved -> End game (session ends, ~6.5 s vblank-loop black gap, re-init) -> main menu End game -> DDF yes/no "Are you sure you want to leave me already?" -> thumbs up -> exit credits (ADDGPX.TGP) -> DATA\SAVE\WET.1ST (132 bytes: +0x08 music 0, +0x10 format 0, +0x14 volume 102) written to the save dir and ExitProcess(0) at about 77 s: the process exits by itself (exit status 0, not 137). A later run with the same --save dir shows the options with Music off and the 8 kHz mono entry checked. No lula[warn]/trap.
+# save: none
+# check: TrackPopupMenu at 100,40 -> command 100
+# check: DrawTextA\("\s*Are you sure you want to leave me already\?\s*"
+# check: CreateFileA\(ADDGPX\.TGP, read
+# check: CreateFileA\(DATA\\SAVE\\WET\.1ST, write
+# check: ExitProcess\(0\)
+12000 move 505 88
+12500 click 505 88
+19000 key F2
+21500 move 165 197
+22000 click 165 197
+24000 move 160 87
+24500 click 160 87
+26500 move 130 110
+27000 click 130 110
+28500 move 165 300
+29000 click 165 300
+31000 move 305 276
+31500 click 305 276
+42000 move 565 245
+42500 click 565 245
+45500 move 318 308
+46000 click 318 308

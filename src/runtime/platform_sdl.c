@@ -124,11 +124,22 @@ uint16_t plat_async_key_state(int vk)
 static pthread_t main_thread;
 static Uint32 ev_quit;
 
+static volatile int guest_quit;    /* a guest thread asked to exit and holds the lock */
+
 static void quit_now(int code)
 {
+    /* Stop guest code before tearing anything down: the sound system runs
+     * in the 2 ms timer thread and calls DirectSound, and so the SDL audio
+     * device, at any time. A guest thread that asked to exit holds the
+     * global lock while it waits in plat_quit; otherwise take it here. */
+    if (!guest_quit)
+        rt_gil_acquire();
     rt_coverage_dump();
-    if (audio_dev)
-        SDL_CloseAudioDevice(audio_dev);
+    if (audio_dev) {
+        SDL_AudioDeviceID dev = audio_dev;
+        audio_dev = 0;
+        SDL_CloseAudioDevice(dev);
+    }
     if (audio_dump)
         fclose(audio_dump);
     SDL_Quit();
@@ -143,6 +154,7 @@ void plat_quit(int code)
     fflush(stderr);
     if (pthread_equal(pthread_self(), main_thread) || !ev_quit)
         quit_now(code);
+    guest_quit = 1;     /* called from guest code, so this thread holds the lock */
     SDL_Event e = {0};
     e.type = ev_quit;
     e.user.code = code;

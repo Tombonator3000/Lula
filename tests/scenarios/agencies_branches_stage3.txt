@@ -1,0 +1,68 @@
+# seconds: 114
+# expects: stage-3 save "Store3" (Los Angeles city map, one rented WET store) -> "To the branches" store icon (registered by 0x40b583 only when 0x40b823 finds a status-5 store) -> room 23 stage 3 (setup 0x4208f2: rival logos + WET logo, bottom buttons) -> the WET store is preselected (WET logo top right at 590,85 with the runner's fixed LULA_CLOCK; a click on it would open the store info sheet) -> buttons "Staff", "Departments", "Balance sheet" -> Staff sheet (DDF 0x4c): Number of staff slider -> 11, Quality slider -> 74 %, Staff costs 0 $ -> 48840 $ per month -> thumbs up -> Departments ("Dept.", DDF 0x4d): videos (2 SU) -> "Free space units 1 of 3", magazines (1 SU) replace them in the selected fitting slot -> "2 of 3" -> thumbs up -> yes/no "The conversion costs $7800. Do conversion?" -> yes (account 1600000 -> 1592200) -> Balance sheet ("Present", DDF 0x4e, callback 0x421caf): Monthly rental costs 7800 $, staff 48840 $, materials 5800 $, total 62440 $, Present acct. bal. 50000 $ -> "Stock up capital" -> EINZAHLEN_DLG (dlgproc 0x4222a7, Account = cash + credit line 1700000, prefill selected) -> 100000 + Enter -> store balance 150000 $, account 1492200 -> "Take out capital" -> AUSZAHLEN_DLG (0x4220fb) -> 20000 + Enter -> store balance 130000 $, account 1512200 -> thumbs up -> WET logo clicked again -> store info sheet (SEXSHOP_INFO_DLG, DDF 0x4b: Acct. bal. 130000 $, Trnovr, Expenses, Site) -> thumb -> 2 Tail Hearts logo -> "Competition" -> rival sheet ("2 Tail Hearts", Trnovr, store type, position) -> thumb -> "To the town" -> city map. No lula[warn]/trap.
+# save: store3
+# note: "Store3" is the Load-dialog entry at 300,119 (slot 4)
+# check: DrawTextA\("\s*48840 \$\s*"
+# check: DrawTextA\("\s*The conversion costs \$7800\. Do conversion\?\s*"
+# check: DrawTextA\("\s*150000 \$\s*"
+# check: DrawTextA\("\s*130000 \$\s*"
+# check: (?s)ms: click 476 436.*DrawTextA\("\s*2 Tail Hearts\s*"
+# main menu -> Load Game -> Store3 -> Load (city map)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# To the branches (store icon right of the portraits); our store (WET logo top right, 590,85) is already selected
+23000 move 530 290
+23500 click 530 290
+# Staff: number slider, quality slider, thumbs up
+30500 move 70 436
+31000 click 70 436
+34000 move 322 360
+34500 click 322 360
+37000 move 180 452
+37500 click 180 452
+40000 move 532 437
+40500 click 532 437
+# Departments: videos (2 SU), magazines (1 SU) into the same slot, thumbs up, yes to the conversion cost
+43500 move 205 436
+44000 click 205 436
+47000 move 285 145
+47500 click 285 145
+50000 move 370 180
+50500 click 370 180
+53000 move 532 437
+53500 click 532 437
+56000 move 312 300
+56500 click 312 300
+# Balance sheet: Stock up capital 100000, Take out capital 20000, thumbs up
+60500 move 341 436
+61000 click 341 436
+64000 move 497 302
+64500 click 497 302
+67500 type 100000
+69000 key RETURN
+72000 move 497 240
+72500 click 497 240
+75500 type 20000
+77000 key RETURN
+80000 move 535 440
+80500 click 535 440
+# WET logo again (already selected) -> SEXSHOP_INFO_DLG (DDF 0x4b, callback 0x421101) -> thumb
+84000 move 590 85
+84500 click 590 85
+87500 move 444 330
+88000 click 444 330
+# a rival logo (2 Tail Hearts) -> Competition -> thumb
+90500 move 392 57
+91000 click 392 57
+94000 move 476 436
+94500 click 476 436
+98000 move 444 330
+98500 click 444 330
+# To the town (thumb at the bottom right, 544..640, 167..480)
+102000 move 595 455
+102500 click 595 455
+106000 move 300 420

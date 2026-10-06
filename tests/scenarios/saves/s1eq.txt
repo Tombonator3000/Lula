@@ -1,0 +1,63 @@
+# Load "Office1" (slot 1, motel room at 10:00, account 20000) -> To the motel -> To the town
+# -> Video store -> Salesman -> Accessories: camera (Castor), spotlight, film; pay
+# -> To the town -> Motel -> Motel room -> F2 -> Save game -> slot 2 (300,94) "Equipped".
+12000 move 505 40
+12500 click 505 40
+15000 move 300 81
+15500 click 300 81
+17000 move 263 228
+17500 click 263 228
+22000 move 570 200
+22500 click 570 200
+26000 move 30 300
+26500 click 30 300
+30000 move 560 200
+30500 click 560 200
+34000 move 250 300
+34500 click 250 300
+37500 move 210 175
+38000 click 210 175
+40000 move 120 213
+40500 click 120 213
+42000 move 155 342
+42500 click 155 342
+44500 move 578 342
+45000 click 578 342
+47500 move 160 290
+48000 click 160 290
+50500 move 120 165
+51000 click 120 165
+52500 move 155 342
+53000 click 155 342
+55000 move 578 342
+55500 click 578 342
+58000 move 80 340
+58500 click 80 340
+61000 move 120 165
+61500 click 120 165
+63000 move 155 342
+63500 click 155 342
+65500 move 578 342
+66000 click 578 342
+68500 move 300 470
+68500 move 380 375
+69000 click 380 375
+71500 move 340 305
+72000 click 340 305
+74500 move 100 440
+75000 click 100 440
+78500 move 77 145
+79000 click 77 145
+82500 move 455 180
+83000 click 455 180
+87000 key F2
+89500 move 305 212
+90000 click 305 212
+92500 move 300 94
+93000 click 300 94
+94500 move 263 228
+95000 click 263 228
+97000 type Equipped
+98500 key RETURN
+101000 move 328 368
+101500 click 328 368

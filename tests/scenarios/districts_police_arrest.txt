@@ -1,0 +1,31 @@
+# seconds: 52
+# expects: stage-1 save with the arrest counter 0x455829 = 3 (hours of arrest) -> Police: the cell view (bars in front, sheriff behind; arrest count 0x45582d +1) with the "SM" spot on the handcuffs -> handcuffs -> full-screen DDF "Do you really want to be my slave ?" (thumb / toilet) -> toilet declines (back in the cell) -> handcuffs again -> thumb -> time jumps ~3 h -> "You're free!" -> thumb -> back in the town. No lula[warn]/trap.
+# save: s1arrest
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000, 0x455829 = 3
+# check: CreateFileA\(DATA\\ANI\\SAD_EYE\.TAF, read
+# check: DrawTextA\("\s*Do you really want to be my slave\s*\?\s*"
+# check: DrawTextA\("\s*You're free!\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Police (366..475, 155..250)
+22000 move 420 240
+22500 click 420 240
+# handcuffs "SM" (141..212, 360..444)
+26500 move 185 400
+27000 click 185 400
+# "Do you really want to be my slave ?" -> toilet (no)
+30500 move 470 103
+31000 click 470 103
+# handcuffs again -> thumb (yes)
+34500 move 185 400
+35000 click 185 400
+38500 move 397 103
+39000 click 397 103
+# "You're free!" -> thumb -> town
+44000 move 344 312
+44500 click 344 312
+48500 move 300 300

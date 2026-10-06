@@ -1,0 +1,76 @@
+# seconds: 113
+# expects: stage-1 save with rent 0x455740 = 4 h, FBI countdown 0x455831 = 40 (FBI car in the town) and 0x455799 = 40 -> Motel (stage-1 room 31, MOT_ANI.TAF) -> Motel room door with rent <= 4 and the owner at the pool -> DDF "Pay the rental first!" -> thumb -> Reception with the FBI countdown 1..43 -> DDF "I know about you! Saw it on TV. You pay me $1000 by tomorrow, or I'll say the word to the FBI..." -> money icon pays -> "$1000 was deducted from your account" -> thumb -> Reception again -> reception room (room 26, REZ_ANI/REZ_DET) -> motel owner -> rent-increase box "You think I don't know what you're doing up there?! From here on in, you're paying ... or I'm calling the Vice!" (callback 0x4311a7) -> thumb -> owner -> DDF "Rental for motel room ... here, quick !" with "Rental for one day" / "Rental for whole week" -> whole week -> thumb -> "$... was deducted" -> thumb -> owner -> "The rent is paid for N days" -> thumb -> Exit -> Motel -> Motel room (room 5 stage 1, hotspots 0x40ed6d: LULA_ZIM/ZIM_DET/GIRL_FLM/VER_ICON) -> Lula (pose) -> Suitcase -> options sheet (DDF 36) -> thumb -> Finished sessions -> To the motel -> To the town. No lula[warn]/trap.
+# save: s1rentfbi
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000, 0x455740 = 4, 0x455831 = 40, 0x455799 = 40
+# check: DrawTextA\("\s*Pay the rental first!\s*"
+# check: DrawTextA\("\s*\$1000 was deducted from your account\s*"
+# check: DrawTextA\("\s*You think I don't know what you're doing up there
+# check: DrawTextA\("\s*The rent is paid for 7 days\s*"
+# check: CreateFileA\(DATA\\ANI\\LULA_ZIM\.TAF, read
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Motel (4..151, 94..197), low in the hotspot (below the bird band)
+22000 move 77 190
+22500 click 77 190
+# Motel room door (413..498, 141..217) -> "Pay the rental first!" -> thumb
+26000 move 455 180
+26500 click 455 180
+30000 move 344 312
+30500 click 344 312
+# Reception (296..452, 256..367) -> blackmail sheet -> money icon -> "$1000 was deducted" -> thumb
+33500 move 374 311
+34000 click 374 311
+37500 move 337 300
+38000 click 337 300
+41500 move 344 312
+42000 click 344 312
+# Reception again -> reception room -> motel owner -> rent-increase box -> thumb
+45500 move 374 311
+46000 click 374 311
+49500 move 200 180
+50000 click 200 180
+53000 move 344 312
+53500 click 344 312
+# owner -> rent sheet -> whole week -> thumb -> "$... was deducted" -> thumb
+56500 move 200 180
+57000 click 200 180
+60000 move 78 360
+60500 click 78 360
+62000 move 377 375
+62500 click 377 375
+65500 move 344 312
+66000 click 344 312
+# owner -> "The rent is paid for N days" -> thumb
+69000 move 200 180
+69500 click 200 180
+72500 move 344 312
+73000 click 344 312
+# Exit (0..78, 95..326)
+76000 move 40 200
+76500 click 40 200
+# Motel room door -> motel room
+80000 move 455 180
+80500 click 455 180
+# Lula (114..264, 172..401); a remark box may follow
+84500 move 189 286
+85000 click 189 286
+88000 move 344 312
+88500 click 344 312
+# Suitcase (422..509, 176..216) -> options sheet -> thumb
+91500 move 465 196
+92000 click 465 196
+95000 move 328 368
+95500 click 328 368
+# Finished sessions (537..634, 380..474)
+98500 move 585 427
+99000 click 585 427
+# To the motel (526..613, 55..285), then To the town (0..70, 154..479)
+102000 move 570 200
+102500 click 570 200
+106000 move 35 300
+106500 click 35 300
+110000 move 300 300

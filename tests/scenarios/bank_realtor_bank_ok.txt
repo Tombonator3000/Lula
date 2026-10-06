@@ -1,0 +1,50 @@
+# seconds: 72
+# expects: stage-2 bank: EINZAHLEN deposit 5000 (typed over the selected prefill, Enter) -> Cur.acct 55000 / Invst.acct 5000; AUSZAHLEN withdraw 2000 (OK clicked) -> 57000 / 3000; deposit 100000 using the credit line -> -43000 / 103000; withdraw the prefilled 103000 -> 60000 / 0; bank sheet closed with the thumb, back to the town.
+# save: stage2
+# note: "Stage2" is the Load-dialog entry at 300,119 (slot 4)
+# check: DrawTextA\("\s*55000 \$\s*"
+# check: DrawTextA\("\s*57000 \$\s*"
+# check: DrawTextA\("\s*-43000 \$\s*"
+# check: DrawTextA\("\s*103000 \$\s*"
+# check: (?s)DrawTextA\("\s*103000 \$".*DrawTextA\("\s*60000 \$\s*"
+# random: about 15 % of "Do business with the bank" clicks hit a random bank event (0x413381: "Get lost! Can't you see I'm busy!", "Offer the bank manager to let Lula help out??"; rand() is seeded from time()), the remaining steps then miss. The runner's fixed LULA_CLOCK makes the outcome repeatable; with it the event does not occur here.
+# main menu -> Load Game -> slot -> Load
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office -> To the overview (0..312, 0..90) -> Bank (132..310, 276..405) -> Do business with the bank
+22000 move 150 40
+22500 click 150 40
+26000 move 220 340
+26500 click 220 340
+30000 move 200 200
+30500 click 200 200
+# Pay in -> EINZAHLEN_DLG; the edit is focused and selected, typing replaces the prefill
+33000 move 222 313
+33500 click 222 313
+36000 type 5000
+37500 key RETURN
+# Draw -> AUSZAHLEN_DLG; type 2000 and click OK (267,273)
+40000 move 355 313
+40500 click 355 313
+43000 type 2000
+44500 move 267 273
+45000 click 267 273
+# Pay in 100000 (more than Cur.acct, within account + credit limit)
+48000 move 222 313
+48500 click 222 313
+51000 type 100000
+52500 move 242 275
+53000 click 242 275
+# Draw: accept the prefilled full investment balance with Enter (no default button in AUSZAHLEN_DLG)
+56000 move 355 313
+56500 click 355 313
+59000 key RETURN
+# close the bank sheet (thumb) and leave: Back to the town (339..640, 14..201)
+62000 move 430 240
+62500 click 430 240
+65500 move 490 100
+66000 click 490 100

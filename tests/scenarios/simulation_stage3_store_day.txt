@@ -1,0 +1,35 @@
+# seconds: 68
+# expects: stage-3 save "Store3" patched to Tuesday 1-2-1997 20:40 (Los Angeles city map, one rented "Little junk store" with $50000 store capital, account 1600000) -> To the branches (our store is preselected) -> Balance sheet ("Present", DDF 0x4e): Monthly rental costs 7800 $, Monthly total costs 7800 $, Present acct. bal. 50000 $ -> thumbs up -> 21:59 ends the day while in the branches room: info box (902) -> thumb -> stage-3 end-of-day work (0x413d3e/0x413ca5 office, 0x4225fc and 0x42244e for the 11 cities: the store pays 7800/30 = 260 $ per day from its own capital, mansion 0x41790c, staff 0x419de7) -> the clock runs from 9:00 on Wednesday 1-3-1997; the main account stays 1600000 -> Balance sheet (the WET logo stays selected): Total costs 260 $, Profit/loss -260 $, Present acct. bal. 49740 $ -> thumbs up. No lula[warn]/trap.
+# save: s3cap
+# note: "Store3" is the Load-dialog entry at 300,119 (slot 4): store3 with 0x4556a8 = 20, 0x4556ac = 40
+# check: DrawTextA\("\s*Monthly rental costs   :\s*"
+# check: DrawTextA\("\s*And another busy day comes to an end\.\s*"
+# check: DrawTextA\("\s*-260 \$\s*"
+# check: DrawTextA\("\s*49740 \$\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# To the branches (store icon; our store is preselected, a click on the WET logo would open the store info sheet) -> Balance sheet -> thumbs up
+21000 move 530 290
+21500 click 530 290
+27000 move 341 436
+27500 click 341 436
+31000 move 535 440
+31500 click 535 440
+# day end (21:59): info box thumb; the second click lands on empty floor if the box is already gone
+40000 move 330 300
+40500 click 330 300
+44000 move 330 300
+44500 click 330 300
+# the WET logo stays selected: Balance sheet -> thumbs up
+48000 move 341 436
+48500 click 341 436
+53000 move 535 440
+53500 click 535 440
+# To the town (544..640, 167..480)
+58000 move 595 455
+58500 click 595 455
+64000 move 300 420

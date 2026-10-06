@@ -1,0 +1,46 @@
+# seconds: 75
+# expects: stage-1 save at 10:00 -> Bar -> Gambler -> DDF "OK, what about a game of WET 6?" -> thumb -> info "New game / You can start and set the stake" -> thumb -> WET 6 dice table (DDF: stake slider "Stake : 10 $", dice-count buttons 1-6, "Choose the number of dice ...", "Account : 20000 $") -> stake slider -> 3 dice -> throw animation, opponent answers with its dice -> result box (random: "No-one has won" / "You've won ..." / "You've lost ...") and follow-up boxes closed with the thumb -> toilet button leaves the table -> To the town. No lula[warn]/trap.
+# save: s1town10
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000
+# check: DrawTextA\("\s*OK, what about a game of WET 6\?\s*"
+# check: CreateFileA\(DATA\\ANI\\WUERFEL\.TAF, read
+# check: DrawTextA\("\s*Choose the number of dice \.\.\.\s*"
+# check: DrawTextA\("\s*(No-one has won|You've won|You've lost)
+# random: the dice (rand() seeded from time()); with the runner's fixed LULA_CLOCK the first throw ends "No-one has won".
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Bar
+22000 move 304 230
+22500 click 304 230
+# Gambler (269..341, 179..299)
+26000 move 305 240
+26500 click 305 240
+# "what about a game of WET 6?" -> thumb
+30000 move 377 375
+30500 click 377 375
+# "New game ... You can start and set the stake" -> thumb
+34500 move 340 312
+35000 click 340 312
+# stake slider, then 3 dice
+38000 move 90 376
+38500 click 90 376
+40500 move 308 370
+41000 click 308 370
+# result and follow-up info boxes (thumb); harmless on the bare table
+52000 move 340 312
+52500 click 340 312
+55500 move 340 312
+56000 click 340 312
+59000 move 340 312
+59500 click 340 312
+# toilet button: leave the table
+62500 move 565 380
+63000 click 565 380
+# To the town
+67500 move 120 450
+68000 click 120 450
+72000 move 300 300

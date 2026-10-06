@@ -1,0 +1,23 @@
+# seconds: 62
+# expects: stage-2 save patched to Sunday 1-30-1997 19:00 (office, account 60000) -> To the overview -> 19:59 ends the day: info box "And another busy day comes to an end." (902), the status line already reads "Monday 2-1-1997 9:00" -> thumb -> end-of-day DDF record 7 "Daily costs" sheet ("Monday", "2/ 1/1997", Expenses Bank / Rental costs / Staff costs, Receipts Bank / Distributor / Direct sales revenue, totals 0 $) -> thumb -> stage-2 day-end work (0x42f2ba, 0x42ab22, weekly 0x40bfed because the new day is a Monday, 0x41da0d) -> the clock runs from 9:00 on 2-1-1997 (month change 1 -> 2), the 9 h and 10 h hourly events run. No lula[warn]/trap.
+# save: s2month
+# note: "Stage2" is the Load-dialog entry at 300,119 (slot 4): stage2 with 0x45569c = 30, 0x4556a8 = 19, 0x4556b8 = 6
+# check: DrawTextA\("\s*And another busy day comes to an end\.\s*"
+# check: DrawTextA\("\s*Daily costs\s*"
+# check: DrawTextA\("\s*Monday\s*"
+# check: DrawTextA\("\s*2/ 1/1997\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office -> To the overview (0..312, 0..90)
+22000 move 150 40
+22500 click 150 40
+# day end at about 33 s: info box thumb (318..372, 277..327), then the Daily costs thumb (287..342, 347..405)
+38000 move 330 300
+38500 click 330 300
+42000 move 318 380
+42500 click 318 380
+60000 move 600 200

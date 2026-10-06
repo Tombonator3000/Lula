@@ -1,0 +1,20 @@
+# seconds: 34
+# expects: stage-2 office (patched stage-1 save, INIT_STUFE(2)) -> F1 calls 0x409c83: DATA\PERSO\HLP.DAT is read twice and the help page "YOUR OFFICE" (white text on a full-screen background picture) is flipped once and held until ESC (game clock stops) -> ESC returns to the office -> To the overview -> F1 shows the overview help page -> SPACE dismisses it (a mouse click would also dismiss it, but the pending click then falls through to the hotspot under the cursor, as in the original code 0x404e47). The "dump" op at 23900 switches the frame dumper to every present, because the help page is presented only once and an interval dump misses it. No lula[warn]/trap.
+# save: s1flag
+# note: "Office1" (patched) is the Load-dialog entry at 300,81 (slot 1)
+# check: CreateFileA\(DATA\\ANI\\SEKR_ANI\.TAF, read
+# check: (?s)ms: key F1 .*CreateFileA\(DATA\\PERSO\\HLP\.DAT.*ms: key ESCAPE
+# check: (?s)ms: click 150 50.*ms: key F1 .*CreateFileA\(DATA\\PERSO\\HLP\.DAT
+12000 move 505 40
+12500 click 505 40
+15000 move 300 81
+15500 click 300 81
+17000 move 263 228
+17500 click 263 228
+23900 dump
+24000 key F1
+27000 key ESCAPE
+29000 move 150 50
+29500 click 150 50
+31500 key F1
+33300 key SPACE

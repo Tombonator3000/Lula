@@ -1,0 +1,54 @@
+# seconds: 100
+# expects: New game (stage 1, account 500) -> town -> "Parking lot" (450..577, 355..464) -> room 7 stage 1 (Hell Devils rockers, the stage-1 form of the Black Cat agency, setup 0x4317c3) -> "Rocker" (the standing rocker, 301..602, 46..397, registered by 0x4318c8) -> ROCKER1_MENU_DLG (DDF 0x2b, callback 0x43197e): "Select from our service offer", Beat up motel owner / Beat up FBI agents / Anti-arrest insurance, "2 Lion beer sixpacks 200 $" -> FBI: 20 sixpacks 2000 $ -> thumbs up: "Unfortunately you haven't got enough money!" (903) -> thumb -> Rocker -> Anti-arrest insurance: 10 sixpacks 1000 $ -> toilet -> Rocker -> slider: 6 sixpacks 600 $, back to 2 sixpacks 200 $ -> thumbs up: "The motel owner should be out of action for about 12 hours.." -> "$200 was deducted from your account" (account 500 -> 300) -> Rocker -> thumbs up again: "You want the motel owner to croak!? ..." (4808) -> thumb -> "To the town" (0..90, 0..243) -> town. No lula[warn]/trap.
+# save: none
+# check: DrawTextA\("\s*Select from our service offer\s*"
+# check: DrawTextA\("\s*Unfortunately you haven't got enough money!\s*"
+# check: DrawTextA\("\s*The motel owner should be out of action for about 12 hours\.\.\s*"
+# check: DrawTextA\("\s*\$200 was deducted from your account\s*"
+# check: DrawTextA\("\s*You want the motel owner to croak!\? \.\.\.\s*"
+# main menu -> New game (stage-1 town)
+11500 move 505 88
+12000 click 505 88
+# Parking lot -> rocker yard; Rocker (the standing rocker)
+24000 move 513 410
+24500 click 513 410
+29000 move 450 250
+29500 click 450 250
+# FBI (20 sixpacks, 2000 $) -> thumbs up -> not enough money -> thumb
+32500 move 48 235
+33000 click 48 235
+35500 move 380 365
+36000 click 380 365
+39000 move 340 306
+39500 click 340 306
+# Rocker -> Anti-arrest insurance (10 sixpacks, 1000 $) -> toilet
+42500 move 450 250
+43000 click 450 250
+46000 move 48 333
+46500 click 48 333
+49000 move 445 365
+49500 click 445 365
+# Rocker -> motel owner: slider to 6 sixpacks, back to 2 -> thumbs up -> two info boxes
+52500 move 450 250
+53000 click 450 250
+56000 move 440 287
+56500 click 440 287
+59000 move 400 287
+59500 click 400 287
+62000 move 380 365
+62500 click 380 365
+65500 move 340 306
+66000 click 340 306
+69000 move 340 306
+69500 click 340 306
+# Rocker -> thumbs up while the motel owner is still out of action -> refused
+72500 move 450 250
+73000 click 450 250
+76000 move 380 365
+76500 click 380 365
+79500 move 340 306
+80000 click 340 306
+# To the town (0..90, 0..243)
+83500 move 45 120
+84000 click 45 120
+88000 move 320 300

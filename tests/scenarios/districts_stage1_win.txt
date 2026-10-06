@@ -1,0 +1,30 @@
+# seconds: 50
+# expects: stage-1 save with account 70000 and FBI countdown 0x455831 = 40 -> Bar (Dealer Don present) -> Dealer Don -> "Today's offer ... new identity and new documents / Today's price 8000..12000 $ / Buy new documents?" -> thumb: sets 0x455841 = 0x455845 = 1, "$<price> was deducted from your account" (account stays >= 50000, so no "Phooey" box) -> thumb -> the stage-1 end check 0x408dea (called by the bar tick) runs INIT_STUFE(2): the stage-2 office (SEKR_ANI.TAF) appears -> To the overview -> stage-2 town overview. No lula[warn]/trap.
+# save: s1rich
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 70000, 0x455831 = 40
+# check: DrawTextA\("\s*Today's offer from Dealer Don:
+# check: DrawTextA\("\s*\$\d+ was deducted from your account\s*"
+# check: (?s)was deducted from your account.*CreateFileA\(DATA\\ANI\\SEKR_ANI\.TAF
+# reject: Phooey
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Bar (low in the hotspot, below the bird band)
+22000 move 304 230
+22500 click 304 230
+# Dealer Don (557..635, 54..205)
+26000 move 596 130
+26500 click 596 130
+# "Buy new documents?" -> thumb
+30000 move 368 363
+30500 click 368 363
+# "$... was deducted" -> thumb -> stage 2 office
+34000 move 344 312
+34500 click 344 312
+# stage-2 office -> To the overview (0..312, 0..90)
+40000 move 150 40
+40500 click 150 40
+46000 move 300 300

@@ -1,0 +1,44 @@
+# seconds: 72
+# expects: stage-3 lady realtor (room 6, MKL3_MEN): "Look for mansion" -> three mansions; Mansion 'Like It' -> "Look at what's offered" -> offer sheet (Rent 10000 $/week, Buy 850000 $); buy-back guarantee ticked (935000 $), Buy -> "Mansion is sold to you." and account 2500000 -> 1565000; second mansion -> "You must sell your other mansion first. One is enough."; back to the realtor's office and the city map.
+# save: stage3
+# note: "Stage3" is the Load-dialog entry at 300,119 (slot 4); it loads into the realtor's office
+# check: DrawTextA\("\s*935000 \$\s*"
+# check: DrawTextA\("\s*Mansion is sold to you\.\s*"
+# check: DrawTextA\("\s*You must sell your other mansion first\. One is enough\.\s*"
+# check: CreateFileA\(DATA\\ANI\\CITIES\.TAF, read
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Look for mansion (256..350, 221..390) -> mansion 1 (15..320, 33..197) -> Look at what's offered (120..520, 90..390)
+21000 move 300 300
+21500 click 300 300
+25000 move 160 110
+25500 click 160 110
+29000 move 320 250
+29500 click 320 250
+# offer sheet: tick buy-back guarantee (422,196), Buy (336,325) -> info box -> thumb
+32000 move 422 196
+32500 click 422 196
+34500 move 336 325
+35000 click 336 325
+38000 move 344 312
+38500 click 344 312
+# To the office (0..640, 0..55) -> mansion 2 (338..625, 24..218) -> Look at what's offered -> refusal -> thumb
+41000 move 320 20
+41500 click 320 20
+45000 move 480 120
+45500 click 480 120
+49000 move 320 250
+49500 click 320 250
+52500 move 344 312
+53000 click 344 312
+# To the office -> Back to the realtor's office (422..606, 250..480) -> Back to the town (0..640, 0..176)
+56000 move 320 20
+56500 click 320 20
+60000 move 520 400
+60500 click 520 400
+64000 move 500 100
+64500 click 500 100

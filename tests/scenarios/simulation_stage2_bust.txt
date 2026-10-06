@@ -1,0 +1,93 @@
+# seconds: 112
+# expects:   stage-2 save patched to account -100000 (credit line 70000), Monday 1-1-1997 18:30, one game minute per tick (0x4556bc = 0) -> To the overview -> 19:59 day end: info box (902) -> "Daily costs" sheet with Bank -400 $ (overdraft interest, the account drops from minus 100000 to minus 100400) -> 0x404a33 finds account + credit < 0: info box "You've exceeded your credit limit, you have to balance your account today!" (907), flag 0x455698 = 1 -> thumb -> Tuesday runs (about 40 s) -> next day end: info box -> Daily costs with Bank -401 $ -> flag still set: 0x41f615 shows the full-screen game-over DDF ("Well honey, you're not much of a businessman. You've lost." ... "If you give up now, I'll look somewhere else for a real man!", buttons "Back to stage 1" / "To main menu"; the DDF text has a line of 20 'ÿ' because WET.DDF stores the first text without a NUL before its 0xFF padding) -> "Back to stage 1": INIT_GAME + INIT_STUFE start a new stage-1 game (town, Monday 1-1-1997 7:00, Account: 500). No lula[warn]/trap.
+# save: s2bust
+# note: "Stage2" is the Load-dialog entry at 300,119 (slot 4): stage2 with 0x45568c = -100000, 0x4556a8 = 18, 0x4556ac = 30, 0x4556bc = 0x4556c0 = 0
+# check: DrawTextA\("\s*-400 \$\s*"
+# check: DrawTextA\("\s*You've exceeded your credit limit, you have to balance your account today!\s*"
+# check: DrawTextA\("\s*Well honey, you're not much of a businessman\. You've lost\.
+# check: (?s)Back to stage 1.*CreateFileA\(DATA\\ANI\\BIRD1\.TAF
+# the info boxes (thumb 318..372, 277..327) and the Daily costs sheet (thumb 287..342, 347..405) are closed by alternating clicks every 2 s; both spots are empty in the stage-2 overview and on the game-over screen
+# Back to stage 1 (20..120, 128..148) on the game-over screen
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+20500 move 150 40
+21000 click 150 40
+25000 move 330 300
+25500 click 330 300
+27000 move 318 380
+27500 click 318 380
+29000 move 330 300
+29500 click 330 300
+31000 move 318 380
+31500 click 318 380
+33000 move 330 300
+33500 click 330 300
+35000 move 318 380
+35500 click 318 380
+37000 move 330 300
+37500 click 330 300
+39000 move 318 380
+39500 click 318 380
+41000 move 330 300
+41500 click 330 300
+43000 move 318 380
+43500 click 318 380
+45000 move 330 300
+45500 click 330 300
+47000 move 318 380
+47500 click 318 380
+49000 move 330 300
+49500 click 330 300
+51000 move 318 380
+51500 click 318 380
+53000 move 330 300
+53500 click 330 300
+55000 move 318 380
+55500 click 318 380
+57000 move 330 300
+57500 click 330 300
+59000 move 318 380
+59500 click 318 380
+61000 move 330 300
+61500 click 330 300
+63000 move 318 380
+63500 click 318 380
+65000 move 330 300
+65500 click 330 300
+67000 move 318 380
+67500 click 318 380
+69000 move 330 300
+69500 click 330 300
+71000 move 318 380
+71500 click 318 380
+73000 move 330 300
+73500 click 330 300
+75000 move 318 380
+75500 click 318 380
+77000 move 330 300
+77500 click 330 300
+79000 move 318 380
+79500 click 318 380
+81000 move 330 300
+81500 click 330 300
+83000 move 318 380
+83500 click 318 380
+85000 move 330 300
+85500 click 330 300
+87000 move 318 380
+87500 click 318 380
+89000 move 330 300
+89500 click 330 300
+91000 move 318 380
+91500 click 318 380
+93000 move 330 300
+93500 click 330 300
+95000 move 318 380
+95500 click 318 380
+100000 move 70 138
+100500 click 70 138
+108000 move 300 440

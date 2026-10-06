@@ -1,0 +1,63 @@
+# seconds: 86
+# expects: stage 3: lady realtor rents the Sex'n sell superstore (yes -> account 2500000 -> 2300000, Free Objects 2 -> 1); city map shows the new branch icon -> branches view (room 23 stage 3); store clicked -> store info sheet (Acct. bal. 200000 $) closed; "Balance sheet" (DDF, callback 0x421caf) -> "Take out capital" opens AUSZAHLEN_DLG (prefill 200000), 50000 + Enter -> Present acct. bal. 150000; "Stock up capital" opens EINZAHLEN_DLG (Account 2400000), 9000000 + Enter is refused (dialog stays), Backspace x7 and 1000 + Enter -> 151000; thumb applies it: main account 2349000.
+# save: stage3
+# note: "Stage3" is the Load-dialog entry at 300,119 (slot 4)
+# check: DrawTextA\("\s*A store this big needs \$200000 startup capital\. Rent the shop\?\s*"
+# check: DrawTextA\("\s*Present acct\. bal\.
+# check: DialogBoxParamA\(AUSZAHLEN_DLG\)
+# check: DrawTextA\("\s*150000 \$\s*"
+# check: DrawTextA\("\s*151000 \$\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Rent sex store -> superstore tile -> first lot -> Rent -> yes
+21000 move 128 280
+21500 click 128 280
+25000 move 468 58
+25500 click 468 58
+28000 move 17 197
+28500 click 17 197
+31500 move 153 397
+32000 click 153 397
+34500 move 318 305
+35000 click 318 305
+# Back to the realtor's office (432..640, 127..480) -> Back to the town -> branch icon on the city map
+38000 move 530 350
+38500 click 530 350
+42000 move 500 100
+42500 click 500 100
+46000 move 560 320
+46500 click 560 320
+# our store (WET logo, top right) -> info sheet -> thumb (453,340)
+50000 move 600 90
+50500 click 600 90
+53000 move 453 340
+53500 click 453 340
+# Balance sheet (274..409, 416..480)
+56000 move 341 448
+56500 click 341 448
+# Take out capital (502,247) -> AUSZAHLEN 50000
+59000 move 502 247
+59500 click 502 247
+62000 type 50000
+63500 key RETURN
+# Stock up capital (502,308) -> EINZAHLEN 9000000 refused, then 1000
+66000 move 502 308
+66500 click 502 308
+69000 type 9000000
+70500 key RETURN
+72000 key BACK
+72200 key BACK
+72400 key BACK
+72600 key BACK
+72800 key BACK
+73000 key BACK
+73200 key BACK
+73500 type 1000
+75000 key RETURN
+# confirm the balance sheet (thumb 531,440)
+78000 move 531 440
+78500 click 531 440

@@ -1,0 +1,73 @@
+# seconds: 98
+# expects: New game -> rent the motel room -> Motel room -> Suitcase -> options -> Save game: GAME_IO_DLG "Save Game:" (16 EMPTY rows) -> row 2 + Save -> STANDARD_GET_TXT_DLG "Savename:" with "EMPTY" selected; END, BACK x5, typed text, HOME/RIGHT/DELETE/END editing, RETURN -> DATA\SAVE\SAVEGAME.  1 and DATA\DATABASE\STF1DAT.  1 written; Save again on the same row, Savename box cancelled with ESCAPE, Save Game list cancelled with its Cancel button -> thumbs up -> To the motel -> F2 -> Load game: list relabelled "Load Game", empty slot 0 shown blank (Load Game does nothing on it), row 2 -> Load Game -> the motel room (room 5, account 400) is rebuilt under the still-open options dialog -> thumbs up. No lula[warn]/trap.
+# save: none
+# check: DrawTextA\("\s*\$100 was deducted from your account\s*"
+# check: CreateFileA\(DATA\\SAVE\\SAVEGAME\.  1, write
+# check: CreateFileA\(DATA\\DATABASE\\STF1DAT\.  1, write
+# check: DialogBoxParamA\(STANDARD_GET_TXT_DLG\) -> 0
+# check: (?s)STF1DAT\.  1, read.*DialogBoxParamA\(GAME_IO_DLG\) -> 1
+12000 move 505 88
+12500 click 505 88
+19000 move 77 145
+19500 click 77 145
+23000 move 374 311
+23500 click 374 311
+27000 move 200 180
+27500 click 200 180
+30500 move 78 306
+31000 click 78 306
+32500 move 380 366
+33000 click 380 366
+35500 move 340 305
+36000 click 340 305
+38500 move 40 200
+39000 click 40 200
+42500 move 455 180
+43000 click 455 180
+47000 move 465 196
+47500 click 465 196
+50500 move 305 212
+51000 click 305 212
+53500 move 300 82
+54000 click 300 82
+55500 move 263 228
+56000 click 263 228
+58000 key END
+58300 key BACK
+58500 key BACK
+58700 key BACK
+58900 key BACK
+59100 key BACK
+59500 type Officeroom
+60500 key HOME
+60800 key RIGHT
+61100 key DELETE
+61400 key END
+61700 type 1
+62500 key RETURN
+65000 move 305 212
+65500 click 305 212
+68000 move 300 82
+68500 click 300 82
+70000 move 263 228
+70500 click 263 228
+72500 key ESCAPE
+74500 move 387 228
+75000 click 387 228
+77000 move 328 368
+77500 click 328 368
+80000 move 570 200
+80500 click 570 200
+84000 key F2
+86500 move 305 142
+87000 click 305 142
+89000 move 300 68
+89500 click 300 68
+90000 move 263 228
+90500 click 263 228
+91500 move 300 81
+92000 click 300 81
+92500 move 263 228
+93000 click 263 228
+96000 move 328 368
+96500 click 328 368

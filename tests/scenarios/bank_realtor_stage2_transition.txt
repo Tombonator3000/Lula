@@ -1,0 +1,15 @@
+# seconds: 32
+# expects: loading the patched stage-1 save (account 60000, mission flags 0x455841/0x455845 = 1, countdown 0x455831 = 0) runs the stage-1 end check 0x408dea -> INIT_STUFE(2): the stage-2 office (SEKR_ANI.TAF) appears with Account 60000; To the overview shows the stage-2 town overview (Realtor, Sex store, Bank, Distributor, Beauty clinic).
+# save: stage1_goal
+# note: the Load-dialog entry at 300,119 (slot 4)
+# check: DialogBoxParamA\(GAME_IO_DLG\) -> 1
+# check: CreateFileA\(DATA\\ANI\\SEKR_ANI\.TAF, read
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# stage-2 office -> To the overview
+25000 move 150 40
+25500 click 150 40

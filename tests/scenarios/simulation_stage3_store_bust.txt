@@ -1,0 +1,36 @@
+# seconds: 115
+# expects: stage-3 save "Store3" patched to Tuesday 1-2-1997 21:00, one game minute per tick (0x4556bc = 0) and store capital 0x45cc81 = 500 (Los Angeles city map, account 1600000) -> 21:59 day end: info box (902) -> thumb -> 0x42244e charges the "Little junk store" 7800/30 = 260 $ and finds the capital short: yes/no "Little junk store (Los Angeles,Suburbs) is busted. Cancel lease?" (860) -> toilet (no): the shortfall is taken from the main account (info box, 861 "The cost difference has been deducted from the account.") -> thumb -> Wednesday runs (about 47 s) -> next day end: info box -> the same question -> thumb (yes): the store record is cleared and the full 260 $ is taken from the account (1600000 -> 1599740; on the "no" path the original code at 0x42247b sets the capital to the cost before subtracting, so 0 $ is taken although the 861 box says otherwise) -> 861 box -> thumb -> the store icon stays until the map is set up again: To the lady realtor -> Back to the town -> city map without the branches store icon. No lula[warn]/trap.
+# save: s3broke
+# note: "Store3" is the Load-dialog entry at 300,119 (slot 4): store3 with 0x4556a8 = 21, 0x4556ac = 0, 0x4556bc = 0x4556c0 = 0, 0x45cc81 = 500 (store capital; see saves.json)
+# check: DrawTextA\("\s*And another busy day comes to an end\.\s*"
+# check: DrawTextA\("\s*Little junk store \(Los Angeles,Suburbs\) is busted\. Cancel lease\?\s*"
+# check: (?s)ms: click 410 305.*The cost difference has been deducted from the account\.
+# check: (?s)ms: click 322 302.*The cost difference has been deducted from the account\.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# first day end at about 22 s: info box thumb, then "Cancel lease?" -> toilet (no), then the 861 info box thumb
+26000 move 330 300
+26500 click 330 300
+30000 move 410 305
+30500 click 410 305
+34000 move 330 300
+34500 click 330 300
+38000 move 330 300
+38500 click 330 300
+# second day end at about 85 s: info box thumb, "Cancel lease?" -> thumb (yes)
+88000 move 330 300
+88500 click 330 300
+92000 move 322 302
+92500 click 322 302
+96000 move 330 300
+96500 click 330 300
+# the icon is registered only by the room setup: To the lady realtor (365.., 178..) -> Back to the town (490..639, 0..176)
+100000 move 400 200
+100500 click 400 200
+105000 move 560 80
+105500 click 560 80
+111000 move 300 420

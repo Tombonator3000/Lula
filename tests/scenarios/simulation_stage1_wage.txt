@@ -1,0 +1,38 @@
+# seconds: 108
+# expects: stage-1 save patched to 11:30 (town, account 20000) -> Bar -> Lady bar owner -> "I'll pay her $100 and $150 for 3 hours in the evening..." -> first clock "Working 12 h - 15 h" -> thumb: Lula hired -> To the town -> the hourly hook 0x408a87 marks the shift (0x45579d = 1) at 12-14 h and pays at 15:00: the status line goes from Account: 20000 to Account: 20100 (end hour < 19 pays $100) -> Bar -> Gambler -> WET 6 table "Account : 20100 $". No lula[warn]/trap.
+# save: s1noon
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): s1town10 with 0x4556a8 = 11, 0x4556ac = 30
+# check: DrawTextA\("\s*STRIPPER\.\s*"
+# check: DrawTextA\("\s*12 h - 15 h\s*"
+# check: DrawTextA\("\s*Choose the number of dice
+# check: DrawTextA\("\s*20100 \$\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Bar (245..363, 128..238); Lula walks to the door first
+22000 move 304 230
+22500 click 304 230
+# Lady bar owner (4..85, 149..247)
+30000 move 45 200
+30500 click 45 200
+# thumb -> working-hours page (first clock 12 h - 15 h is preselected) -> thumb
+34000 move 377 375
+34500 click 377 375
+37500 move 377 375
+38000 click 377 375
+# To the town (0..241, 425..479)
+42000 move 120 450
+42500 click 120 450
+# after 15:00 (about 70 s): Bar -> Gambler -> thumb -> thumb opens the WET 6 table, which shows the account
+86000 move 304 230
+86500 click 304 230
+91000 move 305 240
+91500 click 305 240
+95000 move 377 375
+95500 click 377 375
+99500 move 340 312
+100000 click 340 312
+104000 move 300 440

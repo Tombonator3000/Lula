@@ -1,0 +1,46 @@
+# Load "Office1" (slot 1, patched: account 2500000, stage-1 goal flags, 18:40): stage-2
+# office -> 19:00 day end: info box (thumb) -> Daily costs (thumb) -> INIT_STUFE(3): Los
+# Angeles realtor -> Mansion 'Like It' -> Look at what's offered -> Buy -> "Mansion is sold
+# to you." -> To the office -> lady realtor -> Back to the town -> mansion icon -> stage-3
+# office -> present info box (thumb) -> F2 -> Save game -> slot 2 (300,94) "Mansion3".
+12000 move 505 40
+12500 click 505 40
+15000 move 300 81
+15500 click 300 81
+17000 move 263 228
+17500 click 263 228
+42000 move 340 305
+43000 click 340 305
+46000 move 315 380
+47000 click 315 380
+52000 move 300 420
+54000 move 150 120
+54500 click 150 120
+57000 move 320 240
+57500 click 320 240
+60000 move 336 325
+60500 click 336 325
+63000 move 340 305
+63500 click 340 305
+66000 move 450 330
+66000 move 320 25
+66500 click 320 25
+70000 move 514 365
+70500 click 514 365
+74000 move 320 80
+74500 click 320 80
+78000 move 420 395
+78500 click 420 395
+82000 move 340 305
+82500 click 340 305
+85000 key F2
+87500 move 305 212
+88000 click 305 212
+90500 move 300 94
+91000 click 300 94
+92500 move 263 228
+93000 click 263 228
+95000 type Mansion3
+96500 key RETURN
+99000 move 328 368
+99500 click 328 368

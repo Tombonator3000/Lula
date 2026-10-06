@@ -1,0 +1,24 @@
+# Load "Mansion3" (slot 2, stage-3 office) -> present info box (thumb) -> To the property is
+# refused, the present is opened (secretary chase) -> F2 -> Save game -> slot 3 (300,107)
+# "Mansion3b".
+12000 move 505 40
+12500 click 505 40
+15000 move 300 94
+15500 click 300 94
+17000 move 263 228
+17500 click 263 228
+22000 move 340 305
+22500 click 340 305
+25000 move 320 420
+25500 click 320 420
+30000 key F2
+32500 move 305 212
+33000 click 305 212
+35500 move 300 107
+36000 click 300 107
+37500 move 263 228
+38000 click 263 228
+40000 type Mansion3b
+41500 key RETURN
+44000 move 328 368
+44500 click 328 368

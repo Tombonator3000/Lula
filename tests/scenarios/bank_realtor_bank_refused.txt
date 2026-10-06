@@ -1,0 +1,64 @@
+# seconds: 72
+# expects: stage-2 bank, every transaction refused or cancelled and the balances stay 60000 / 0: EINZAHLEN 999999 (> account + credit 130000) with Enter keeps the dialog open; Backspace empties the field and OK keeps it open (GetDlgItemInt fails); letters typed into the ES_NUMBER edit are dropped ("a1b2" -> "12"); Esc cancels. AUSZAHLEN with an empty investment account: 100 + OK stays open; 99999999999 (overflow) + OK stays open; Cancel closes.
+# save: stage2
+# note: "Stage2" is the Load-dialog entry at 300,119 (slot 4)
+# check: (?s)ms: key ESCAPE.*DialogBoxParamA\(EINZAHLEN_DLG\)
+# check: (?s)ms: click 378 273.*DialogBoxParamA\(AUSZAHLEN_DLG\)
+# reject: (?s)ms: type 999999.*DialogBoxParamA\(EINZAHLEN_DLG\).*ms: key ESCAPE
+# reject: (?s)ms: type 100\b.*DialogBoxParamA\(AUSZAHLEN_DLG\).*ms: click 378 273
+# reject: DrawTextA\("\s*(?!60000 \$|0 \$|70000 \$)-?\d+ \$\s*"
+# random: about 15 % of "Do business with the bank" clicks hit a random bank event (0x413381: "Get lost! Can't you see I'm busy!", "Offer the bank manager to let Lula help out??"; rand() is seeded from time()), the remaining steps then miss. The runner's fixed LULA_CLOCK makes the outcome repeatable; with it the event does not occur here.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 150 40
+22500 click 150 40
+26000 move 220 340
+26500 click 220 340
+30000 move 200 200
+30500 click 200 200
+# Pay in: too large -> refused, dialog stays
+33000 move 222 313
+33500 click 222 313
+36000 type 999999
+37500 key RETURN
+39000 key BACK
+39200 key BACK
+39400 key BACK
+39600 key BACK
+39800 key BACK
+40000 key BACK
+40200 key BACK
+# empty field + OK -> refused (OK button takes the focus)
+41500 move 242 275
+42000 click 242 275
+# click into the edit (318,232) and type letters and digits: only digits arrive
+44000 move 318 232
+44500 click 318 232
+45500 type a1b2
+47000 key ESCAPE
+# Draw with Invst.acct 0
+50000 move 355 313
+50500 click 355 313
+53000 type 100
+54500 move 267 273
+55000 click 267 273
+# back into the edit (362,229), clear and type an overflowing number
+57000 move 362 229
+57500 click 362 229
+58000 key END
+58200 key BACK
+58400 key BACK
+58600 key BACK
+59000 type 99999999999
+60500 move 267 273
+61000 click 267 273
+# Cancel (378,273)
+63500 move 378 273
+64000 click 378 273
+# thumb closes the bank sheet
+67000 move 430 240
+67500 click 430 240

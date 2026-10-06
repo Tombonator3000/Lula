@@ -1,0 +1,99 @@
+# seconds: 116
+# expects: stage-1 save with 0x455791 = 1 (Lula wants a partner) -> Bar. The girls at the bar (spots 6 and 7) appear with 30 % chance per bar visit (girl 6 is dropped when both roll), so the scenario tries girl 7 then girl 6, re-rolls via Toilet <-> Bar and tries again (~76 % to meet one). For a present girl: DDF with three chat-up lines ("But you have beautiful big ... eyes" / "I'm really a stinking rich oil sheikh, ..." / "Want to join in a hot photo or video session ?") -> third line -> thumb -> speech bubble "Depends what I get for it..." -> thumb -> girl card DDF (photo, name, age, measurements, "I'll pay you : 10 $" slider) -> slider to the top -> thumb -> answer (accepts or "I'd rather do it myself!") -> thumbs/right-clicks close. When no girl is present, the line-3 click lands on the Gambler and opens his WET 6 offer, which the following right-clicks cancel. Ends with To the town. No lula[warn]/trap.
+# save: s1partner
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000, 0x455791 = 1, 0x455740 = 30
+# check: CreateFileA\(DATA\\ANI\\BARLEUTE\.TAF, read
+# check: DrawTextA\("\s*Want to join in a hot photo or video
+# check: DrawTextA\("\s*Depends what I get for it\.\.\.\s*"
+# check: DrawTextA\("\s*I'll pay you :\s*"
+# random: girls 6 and 7 are rolled on every bar visit (rand() seeded from time()). With the runner's fixed LULA_CLOCK no girl is there on the first two tries and girl 6 (Jasmin Nordstern) is met on the third and accepts.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Bar
+22000 move 304 230
+22500 click 304 230
+# round 1: girl 7 (141..213, 170..288); line 3 (290,260); thumb (401,362); thumb; pay slider (560,316); thumb; thumb; right-clicks
+25500 move 177 230
+25900 click 177 230
+28000 move 290 260
+28400 click 290 260
+29500 move 401 362
+29900 click 401 362
+32000 move 401 362
+32400 click 401 362
+34500 move 560 316
+34900 click 560 316
+36000 move 401 362
+36400 click 401 362
+38500 move 344 305
+38900 click 344 305
+40500 rclick 300 450
+41500 rclick 300 450
+42500 rclick 300 450
+# round 1: girl 6 (68..133, 256..380); line 3 (290,260); thumb (401,362); thumb; pay slider (560,316); thumb; thumb; right-clicks
+44000 move 100 320
+44400 click 100 320
+46500 move 290 260
+46900 click 290 260
+48000 move 401 362
+48400 click 401 362
+50500 move 401 362
+50900 click 401 362
+53000 move 560 316
+53400 click 560 316
+54500 move 401 362
+54900 click 401 362
+57000 move 344 305
+57400 click 344 305
+59000 rclick 300 450
+60000 rclick 300 450
+61000 rclick 300 450
+# re-roll the bar: Toilet, then Bar
+62500 move 114 107
+62900 click 114 107
+65500 move 500 440
+65900 click 500 440
+# round 2: girl 7 (141..213, 170..288); line 3 (290,260); thumb (401,362); thumb; pay slider (560,316); thumb; thumb; right-clicks
+68500 move 177 230
+68900 click 177 230
+71000 move 290 260
+71400 click 290 260
+72500 move 401 362
+72900 click 401 362
+75000 move 401 362
+75400 click 401 362
+77500 move 560 316
+77900 click 560 316
+79000 move 401 362
+79400 click 401 362
+81500 move 344 305
+81900 click 344 305
+83500 rclick 300 450
+84500 rclick 300 450
+85500 rclick 300 450
+# round 2: girl 6 (68..133, 256..380); line 3 (290,260); thumb (401,362); thumb; pay slider (560,316); thumb; thumb; right-clicks
+87000 move 100 320
+87400 click 100 320
+89500 move 290 260
+89900 click 290 260
+91000 move 401 362
+91400 click 401 362
+93500 move 401 362
+93900 click 401 362
+96000 move 560 316
+96400 click 560 316
+97500 move 401 362
+97900 click 401 362
+100000 move 344 305
+100400 click 344 305
+102000 rclick 300 450
+103000 rclick 300 450
+104000 rclick 300 450
+# To the town
+105500 move 120 450
+106000 click 120 450
+109000 move 300 300

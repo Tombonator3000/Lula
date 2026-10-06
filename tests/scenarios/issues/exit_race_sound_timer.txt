@@ -1,0 +1,31 @@
+# seconds: 50
+# expects: the game quits cleanly (exit status 0) when the script's quit arrives. FIXED (quit_now in src/runtime/platform_sdl.c now takes the global lock before closing audio, so no guest code runs during teardown). The old bug: now and then the process dies with SIGSEGV during that quit instead. Seen once in about 250 scenario runs (bank_realtor_mansion_rent, full run 2 of 2026-10-06): "script requested quit", then "lula[fatal] signal 11" on thread 264 (eax=081c2270, stack 004382d8 081c2270 ...), with no "at guest address" part, so the fault is in host memory. 0x4382d8 lies in the sound system (0x4365d8..0x439032), which runs in the WINMM periodic timer callback 0x438003 every 2 ms on its own thread and calls DirectSound and ReadFile from there (docs/recomp/specs/directx.md item 8). quit_now() in src/runtime/platform_sdl.c closes the SDL audio device, calls SDL_Quit() and exit() while that timer thread keeps running guest code, so the thread can touch state that is being torn down. Expected fix direction (not done here): stop the timeSetEvent threads (or hold them out of guest code) before closing audio and exiting. The same quit path serves ExitProcess, so a normal "End game" exit is exposed too.
+# save: stage3
+# note: a copy of bank_realtor_mansion_rent, the run that crashed. The race is rare, so loop it: for i in $(seq 40); do python3 tools/scenarios.py run issues/exit_race_sound_timer | tail -1; done
+# check: DrawTextA\("\s*Mansion is rented for a week\.\s*"
+# check: lula\[info\] script requested quit
+# reject: lula\[fatal\] signal
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+21000 move 300 300
+21500 click 300 300
+25000 move 160 110
+25500 click 160 110
+29000 move 320 250
+29500 click 320 250
+32000 move 211 325
+32500 click 211 325
+35000 move 344 312
+35500 click 344 312
+38000 move 320 250
+38500 click 320 250
+41000 move 344 312
+41500 click 344 312
+44000 move 320 20
+44500 click 320 20
+47500 move 520 400
+48000 click 520 400

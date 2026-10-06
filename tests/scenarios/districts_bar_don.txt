@@ -1,0 +1,43 @@
+# seconds: 66
+# expects: stage-1 save at 10:00 with the FBI countdown 0x455831 = 40 (the black FBI car is parked in the town) -> Bar: Dealer Don is always present when the countdown is <= 51 (bar setup 0x425c85) -> DDF "Today's offer from Dealer Don: new identity and new documents / Today's price 8000..12000 $ (random) / Buy new documents?" -> thumb (sets 0x455841 = 0x455845 = 1) -> "$<price> was deducted from your account" -> thumb -> account < 50000, so "Phooey, the FBI can't touch you now. Another 50000 bucks and this dump is history!" -> thumb -> Don's sprite is hidden (0x450fb8 = 0) but his hotspot stays registered until the bar is re-entered, so his spot opens the offer again and a second purchase repeats "$<price> was deducted" and "Phooey ..." (game logic in 0x4266d2) -> thumbs -> To the town. No lula[warn]/trap.
+# save: s1fbi
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000, FBI countdown 0x455831 = 40
+# check: DrawTextA\("\s*Today's offer from Dealer Don:
+# check: DrawTextA\("\s*\$\d+ was deducted from your account\s*"
+# check: DrawTextA\("\s*Phooey, the FBI can't touch you now\.
+# check: (?s)ms: click 596 130.*ms: click 596 130.*\$\d+ was deducted from your account
+# random: Don's price is 8000..12000 $ (rand() seeded from time()); with the runner's fixed LULA_CLOCK it is 10000 $.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Bar (low in the hotspot, below the band of the flying bird)
+22000 move 304 230
+22500 click 304 230
+# Dealer Don (557..635, 54..205)
+26000 move 596 130
+26500 click 596 130
+# "Buy new documents?" -> thumb
+30000 move 368 363
+30500 click 368 363
+# "$... was deducted" -> thumb
+34000 move 344 312
+34500 click 344 312
+# "Phooey, the FBI can't touch you now..." -> thumb
+38000 move 344 312
+38500 click 344 312
+# Don's spot again: offer -> thumb -> "$... was deducted" -> thumb -> "Phooey ..." -> thumb
+42000 move 596 130
+42500 click 596 130
+46000 move 368 363
+46500 click 368 363
+50000 move 344 312
+50500 click 344 312
+54000 move 344 312
+54500 click 344 312
+# To the town
+58000 move 120 450
+58500 click 120 450
+62500 move 300 300

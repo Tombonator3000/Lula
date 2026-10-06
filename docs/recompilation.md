@@ -64,6 +64,7 @@ build/game/lula [--data DIR] [--save DIR] [--mods DIR] [--trace] [--verbose] -- 
 | `LULA_SMOOTH=1` | Lineær skalering i stedet for skarpe piksler. |
 | `LULA_TEXT_AA=0` | Tekst uten kantutjevning, slik Windows 95 tegnet den. |
 | `LULA_LOG=0..3` | Loggnivå. |
+| `LULA_CLOCK=1997-01-01T08:00:00` | Veggklokka (`GetLocalTime`) starter på dette lokale tidspunktet og går deretter i sanntid. Spillet seeder `rand()` fra den én gang ved oppstart, så en fast verdi gjør de tilfeldige hendelsene like fra kjøring til kjøring. `tools/scenarios.py` setter den for hver kjøring. |
 
 ## Grafikkutskifting
 

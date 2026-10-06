@@ -1,0 +1,45 @@
+# Load "Casting2" (slot 2, clock patched to 9:05) -> casting office -> overview -> Realtor
+# -> Look at real estate -> "Lula's flat" tile -> Rent -> office -> Broom cupboard
+# -> Lula's flat -> F2 -> Save game -> slot 3 (300,107) "LulaFlat".
+12000 move 505 40
+12500 click 505 40
+15000 move 300 94
+15500 click 300 94
+17000 move 263 228
+17500 click 263 228
+21000 move 470 160
+21500 click 470 160
+25000 move 290 330
+25500 click 290 330
+29000 move 150 50
+29500 click 150 50
+33000 move 407 199
+33500 click 407 199
+37000 move 110 368
+37500 click 110 368
+41000 move 634 48
+41500 click 634 48
+44000 move 65 48
+44500 click 65 48
+47500 move 245 228
+48000 click 245 228
+51000 move 290 330
+51500 click 290 330
+55000 move 560 80
+55500 click 560 80
+59000 move 320 450
+59500 click 320 450
+63000 move 440 150
+63500 click 440 150
+67000 move 300 470
+67000 key F2
+69500 move 305 212
+70000 click 305 212
+72500 move 300 107
+73000 click 300 107
+74500 move 263 228
+75000 click 263 228
+77000 type LulaFlat
+78500 key RETURN
+81000 move 328 368
+81500 click 328 368

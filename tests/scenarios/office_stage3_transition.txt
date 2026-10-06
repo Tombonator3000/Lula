@@ -1,0 +1,36 @@
+# seconds: 92
+# expects: patched stage-1 save (account 2500000, flags 0x455841/0x455845 = 1, clock 18:40) -> INIT_STUFE(2) puts the player in the stage-2 office; at 19:00 the day ends: info box "And another busy day comes to an end." -> "Daily costs" sheet (Tuesday 1/ 2/1997) -> the day-change check 0x404a33 sees > 1999999 and calls INIT_STUFE(3): Los Angeles realtor with three mansions (MKL3_MEN) -> Mansion 'Like It' -> "Look at what's offered" -> offer sheet -> Buy -> "Mansion is sold to you." (account 1650000) -> "To the office" (three mansions) -> lady realtor's office -> "Back to the town" (city map, CTY_MEN/CITIES) -> mansion icon -> stage-3 office (OFFICE3.TAF, S_PARCEL.TBF) with "A little present from me to celebrate our new home.." No lula[warn]/trap.
+# save: s1flag3
+# note: "Office1" (patched) is the Load-dialog entry at 300,81 (slot 1)
+# check: DrawTextA\("\s*And another busy day comes to an end\.\s*"
+# check: CreateFileA\(DATA\\ANI\\MKL3_MEN\.TAF, read
+# check: DrawTextA\("\s*Mansion is sold to you\.\s*"
+# check: CreateFileA\(DATA\\ANI\\OFFICE3\.TAF, read
+# check: DrawTextA\("\s*A little present from me to celebrate our new home\.\.\s*"
+12000 move 505 40
+12500 click 505 40
+15000 move 300 81
+15500 click 300 81
+17000 move 263 228
+17500 click 263 228
+42000 move 340 305
+43000 click 340 305
+46000 move 315 380
+47000 click 315 380
+54000 move 150 120
+54500 click 150 120
+57000 move 320 240
+57500 click 320 240
+60000 move 336 325
+60500 click 336 325
+63000 move 340 305
+63500 click 340 305
+66000 move 320 25
+66500 click 320 25
+70000 move 514 365
+70500 click 514 365
+74000 move 320 80
+74500 click 320 80
+78000 move 420 395
+78500 click 420 395
+82000 move 300 470

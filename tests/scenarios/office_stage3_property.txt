@@ -1,0 +1,44 @@
+# seconds: 66
+# expects: stage-3 office after the present (save "Mansion3b") -> To the property (room 20 stage 3, LAGE_ST3) -> Hire staff: five portraits (DDF) -> Chambermaid sheet ("Number: 0 Leute", Quality 0 %) -> both sliders moved (7 Leute, 41 %, monthly costs 8610 $) -> thumbs up -> portraits thumbs up -> Expand site: pool / fence / hangar / runway -> pool -> yes/no box "The work will cost $20000. Start building work?" -> no (toilet) -> Extend thumbs up -> Buy private jet -> "You'll need a runway and a hangar!" -> thumbs up -> To the office. No lula[warn]/trap.
+# save: s3b
+# note: "Mansion3b" is the Load-dialog entry at 300,107 (slot 3)
+# check: CreateFileA\(DATA\\ANI\\LAGE_ST3\.TAF, read
+# check: DrawTextA\("\s*8610 \$\s*"
+# check: DrawTextA\("\s*The work will cost \$20000\. Start building work\?\s*"
+# check: DrawTextA\("\s*You'll need a runway and a hangar!\s*"
+# check: (?s)ms: click 180 120.*CreateFileA\(DATA\\ANI\\OFFICE3\.TAF
+12000 move 505 40
+12500 click 505 40
+15000 move 300 107
+15500 click 300 107
+17000 move 263 228
+17500 click 263 228
+22000 move 323 130
+22500 click 323 130
+26000 move 428 436
+26500 click 428 436
+29000 move 184 230
+29500 click 184 230
+32000 move 300 239
+32500 click 300 239
+34500 move 260 323
+35000 click 260 323
+37000 move 450 330
+37500 click 450 330
+40000 move 504 366
+40500 click 504 366
+43000 move 510 436
+43500 click 510 436
+46000 move 220 220
+46500 click 220 220
+49000 move 400 305
+49500 click 400 305
+52000 move 450 330
+52500 click 450 330
+55000 move 592 436
+55500 click 592 436
+58000 move 340 305
+58500 click 340 305
+61000 move 180 120
+61500 click 180 120
+64000 move 300 470

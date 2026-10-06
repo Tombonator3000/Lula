@@ -1,0 +1,35 @@
+# seconds: 58
+# expects: stage-2 save (office) -> To the overview -> stage-2 town overview (Realtor, Sex store, Bank, ...) -> Sex store (stage-2 room 4, SEX_ST2.TAF, hotspots 0x40bc6d) -> "Look at video charts" -> full-screen "Video Charts:" page dated "Monday 1-1-1997" with 10 titles and genre icons -> thumb -> "Buy sex toy" -> info "You have no props department where you could store the things!" -> thumb -> To the town -> stage-2 overview. Navigation only. No lula[warn]/trap.
+# save: stage2
+# note: "Stage2" is the Load-dialog entry at 300,119 (slot 4): stage 2, office, 8:00, account 60000
+# check: CreateFileA\(DATA\\ANI\\SEX_ST2\.TAF, read
+# check: DrawTextA\("\s*Video Charts:\s*"
+# check: DrawTextA\("\s*Monday 1-1-1997\s*"
+# check: DrawTextA\("\s*You have no props department where you could store the things!\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# stage-2 office -> To the overview (0..312, 0..90)
+24000 move 150 40
+24500 click 150 40
+# overview -> Sex store (322..470, 302..413)
+29000 move 396 357
+29500 click 396 357
+# Look at video charts (0..116, 0..343)
+34000 move 60 200
+34500 click 60 200
+# charts page -> thumb (bottom right)
+38000 move 600 445
+38500 click 600 445
+# Buy sex toy (443..640, 73..346) -> "You have no props department ..." -> thumb
+41500 move 540 200
+42000 click 540 200
+45000 move 344 312
+45500 click 344 312
+# To the town (0..640, 344..480)
+49000 move 320 420
+49500 click 320 420
+54000 move 300 300

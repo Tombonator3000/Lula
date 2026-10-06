@@ -1,0 +1,15 @@
+# seconds: 28
+# expects: regression test for the stale mouse position after a modal dialog (fixed). Load the stage-2 save with the mouse on the Load button (263,228); in the office no hotspot covers (263,228), so a click there without moving does nothing and BAUTEN.TAF is not opened. Before the fix the game kept the pre-dialog position (505,40) from the main-menu "Load Game" button, showed the tooltip "To the other WET buildings" and the click entered room 20. The original under Wine shows the tooltip of the real cursor position after the Load dialog closes.
+# save: stage2
+# note: the Load-dialog entry at 300,119 (slot 4)
+# check: DialogBoxParamA\(GAME_IO_DLG\) -> 1
+# check: CreateFileA\(DATA\\ANI\\SEKR_ANI\.TAF, read
+# reject: CreateFileA\(DATA\\ANI\\BAUTEN\.TAF
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# click again where the Load button was, without moving
+22000 click 263 228

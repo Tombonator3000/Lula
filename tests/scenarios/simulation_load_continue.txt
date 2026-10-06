@@ -1,0 +1,76 @@
+# seconds: 88
+# expects: Load Game -> "Sim2", a save written by the long run L3 itself (F2 -> Save game) after six game days: stage-2 town overview, Sunday 1-7-1997 17:08, account 60000, fast clock (0x4556bc = 0 carried over from its start save) -> the clock continues from 17:08 -> 19:59 day end: info box (902) -> "Daily costs" sheet "Sunday 1/ 7/1997" -> Monday 1-8-1997 9:00 (weekday 6 -> 0: weekly 0x40bfed runs) -> the clock runs through Monday (random hourly event boxes are closed by the same clicks) -> the next day end -> Tuesday 1-9-1997 9:00 and the clock runs again. No lula[warn]/trap.
+# save: sim2
+# note: "Sim2" is the Load-dialog entry at 300,119 (slot 4); the explorers made it with the 6-day run build/explore/simulation/scripts/L3.txt, the recipe in saves.json saves a patched Sunday save right after loading it
+# check: DialogBoxParamA\(GAME_IO_DLG\) -> 1
+# check: DrawTextA\("\s*And another busy day comes to an end\.\s*"
+# check: DrawTextA\("\s*1/ 8/1997\s*"
+# check: DrawTextA\("\s*1/ 9/1997\s*"
+# info boxes (thumb 318..372, 277..327) and the Daily costs sheet (thumb 287..342, 347..405) are closed by alternating clicks every 2 s; both spots are empty in the stage-2 overview
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+22000 move 330 300
+22500 click 330 300
+24000 move 318 380
+24500 click 318 380
+26000 move 330 300
+26500 click 330 300
+28000 move 318 380
+28500 click 318 380
+30000 move 330 300
+30500 click 330 300
+32000 move 318 380
+32500 click 318 380
+34000 move 330 300
+34500 click 330 300
+36000 move 318 380
+36500 click 318 380
+38000 move 330 300
+38500 click 330 300
+40000 move 318 380
+40500 click 318 380
+42000 move 330 300
+42500 click 330 300
+44000 move 318 380
+44500 click 318 380
+46000 move 330 300
+46500 click 330 300
+48000 move 318 380
+48500 click 318 380
+50000 move 330 300
+50500 click 330 300
+52000 move 318 380
+52500 click 318 380
+54000 move 330 300
+54500 click 330 300
+56000 move 318 380
+56500 click 318 380
+58000 move 330 300
+58500 click 330 300
+60000 move 318 380
+60500 click 318 380
+62000 move 330 300
+62500 click 330 300
+64000 move 318 380
+64500 click 318 380
+66000 move 330 300
+66500 click 330 300
+68000 move 318 380
+68500 click 318 380
+70000 move 330 300
+70500 click 330 300
+72000 move 318 380
+72500 click 318 380
+74000 move 330 300
+74500 click 330 300
+76000 move 318 380
+76500 click 318 380
+78000 move 330 300
+78500 click 330 300
+80000 move 318 380
+80500 click 318 380
+84000 move 600 200

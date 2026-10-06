@@ -1,0 +1,50 @@
+# seconds: 100
+# expects: New game (stage 1 town); the stage-1 distributor refuses Photos and Video (random refusal text such as "You ain't got photos!" or "Piss off, you clown...", closed with the thumb); Agent click; back to the town; after 10:00 game time the pawnshop (stage-1 room 2), its owner and the pawn sheet (Pawn / Buy back with empty lists, thumb); back to the town. No save needed.
+# save: none
+# check: CreateFileA\(DATA\\ANI\\VER_ANI1\.TAF, read
+# check: DrawTextA\("\s*You ain't got photos!\s*"
+# check: DrawTextA\("\s*You ain't got videos!\s*"
+# check: CreateFileA\(DATA\\ANI\\BUTCH\.TAF, read
+# check: DrawTextA\("\s*Pawnstore things
+11500 move 505 88
+12000 click 505 88
+# stage-1 town -> distributor (382..477, 69..151)
+20000 move 430 110
+20500 click 430 110
+# Photos -> refusal box -> thumb
+24000 move 278 238
+24500 click 278 238
+27500 move 344 312
+28000 click 344 312
+# Video -> refusal box -> thumb
+31000 move 110 148
+31500 click 110 148
+34500 move 344 312
+35000 click 344 312
+# Agent
+38000 move 357 125
+38500 click 357 125
+41500 move 344 312
+42000 click 344 312
+# To the town (0..292, 398..479)
+45000 move 140 440
+45500 click 140 440
+# the pawnshop only opens at 10:00 (opening-hours table 0x450f0c); wait in the town.
+# pawnshop (2..133, 234..364); the second click is a harmless retry if the clock is late
+71000 move 60 300
+71500 click 60 300
+75000 move 60 300
+75500 click 60 300
+# The owner (326..521, 74..310)
+79000 move 420 190
+79500 click 420 190
+# pawn sheet (DDF): Pawn and Buy back with empty lists, then the thumb
+82500 move 298 368
+83000 click 298 368
+85000 move 298 399
+85500 click 298 399
+88000 move 572 380
+88500 click 572 380
+# To the town (0..280, 327..479)
+92000 move 140 420
+92500 click 140 420

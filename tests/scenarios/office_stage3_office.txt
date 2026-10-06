@@ -1,0 +1,48 @@
+# seconds: 75
+# expects: stage-3 office (mansion, room 5 stage 3) -> present info box -> Laptop opens the options dialog -> thumbs up -> Flipchart: ST3_FLIPCHART_DLG "Financial data" (stores x turnover/costs/profit; Washington turnover drawn white as in WET.DDF, others green) -> thumbs up -> Safe: ST3_SAFE_DLG account balances, Own assets 1650000 $ -> thumbs up -> Planning parties: "Party plan" with three sliders (frequency label Yearly -> Every two weeks / Every two months, Girls 36, Buffet "Super-fantastic style", costs per party 7200 -> 15200) -> thumbs up -> To the property refused ("Don't run away honey, you have to open my present first!") -> present opened, secretary "Catch me!!" runs around. No lula[warn]/trap.
+# save: s3office
+# note: "Mansion3" is the Load-dialog entry at 300,94 (slot 2)
+# check: DrawTextA\("\s*Financial data\s*"
+# check: DrawTextA\("\s*1650000 \$\s*"
+# check: DrawTextA\("\s*Every two weeks\s*"
+# check: DrawTextA\("\s*15200\s*"
+# check: DrawTextA\("\s*Don't run away honey, you have to open my present first!\s*"
+12000 move 505 40
+12500 click 505 40
+15000 move 300 94
+15500 click 300 94
+17000 move 263 228
+17500 click 263 228
+22000 move 340 305
+22500 click 340 305
+25000 move 275 324
+25500 click 275 324
+28500 move 328 368
+29000 click 328 368
+31500 move 470 256
+32000 click 470 256
+35000 move 533 437
+35500 click 533 437
+38000 move 538 364
+38500 click 538 364
+41500 move 533 437
+42000 click 533 437
+44500 move 566 257
+45000 click 566 257
+48000 move 150 367
+48500 click 150 367
+50000 move 300 370
+50500 click 300 370
+52000 move 580 370
+52500 click 580 370
+54000 move 100 367
+54500 click 100 367
+56000 move 533 437
+56500 click 533 437
+59000 move 323 130
+59500 click 323 130
+62000 move 340 305
+62500 click 340 305
+65000 move 320 420
+65500 click 320 420
+70000 move 300 470

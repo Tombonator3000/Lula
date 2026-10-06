@@ -1,0 +1,33 @@
+# New game -> town -> Motel -> Reception -> motel owner: rent for one day -> thumbs up
+# -> "$100 was deducted" -> back out -> Motel room -> Suitcase (options dialog)
+# -> Save game -> slot 1 (300,82) -> Save -> "Office1" -> thumbs up closes the options.
+12000 move 505 88
+12500 click 505 88
+19000 move 77 145
+19500 click 77 145
+23000 move 374 311
+23500 click 374 311
+27000 move 200 180
+27500 click 200 180
+30500 move 78 306
+31000 click 78 306
+32500 move 380 366
+33000 click 380 366
+35500 move 340 305
+36000 click 340 305
+38500 move 40 200
+39000 click 40 200
+42500 move 455 180
+43000 click 455 180
+47000 move 465 196
+47500 click 465 196
+50500 move 305 212
+51000 click 305 212
+53500 move 300 82
+54000 click 300 82
+55500 move 263 228
+56000 click 263 228
+58500 type Office1
+60000 key RETURN
+63000 move 328 368
+63500 click 328 368

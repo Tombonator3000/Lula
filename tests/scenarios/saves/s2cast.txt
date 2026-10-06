@@ -1,0 +1,43 @@
+# Load "Office1" (slot 1, patched with account 120000 and the stage-1 goal flags): the
+# stage-1 end check switches to the stage-2 office -> To the overview -> Realtor -> Look at
+# real estate -> casting office tile -> Rent -> office -> To the other WET buildings
+# -> casting building -> F2 -> Save game -> slot 2 (300,94) "Casting2".
+12000 move 505 40
+12500 click 505 40
+15000 move 300 81
+15500 click 300 81
+17000 move 263 228
+17500 click 263 228
+24000 move 150 50
+24500 click 150 50
+28000 move 407 199
+28500 click 407 199
+32000 move 110 368
+32500 click 110 368
+36000 move 634 48
+36500 click 634 48
+39000 move 270 48
+39500 click 270 48
+42500 move 245 228
+43000 click 245 228
+46000 move 290 330
+46500 click 290 330
+50000 move 560 80
+50500 click 560 80
+54000 move 320 450
+54500 click 320 450
+58000 move 560 100
+58500 click 560 100
+62000 move 440 375
+62500 click 440 375
+66000 key F2
+68500 move 305 212
+69000 click 305 212
+71500 move 300 94
+72000 click 300 94
+73500 move 263 228
+74000 click 263 228
+76000 type Casting2
+77500 key RETURN
+80000 move 328 368
+80500 click 328 368

@@ -1,0 +1,39 @@
+# seconds: 74
+# expects: stage-1 save (town, Monday 1-1-1997 10:40, account 20000) patched to FBI countdown 0x455831 = 2 (a new game starts at 169 hours; at 154, 137, ..., 52 the hourly hook 0x408a87 plays the SMNEWS news videos, skipped with -novideo) -> the hourly hook counts it down at 11:00 and 12:00; at 0 it sets 0x455845 = 1 -> the stage-1 end check 0x408dea (no new identity, 0x455841 = 0): videos (skipped) and the yes/no box "The FBI have got you and you are going away for a long time... try again?" at 12:00 -> thumb (yes) -> INIT_GAME + INIT_STUFE start a new stage-1 game: dark morning town, Monday 1-1-1997 7:00, Account: 500, clock running. No lula[warn]/trap.
+# save: s1fbi2
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): s1town10 with 0x455831 = 2, 0x4556ac = 40
+# check: DialogBoxParamA\(GAME_IO_DLG\) -> 1
+# check: DrawTextA\("\s*The FBI have got you and you're going away for a long time\.\.\. try again\?\s*"
+# check: (?s)The FBI have got you.*CreateFileA\(DATA\\ANI\\BIRD1\.TAF
+# the yes thumb (about 300..350, 290..330) is clicked every 2 s from 42 s; the spot is empty in the stage-1 town
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+42000 move 330 300
+42500 click 330 300
+44000 move 330 300
+44500 click 330 300
+46000 move 330 300
+46500 click 330 300
+48000 move 330 300
+48500 click 330 300
+50000 move 330 300
+50500 click 330 300
+52000 move 330 300
+52500 click 330 300
+54000 move 330 300
+54500 click 330 300
+56000 move 330 300
+56500 click 330 300
+58000 move 330 300
+58500 click 330 300
+60000 move 330 300
+60500 click 330 300
+62000 move 330 300
+62500 click 330 300
+64000 move 330 300
+64500 click 330 300
+70000 move 300 440

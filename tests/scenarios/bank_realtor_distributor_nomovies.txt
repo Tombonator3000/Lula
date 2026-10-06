@@ -1,0 +1,32 @@
+# seconds: 48
+# expects: stage-2 distributor (room 3) without finished movies: "Grant movie licenses" and "Sell movie rights" both answer "Unfortunately you have no movies to sell!" (closed with the thumb); To the town. Note: with about 19 % probability the distributor is busy on entry (random event 0x4111e1, text "What is this, you wanna hold my prick? Get outa here!") and throws Lula out to the town; then the later clicks land in the town overview.
+# save: stage2
+# note: "Stage2" is the Load-dialog entry at 300,119 (slot 4)
+# check: CreateFileA\(DATA\\ANI\\Verl_ani\.TAF, read
+# check: (?s)ms: click 440 258.*Unfortunately you have no movies to sell!
+# check: (?s)ms: click 152 335.*Unfortunately you have no movies to sell!
+# random: about 19 % of distributor entries hit the busy-distributor event (0x4111e1, rand() seeded from time()). The runner's fixed LULA_CLOCK makes the outcome repeatable; with it the distributor is not busy here.
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office -> overview -> Distributor (523..585, 104..272)
+22000 move 150 40
+22500 click 150 40
+26000 move 554 190
+26500 click 554 190
+# Grant movie licenses (379..501, 228..289)
+30000 move 440 258
+30500 click 440 258
+33500 move 344 312
+34000 click 344 312
+# Sell movie rights (97..208, 308..362)
+37000 move 152 335
+37500 click 152 335
+40500 move 344 312
+41000 click 344 312
+# To the town (15..169, 0..91)
+44000 move 90 45
+44500 click 90 45

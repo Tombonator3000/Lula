@@ -1,0 +1,19 @@
+# seconds: 58
+# expects: patched stage-2 save (account 2500000, clock 18:55) reaches the end of the day: "And another busy day comes to an end." info box -> thumb -> "Daily costs" sheet -> thumb -> account > 1999999 triggers INIT_STUFE(3) and the stage-3 lady realtor (MKL3_MEN.TAF, mansions view, "Los Angeles") appears.
+# save: stage2_rich
+# note: the Load-dialog entry at 300,119 (slot 4)
+# check: DrawTextA\("\s*And another busy day comes to an end\.\s*"
+# check: DrawTextA\("\s*1/ 2/1997\s*"
+# check: (?s)1/ 2/1997.*CreateFileA\(DATA\\ANI\\MKL3_MEN\.TAF
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+19000 move 260 330
+# day-end info box thumb, then the daily costs sheet thumb
+42000 move 344 312
+42500 click 344 312
+46000 move 307 384
+46500 click 307 384

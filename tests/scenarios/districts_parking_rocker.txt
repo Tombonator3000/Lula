@@ -1,0 +1,66 @@
+# seconds: 94
+# expects: stage-1 save at 10:00 (FBI countdown 169, FBI not in town) -> Parking lot (stage-1 room 7) -> Rocker -> DDF "Select from our service offer" (Beat up motel owner / Beat up FBI agents / Anti-arrest insurance, "How much do you want to pay ?" slider "2 Lion beer sixpacks 200 $") -> motel owner, slider to ~7 sixpacks, thumb -> "The motel owner should be out of action for about N hours.." -> "$... was deducted from your account" -> Rocker -> FBI agents, thumb -> "The FBI aren't in town yet" -> Rocker -> Anti-arrest insurance, thumb -> "The cops should leave you in peace for about N hours.." -> "$... was deducted" -> Rocker -> motel owner again -> "You want the motel owner to croak!? ..." -> To the town. No lula[warn]/trap.
+# save: s1town10
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000
+# check: DrawTextA\("\s*The motel owner should be out of action for about \d+ hours\.\.\s*"
+# check: DrawTextA\("\s*The FBI aren't in town yet\s*"
+# check: DrawTextA\("\s*The cops should leave you in peace for about \d+ hours\.\.\s*"
+# check: DrawTextA\("\s*\$1000 was deducted from your account\s*"
+# check: DrawTextA\("\s*You want the motel owner to croak!\? \.\.\.\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Parking lot (450..577, 355..464)
+22000 move 513 410
+22500 click 513 410
+# Rocker (301..602, 46..397) -> service sheet
+26000 move 450 200
+26500 click 450 200
+# beat up motel owner, slider, thumb
+29500 move 48 128
+30000 click 48 128
+31500 move 450 287
+32000 click 450 287
+33500 move 377 375
+34000 click 377 375
+# "out of action for about N hours.." -> thumb; "$... was deducted" -> thumb
+37000 move 344 312
+37500 click 344 312
+40500 move 344 312
+41000 click 344 312
+# Rocker -> beat up FBI agents -> thumb -> "The FBI aren't in town yet" -> thumb
+44000 move 450 200
+44500 click 450 200
+47500 move 48 233
+48000 click 48 233
+49500 move 377 375
+50000 click 377 375
+53000 move 344 312
+53500 click 344 312
+# Rocker -> anti-arrest insurance -> thumb -> "The cops should leave you in peace..." -> "$... deducted"
+56500 move 450 200
+57000 click 450 200
+60000 move 48 333
+60500 click 48 333
+62000 move 377 375
+62500 click 377 375
+65500 move 344 312
+66000 click 344 312
+69000 move 344 312
+69500 click 344 312
+# Rocker -> motel owner again -> "You want the motel owner to croak!? ..."
+72500 move 450 200
+73000 click 450 200
+76000 move 48 128
+76500 click 48 128
+78000 move 377 375
+78500 click 377 375
+81500 move 344 312
+82000 click 344 312
+# To the town (0..90, 0..243)
+85500 move 45 120
+86000 click 45 120
+90000 move 300 300

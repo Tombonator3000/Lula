@@ -1,0 +1,40 @@
+# seconds: 58
+# expects: stage-1 save at 10:00 (Load Game, entry 300,119) -> town -> Bar (room 24, BARLEUTE/LULA1 TAFs) -> Lady bar owner -> DDF "You're in luck! I'm going to hire your little friend as a STRIPPER." -> thumb -> "I'll pay her $100 and $150 for 3 hours in the evening. When should Lula start work?" with four clocks, "Working 12 h - 15 h" -> second clock -> "Working 15 h - 18 h" -> thumb closes -> Lady bar owner again -> info box "Lula already works here. 15:00 to 18:00" -> thumb -> piano spot (sound 0x33) -> To the town. No lula[warn]/trap.
+# save: s1town10
+# note: "Base" is the Load-dialog entry at 300,119 (slot 4): stage 1, town, 10:00, account 20000
+# check: DrawTextA\("\s*STRIPPER\.\s*"
+# check: DrawTextA\("\s*15 h - 18 h\s*"
+# check: DrawTextA\("\s*Lula already works here\. 15:00 to 18:00\s*"
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# town -> Bar (245..363, 128..238); low in the hotspot, below the band of the flying bird (crosshair)
+22000 move 304 230
+22500 click 304 230
+# Lady bar owner (4..85, 149..247)
+26000 move 45 200
+26500 click 45 200
+# thumb -> working-hours page
+30000 move 377 375
+30500 click 377 375
+# second day clock (15 h - 18 h)
+33500 move 510 197
+34000 click 510 197
+# thumb: Lula is hired
+36500 move 377 375
+37000 click 377 375
+# Lady again: "Lula already works here. 15:00 to 18:00"
+40000 move 45 200
+40500 click 45 200
+43500 move 344 312
+44000 click 344 312
+# piano / stage spot (165..305, 62..138): plays a sound
+47000 move 235 100
+47500 click 235 100
+# To the town (0..241, 425..479)
+51000 move 120 450
+51500 click 120 450
+55000 move 300 300
