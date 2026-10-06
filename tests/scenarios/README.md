@@ -37,9 +37,10 @@ every run. Several scenarios are tuned to that data (click positions, amounts
 in `# check:` lines), so another clock value means rebuilding the templates
 (their stamps include the clock) and retuning those scenarios. The runner drops the
 per-read `ReadFile`/`SetFilePointer` trace lines from the log and keeps each
-distinct `DrawTextA` line once per script step (the game redraws its texts
-every frame), so `log.txt` stays small and still shows every text the game
-drew, in order.
+distinct `DrawTextA` and `TextOutA` line once per script step (the game
+redraws its texts every frame), so `log.txt` stays small and still shows every
+text the game drew, in order. `TextOutA` carries the hover labels of hotspots,
+help pages and a few HUD texts, with their position.
 
 Script times are wall-clock milliseconds since the start of the process, while
 the game itself slows down when the machine is busy. Leave a few seconds of
@@ -73,7 +74,7 @@ slack between steps and before `# seconds`.
   scenario reached what `# expects:` describes: Win32 dialogs
   (`DialogBoxParamA\(GAME_IO_DLG\) -> 1`, `dialog STANDARD_GET_TXT_DLG`),
   files the game opens (`CreateFileA\(DATA\\ANI\\BAUTEN\.TAF`), texts it draws
-  (`DrawTextA\("The advertising budget is now \$35000`), popup menus
+  (`DrawTextA\("The advertising budget is now \$35000`, `TextOutA\("To the bank"`), popup menus
   (`TrackPopupMenu at 100,40 -> command 100`), saves it writes
   (`CreateFileA\(DATA\\SAVE\\SAVEGAME\.  1, write`).
 - `# reject: REGEX`: must not match anywhere (regression tests).

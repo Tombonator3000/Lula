@@ -434,6 +434,8 @@ WINAPI_FN(gdi32, TextOutA)
     int32_t x = (int32_t)ARG(1), y = (int32_t)ARG(2);
     const char *s = gstr(ARG(3));
     int n = (int)ARG(4);
+    if (s)
+        RT_TRACE("TextOutA(\"%.*s\", %d,%d)", n, s, (int)x, (int)y);
     if (d && s) {
         Font *f = font_of(d->font);
         if (!f)

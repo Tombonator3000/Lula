@@ -143,8 +143,8 @@ def scenario_paths(patterns):
 # --------------------------------------------------------------------- game
 def filter_log(raw, dest):
     """Copy a LULA_LOG=3 log without the per-read file trace lines and with
-    each distinct DrawTextA record kept once per script step (the game redraws
-    its texts every frame). A record is a "lula[" line plus the lines of a
+    each distinct DrawTextA and TextOutA record kept once per script step (the
+    game redraws its texts every frame). A record is a "lula[" line plus the lines of a
     multi-line text."""
     seen = set()
     with open(raw, 'rb') as src, open(dest, 'wb') as out:
@@ -153,7 +153,7 @@ def filter_log(raw, dest):
         def flush(rec):
             if rec.startswith(b'lula[trace] ReadFile(') or rec.startswith(b'lula[trace] SetFilePointer('):
                 return
-            if rec.startswith(b'lula[trace] DrawTextA('):
+            if rec.startswith(b'lula[trace] DrawTextA(') or rec.startswith(b'lula[trace] TextOutA('):
                 if rec in seen:
                     return
                 seen.add(rec)
