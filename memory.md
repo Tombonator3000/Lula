@@ -29,7 +29,8 @@ Hele WET.EXE (Lula - The Sexy Empire, 1997) skal rekompileres og kjøre native p
 - Teksten tegnes med Liberation Sans Bold (fontnavnet spillet ber om er "System Small", høyde -14, vekt 700). Noen DDF-etiketter brytes eller klippes. Wine viser originalen med en font av samme størrelse, så fonten er ikke endret uten et skjermbilde fra ekte Windows.
 - Rekonstruert som lesbar C: memcpy og get-PC-stubben (Claude), fem ressursfunksjoner (Codex, PR #3, `docs/reconstruction/resource-readers.md`).
 - Spillet treffer klikk der siste WM_MOUSEMOVE var (ingen GetCursorPos). Runtimen poster derfor en musebevegelse når en dialog, meldingsboks eller meny lukkes, slik Windows gjør.
-- Scenariene i `tests/scenarios/` laster lagrede spill. Lagrede spill skal ikke i Git, så de bygges fra oppskrifter (arbeid pågår, se todo.md).
+- Scenariene i `tests/scenarios/` laster lagrede spill. Lagrede spill skal ikke i Git, så `tools/scenarios.py saves` bygger dem fra `tests/scenarios/saves.json` (ca. 5 min). `tools/scenarios.py run` kjører alle 64 (ca. 29 min med `-j 3`). Runneren setter `LULA_CLOCK=1997-01-01T08:00:00`; flere scenarier er tilpasset de tilfeldige bydataene denne klokka gir.
+- Avslutning: hovedtråden tar den globale låsen før lyd og SDL stenges, med mindre en spilltråd ba om avslutningen (da holder den låsen allerede).
 - Wine-referansen ligger i `build/wine-ref/` (lokal, ikke i Git): skjermbilder, API-sekvens og relay-trace.
 
 ## Verktøy og arbeidsflyt

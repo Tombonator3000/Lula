@@ -1,15 +1,12 @@
 # Gjøremål
 
-## Pågår
-
-- [ ] Gjøre scenariene i `tests/scenarios/` kjørbare fra en fersk klone: oppskrifter for lagrede spill (`tests/scenarios/saves.json`), kjøreverktøy `tools/scenarios.py` og `tests/test_scenarios.py`. En agent jobber med det.
-
 ## Neste
 
 - [ ] Video (CUT-filer, ActiveMovie via CoCreateInstance) og MCI. Venter på svar fra brukeren. Med "Play videos" slått på avslutter F1 i dag spillet ("End Program ??").
 - [ ] Nå de delene av spillet utforskningen ikke kom til: salg av ferdige filmer (WORK_ORDER_DLG, 0x40e19b), bemannet markedsavdeling, sabotasjens ettervirkninger, 145 funksjoner i rom/dialoger/simulering.
 - [ ] Fonten: finn ut hvilken font Windows 9x gir for "System Small" -14 fet (skjermbilde fra ekte Windows), og velg erstatning etter det.
-- [ ] Rekonstruksjon i større skala, kontrollert med `lula-fncheck`. Neste kandidater: resten av Watcom-runtimen og 2D-grafikkmotoren.
+- [ ] Rekonstruksjon i større skala, kontrollert med `lula-fncheck`. Blitterne er gitt til Codex (oppgave 4 i `docs/samarbeid-codex.md`); deretter 2D-grafikkmotoren og resten av Watcom-runtimen.
+- [ ] TAF-redigering (Codex, oppgave 2).
 - [ ] Logg direkte importkall i `--trace` (i dag logges bare indirekte kall og COM-metoder).
 - [ ] Lineær interpolasjon i lydmikseren (i dag nærmeste sample; påvirker bare lydkvalitet).
 - [ ] Windows-bygg av samme kildekode (MinGW 13 og SDL2 2.30.8 for MinGW finnes). Lav prioritet, originalen kjører allerede på Windows.
@@ -39,3 +36,6 @@
 - [x] Skriptet utforskning av alle tre trinn: 955 av 1261 levende funksjoner kjørt, ingen feilfeller (`docs/recomp/exploration.md`).
 - [x] Musposisjon etter modale dialoger (ny WM_MOUSEMOVE som i Windows).
 - [x] Ressursleserne rekonstruert som lesbar C (Codex, PR #3), kontrollert på nytt etter fletting.
+- [x] 64 scenariotester kjørbare fra en fersk klone (`tools/scenarios.py`, 40 oppskrifter for lagrede spill, fast klokke med `LULA_CLOCK`).
+- [x] Sjelden krasj ved avslutning (lydtimeren kalte en lukket lydenhet) rettet.
+- [x] Codex-gjennomgangen av PR #2: timer, kommandolinje og README.
