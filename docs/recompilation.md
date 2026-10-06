@@ -55,8 +55,11 @@ build/game/lula [--data DIR] [--save DIR] [--mods DIR] [--trace] [--verbose] -- 
 | Miljøvariabel | Virkning |
 |---|---|
 | `LULA_HEADLESS=1` | Ingen vindu eller lydenhet (SDL dummy-drivere). |
-| `LULA_FRAMEDUMP=DIR` | Skriver viste bilder som PPM, ett per `LULA_FRAMEDUMP_MS` (standard 1000). |
-| `LULA_INPUT=FIL` | Skriptet input, én linje per hendelse: `<ms> move X Y`, `click X Y`, `rclick X Y`, `key NAVN`, `quit`. |
+| `LULA_FRAMEDUMP=DIR` | Skriver viste bilder som PPM, ett per `LULA_FRAMEDUMP_MS` (standard 1000). Et bilde som vises én gang og blir stående (hjelpesider, meldingsbokser) skrives også. Bildene er 900 KB hver, så bruk kroken sparsomt. |
+| `LULA_INPUT=FIL` | Skriptet input, én linje per hendelse: `<ms> move X Y`, `click X Y`, `rclick X Y`, `key NAVN`, `type TEKST` (resten av linja, med mellomrom og tegnsetting), `dump` (skriv hvert bilde fra nå), `quit`. Linjer som begynner med `#` er kommentarer. |
+| `LULA_COVERAGE=FIL` | Skriver hvilke rekompilerte funksjoner som har kjørt (adresse og antall kall), hvert annet sekund og ved avslutning. Slå sammen med `tools/coverage_report.py`. |
+| `LULA_MSGBOX_AUTO=1` | Meldingsbokser svarer med standardknappen med en gang (for hodeløse tester). |
+| `LULA_AUDIODUMP=FIL` | Skriver den miksede lyden til en WAV-fil. |
 | `LULA_SCALE=N` | Startstørrelse på vinduet (standard 2, altså 1280x960). |
 | `LULA_SMOOTH=1` | Lineær skalering i stedet for skarpe piksler. |
 | `LULA_TEXT_AA=0` | Tekst uten kantutjevning, slik Windows 95 tegnet den. |
@@ -92,10 +95,12 @@ Testen `tests/test_recompiled_game.py` gjør det samme automatisk med en grønn 
 - Rekompilatoren: hver instruksjonsform i WET.EXE er sammenlignet med emulatoren unicorn, til sammen 247 380 tilstander uten avvik (`docs/recomp/lifter-verification.md`, `python3 tests/recomp/unicorn_diff.py`).
 - Dialogbokser fra ressursene (13 maler, 18 dialogprosedyrer), popupmenyen "Set Digital Output" og MessageBox. Lagring fra F2-menyen og lasting fra hovedmenyen er dekket av en ende-til-ende-test.
 - Utforskende kjøring med tilfeldige klikk og taster i 2 x 4 minutter uten feilfeller eller advarsler.
+- Skriptet gjennomspilling av alle tre trinn (kontor, bank, eiendomsmeglere, byrå, bydeler, dag-, måneds- og årsskifte, flyplass og sluttscenen) i rundt 400 kjøringer uten feilfeller. 955 av 1261 levende funksjoner har kjørt (75,7 %). Se [utforskningen](recomp/exploration.md).
 
 ## Ikke verifisert ennå
 
-- Store deler av spillflyten (mange rom og hendelser er ikke besøkt i testene).
+- Deler av spillflyten: salg av ferdige filmer og noen sene hendelser er ikke nådd (se [utforskningen](recomp/exploration.md)).
+- Fonten: spillet ber om "System Small", som ikke finnes. Noen etiketter brytes eller klippes med erstatningsfonten. Uten et skjermbilde fra ekte Windows vet vi ikke hvilken font originalen fikk.
 - Lyd på en ekte lydenhet. Miksen er sammenlignet med originalens samples, men ikke lyttet på.
 - Video (`.CUT`-filer) og MCI er bevisst satt til side. Med `-novideo` hopper spillet over videoene.
 - Windows-bygg av den samme koden.
@@ -118,6 +123,6 @@ uint32_t f_00442be4(Cpu *c)
 
 Rekompilatoren ser markeringen, slutter å generere sin egen `f_00442be4` og beholder den som `lifted_00442be4` for sammenligning. CMake regenererer automatisk når filene endres. En erstatning må etterlate registre, flagg som leses senere, stakk og minne slik originalen gjør, fordi kallerne er generert kode. Rekompilatoren advarer hvis funksjonen inngår i flaggflyt på tvers av kall.
 
-Første eksempel er Watcoms `memcpy` (0x442be4) i `src/reconstructed/watcom_crt.c`. Alle ende-til-ende-testene går grønt med den.
+Første eksempel er Watcoms `memcpy` (0x442be4) i `src/reconstructed/watcom_crt.c`. Alle ende-til-ende-testene går grønt med den. Codex har rekonstruert fem ressursfunksjoner (NGS-oppslag og -lesing, TBF-lesing, RLE-dekoderen og signaturkontrollen) i `src/reconstructed/resource_*.c`, kontrollert med `lula-fncheck` og 6395 filtilfeller fra spilldataene ([beskrivelse](reconstruction/resource-readers.md)).
 
 `build/game/lula-fncheck` kontrollerer hver erstatning mot den genererte versjonen. Den bygger tilfeldige maskintilstander ut fra en profil i kildekoden, for eksempel `RT_CHECK(0x00442be4, "eax:ptr edx:ptr ebx:size(0,600)")`, kjører begge versjonene og sammenligner registre, flaggene kallerne leser, x87-tilstand og minne (skrapebuffere, stakk over stakkpekeren og hele programbildet). memcpy består 3000 av 3000 tilstander. Samme mekanisme er veien til lesbar kildekode for spillogikken, ny renderer og høyere intern oppløsning.
