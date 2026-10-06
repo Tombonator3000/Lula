@@ -1,0 +1,97 @@
+# seconds: 160
+# expects: "Beauty" (movie_heal_eve: both actors sick after the beauty operation of 1-1-1997, 8 days; Monday 8-1-1997 18:00, normal speed) on the WET plot -> office -> To the overview -> Beauty clinic -> Give actors beauty treatment -> actors: card "Is still sick for 1 day(s)!" (8 - 7 days, 0x405314 on +0x18) -> OK -> "He's still sick because of the last operation!" -> thumb -> close; the player waits in the clinic -> 19:59 day end: "And another busy day comes to an end." -> Daily costs of Tuesday 1/9/1997: rental costs -1430 $ (sum of rent / 30 of the 14 rented buildings, 0x418eb2), staff costs -7837 $ (pay of the 22 hired people, sick ones included, 0x41d9c0), total -9267 $ (added to the account at 0x405612) -> the day-end staff update 0x41da0d ends both operations (9 - 1 = 8 days >= +0x24 = 8: level + 1, status 1) -> actors again: "Is glad there's nothing to do." -> OK -> operation sheet -> Cancel; actress the same -> close -> To the town -> Office -> F2 save 'Healed2'. No lula[warn]/trap.
+# save: movie_heal_eve
+# note: "Beauty" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20) at 18:00, 14.4 s per game hour; the card is opened at about 19:20, the clock stands still while DDF sheets are open, and the day end comes about 12 s after the sheet is closed
+# note: the day-end clicks at 366,300 and 300,395 hit the thumbs of the info boxes (318..372 x 277..327) and of Daily costs (287..342 x 347..405) and no hotspot of the clinic (0..640 x 0..80 and 20..228 x 48..305), so spare clicks do nothing; a trash box at 9:00 (rand() % 100 > 90) is closed the same way
+# note: checked with --keep: the saved slot has actor 527 at level 9 (was 8) and actress 17 at level 9 (capped), both status 1 with the date and +0x24 cleared, account 1488000 - 9267 = 1478733
+# check: (?s)ms: click 187 253.*DrawTextA\("Thommy Session".*DrawTextA\("Is still sick for 1 day\(s\)!".*ms: click 505 382.*DrawTextA\("He's still sick because of the last operation!"
+# check: (?s)DrawTextA\("And another busy day comes to an end\.".*DrawTextA\("-1430 \$", rect 264,167.*DrawTextA\("-7837 \$", rect 264,190.*DrawTextA\(" -9267 \$", rect 424,383.*DrawTextA\("Tuesday".*DrawTextA\("1/ 9/1997"
+# check: (?s)DrawTextA\("1/ 9/1997".*ms: click 187 253.*DrawTextA\("Thommy Session".*DrawTextA\("Is glad there's nothing to do\.".*ms: click 505 382.*DrawTextA\("Do beauty operation\s*:"
+# check: (?s)DrawTextA\("1/ 9/1997".*ms: click 470 250.*DrawTextA\("Cassandra Casablanca".*DrawTextA\("Is glad there's nothing to do\."
+# check: CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: The operation you want costs
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building -> office -> To the overview -> Beauty clinic -> Give actors beauty treatment
+22000 move 290 340
+22500 click 290 340
+26000 move 150 40
+26500 click 150 40
+30000 move 78 190
+30500 click 78 190
+34000 move 120 200
+34500 click 120 200
+# actors -> card 'Is still sick for 1 day(s)!' -> OK -> 'He's still sick because of the last operation!' -> thumb; close the sheet
+37500 move 187 253
+38000 click 187 253
+40500 move 505 382
+41000 click 505 382
+43500 move 340 305
+44000 click 340 305
+46500 move 327 375
+47000 click 327 375
+# wait in the clinic for the 19:59 day end: 366,300 and 300,395 hit the thumbs of the boxes and no clinic hotspot
+50000 move 366 300
+50500 click 366 300
+53000 move 300 395
+53500 click 300 395
+57000 move 366 300
+57500 click 366 300
+60000 move 300 395
+60500 click 300 395
+64000 move 366 300
+64500 click 366 300
+67000 move 300 395
+67500 click 300 395
+71000 move 366 300
+71500 click 366 300
+74000 move 300 395
+74500 click 300 395
+78000 move 366 300
+78500 click 366 300
+81000 move 300 395
+81500 click 300 395
+85000 move 366 300
+85500 click 366 300
+88000 move 300 395
+88500 click 300 395
+92000 move 366 300
+92500 click 366 300
+95000 move 300 395
+95500 click 300 395
+# after the day end: actors -> card 'Is glad there's nothing to do.' -> OK -> operation sheet -> Cancel; actresses the same; close
+100000 move 120 200
+100500 click 120 200
+103500 move 187 253
+104000 click 187 253
+106500 move 505 382
+107000 click 505 382
+109500 move 424 370
+110000 click 424 370
+112500 move 470 250
+113000 click 470 250
+115500 move 505 382
+116000 click 505 382
+118500 move 424 370
+119000 click 424 370
+121500 move 327 375
+122000 click 327 375
+# To the town -> Office -> F2 save 'Healed2'
+124500 move 320 40
+125000 click 320 40
+128500 move 320 450
+129000 click 320 450
+133000 key F2
+135500 move 305 212
+136000 click 305 212
+138000 move 300 119
+138500 click 300 119
+140500 move 263 228
+141000 click 263 228
+143500 type Healed2
+145000 key RETURN
+148000 move 320 240

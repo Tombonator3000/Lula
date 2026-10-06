@@ -1,0 +1,45 @@
+# movie_mixing: buy sound equipment and start the sound track of 'Hot Sauna', save on the WET plot as 'Mixing'
+# main menu -> Load Game -> CutDone (slot 4) -> Load (WET plot)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# Sound studio (plot building 2) -> Buy equipment -> '3 Mix 3000' 1200 $ -> Buy -> left thumb
+22000 move 460 120
+22500 click 460 120
+26000 move 300 410
+26500 click 300 410
+29500 move 150 168
+30000 click 150 168
+31500 move 168 341
+32000 click 168 341
+34000 move 292 342
+34500 click 292 342
+# Add sound track to film -> DDF 60 (0x42de52) -> entry 1 'Hot Sauna' -> DDF 70 (0x42e0c4) -> 'Tango' -> thumb
+# -> 'Adding sound track will take about 1 day(s).' -> thumb -> sheet thumb
+37500 move 280 280
+38000 click 280 280
+41000 move 120 98
+41500 click 120 98
+44500 move 341 166
+45000 click 341 166
+47500 move 170 365
+48000 click 170 365
+51000 move 340 300
+51500 click 340 300
+54000 move 595 440
+54500 click 595 440
+# To the other offices -> WET plot -> F2 save 'Mixing'
+57500 move 80 400
+58000 click 80 400
+62000 key F2
+64500 move 305 212
+65000 click 305 212
+67000 move 300 119
+67500 click 300 119
+69500 move 263 228
+70000 click 263 228
+72500 type Mixing
+74000 key RETURN

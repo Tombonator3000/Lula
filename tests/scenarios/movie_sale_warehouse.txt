@@ -1,0 +1,117 @@
+# seconds: 240
+# expects: "OnSale" (movie_onsale_eve: 'Hot Sauna' put on sale at the office laptop on Monday 15-1-1997 by the game, FILMB.TMP record with price code -112 and value 49000; 19:00, fast clock 0x4556bc = 2) on the WET plot -> casting office -> 19:59 day end -> Daily costs of Tuesday 1/16/1997 (no revenue yet, total -9267 $) -> 0x404a33 calls 0x42a1ef: the record (1 day old) becomes warehouse entry 0 with expected copies 49000 / 30 = 1633 and price 112 - 100 - 1633 / 1000 = 11 (+- rand() % 3) -> the hourly 0x42a0ac draws orders (rand() % 100 > 30; quantity rand() % 1633, the last one capped so that the orders add up to 1633) -> WET plot -> about 17:00: Warehouse -> Process orders -> WORK_ORDER_DLG with SVE Inc. 80 x 10$, Sex Attack Film&Video 420 x 11$, Sex&Sell Inc. 912 x 11$ and 221 x 11$ -> Accept four times (0x42aaa8: revenue 0x485080 += quantity * price) -> OK -> Process orders -> "You haven't got any orders!" -> thumb -> casting office -> 19:59 day end -> Daily costs of Wednesday 1/17/1997: "Direct sales revenue" 17883 $ (80 * 10 + 420 * 11 + 912 * 11 + 221 * 11), total 8616 $ -> 0x42a4b9 writes the sold copies back into FILMB.TMP (read, read, write). No lula[warn]/trap.
+# save: movie_onsale_eve
+# note: "OnSale" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20) at 19:00; with 0x4556bc = 2 a game hour takes about 11 s, and the clock stands still while WORK_ORDER_DLG and the DDF boxes are open (the warehouse is entered at about 16:56, the second day end comes 34 s of running clock later)
+# note: timing at normal machine speed: first day end at about 26 s, 9:00 at about 36 s, the last order (13:00) at about 80 s, the warehouse at about 17:00, the second day end at about 172 s; the warehouse visit still comes after 13:00 when the game runs 50 % slow, and the spare clicks run until 228 s
+# note: Lula's flat is rented in this chain, so its plot rectangle (216..416 x 258..387) covers 366,300: the day-end clicks are made in the casting office, where 366,300 and 300,395 hit no hotspot (0x41a59c)
+# note: the orders are the same with the normal speed and with 0x4556bc = 1 (runs with frames): the order draws do not depend on the number of timer calls per hour
+# note: checked once with --keep and an F2 save after the second day end (an earlier version of this script): the account is then 1447229 - 9267 + 8616 = 1446578, and FILMB.  4 holds +0x110 = 1633 copies sold in the first 30 days
+# check: (?s)ms: click 440 400.*CreateFileA\(DATA\\ANI\\CAST_DET\.TAF, read.*DrawTextA\("Daily costs".*DrawTextA\(" -9267 \$", rect 424,383.*DrawTextA\("1/16/1997"
+# check: (?s)ms: click 410 330.*dialog WORK_ORDER_DLG: 5 controls.*ms: click 82 270.*ms: click 325 270.*DialogBoxParamA\(WORK_ORDER_DLG\) -> 0.*ms: click 410 330(?:(?!ms: click).)*DrawTextA\("You haven't got any orders!"
+# check: (?s)DrawTextA\(" 17883 \$", rect 424,338.*DrawTextA\(" 8616 \$", rect 424,383.*DrawTextA\("Direct sales revenue\s*".*DrawTextA\(" 17883 \$", rect 265,314.*DrawTextA\("1/17/1997"
+# check: (?s)DrawTextA\(" 8616 \$", rect 424,383(?:(?!FILMB).)*CreateFileA\(DATA\\DATABASE\\FILMB\.TMP, read[^\n]*\n[^\n]*CreateFileA\(DATA\\DATABASE\\FILMB\.TMP, read[^\n]*\n[^\n]*CreateFileA\(DATA\\DATABASE\\FILMB\.TMP, write
+# reject: You haven't got any staff in this department
+# check: (?s)ms: click 440 400(?:(?!SEKR_ANI).)*\Z
+# main menu -> Load Game -> OnSale (slot 4) -> Load (WET plot, 19:00); casting office (the waiting room: 366,300 and 300,395 hit no hotspot there)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+20000 move 440 400
+20500 click 440 400
+# first day end: trash box if any, 'And another busy day', Daily costs
+26000 move 366 300
+26500 click 366 300
+29000 move 300 395
+29500 click 300 395
+33000 move 366 300
+33500 click 366 300
+36000 move 300 395
+36500 click 300 395
+40000 move 366 300
+40500 click 366 300
+43000 move 300 395
+43500 click 300 395
+47000 move 366 300
+47500 click 366 300
+50000 move 300 395
+50500 click 300 395
+54000 move 366 300
+54500 click 366 300
+57000 move 300 395
+57500 click 300 395
+# To the other offices -> WET plot (orders come at 10:00, 11:00, 12:00 and 13:00)
+59000 move 470 160
+59500 click 470 160
+# about 17:00: Warehouse -> Process orders -> WORK_ORDER_DLG -> Accept four times -> OK
+118000 move 80 300
+118500 click 80 300
+122000 move 410 330
+122500 click 410 330
+125500 move 82 270
+126000 click 82 270
+127500 move 82 270
+128000 click 82 270
+129500 move 82 270
+130000 click 82 270
+131500 move 82 270
+132000 click 82 270
+134000 move 325 270
+134500 click 325 270
+# Process orders -> 'You haven't got any orders!' -> thumb -> To the other offices -> casting office
+137000 move 410 330
+137500 click 410 330
+140000 move 340 300
+140500 click 340 300
+143000 move 440 80
+143500 click 440 80
+146500 move 440 400
+147000 click 440 400
+# second day end (about 172 s)
+151000 move 366 300
+151500 click 366 300
+154000 move 300 395
+154500 click 300 395
+158000 move 366 300
+158500 click 366 300
+161000 move 300 395
+161500 click 300 395
+165000 move 366 300
+165500 click 366 300
+168000 move 300 395
+168500 click 300 395
+172000 move 366 300
+172500 click 366 300
+175000 move 300 395
+175500 click 300 395
+179000 move 366 300
+179500 click 366 300
+182000 move 300 395
+182500 click 300 395
+186000 move 366 300
+186500 click 366 300
+189000 move 300 395
+189500 click 300 395
+193000 move 366 300
+193500 click 366 300
+196000 move 300 395
+196500 click 300 395
+200000 move 366 300
+200500 click 366 300
+203000 move 300 395
+203500 click 300 395
+207000 move 366 300
+207500 click 366 300
+210000 move 300 395
+210500 click 300 395
+214000 move 366 300
+214500 click 366 300
+217000 move 300 395
+217500 click 300 395
+221000 move 366 300
+221500 click 366 300
+224000 move 300 395
+224500 click 300 395
+229000 move 320 240

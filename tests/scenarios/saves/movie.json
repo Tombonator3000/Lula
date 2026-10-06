@@ -91,12 +91,12 @@
  },
  "movie_heal_clock": {
   "from": "movie_beauty",
-  "note": "Patch-only parent of movie_healed: movie_beauty with the date moved on to Monday 8-1-1997 19:50 (day 0x45569c = 8, weekday 0x4556b8 = 0) and the normal speed (0x4556bc = 3), so the day end comes about 3 s after loading. Nothing else changes: the operation of both actors started on 1-1-1997 and lasts 8 days.",
+  "note": "Patch-only parent of movie_healed: movie_beauty with the date moved on to Monday 8-1-1997 19:30 (day 0x45569c = 8, weekday 0x4556b8 = 0) and the normal speed (0x4556bc = 3), so the day end comes about 7 s after loading. Nothing else changes: the operation of both actors started on 1-1-1997 and lasts 8 days.",
   "patch": {
    "0x45569c": 8,
    "0x4556b8": 0,
    "0x4556a8": 19,
-   "0x4556ac": 50,
+   "0x4556ac": 30,
    "0x4556bc": 3,
    "0x4556c0": 0
   },
@@ -107,14 +107,14 @@
    "name": "Beauty",
    "day": 8,
    "hour": 19,
-   "minute": 50,
+   "minute": 30,
    "0x462409": 5,
    "0x45d459": 5
   }
  },
  "movie_healed": {
   "from": "movie_heal_clock",
-  "note": "movie_heal_clock loaded on the WET plot and run through the 19:59 day end into Tuesday 9-1-1997 (script inline: three clicks at 366,300 and two at 300,395, which hit the thumbs of the trash box, 'And another busy day comes to an end.' and Daily costs and fall on empty plot ground otherwise), then saved as 'Healed' in slot 4 (300,119). The day-end staff update 0x41da0d (status-5 loop at 0x41dae5) finds 9 - 1 = 8 days >= +0x24 = 8 for both actors: level +0xc + 1 (capped at 9), +0x24 = 0, the date cleared and status 1. So actor 527 goes from level 8 to 9 and actress 17 stays at 9. Then patched to the slow clock (0x4556bc = 30) at 9:00.",
+  "note": "movie_heal_clock loaded on the WET plot (19:30); the player walks into the casting office and waits there through the 19:59 day end into Tuesday 9-1-1997 (script inline: clicks at 366,300 and 300,395, which hit the thumbs of the trash box, 'And another busy day comes to an end.' and Daily costs and no hotspot of the casting office; on the WET plot of this chain 366,300 would open the office, because Lula's flat, building 8, is rented), then goes back to the plot and saves as 'Healed' in slot 4 (300,119). The day-end staff update 0x41da0d (status-5 loop at 0x41dae5) finds 9 - 1 = 8 days >= +0x24 = 8 for both actors: level +0xc + 1 (capped at 9), +0x24 = 0, the date cleared and status 1. So actor 527 goes from level 8 to 9 and actress 17 stays at 9. Daily costs: rent -1430, staff -7837, total -9267. Then patched to the slow clock (0x4556bc = 30) at 9:00.",
   "script": [
    "11500 move 505 40",
    "12000 click 505 40",
@@ -122,27 +122,33 @@
    "15500 click 300 119",
    "17500 move 263 228",
    "18000 click 263 228",
-   "23500 move 366 300",
-   "24000 click 366 300",
-   "27000 move 366 300",
-   "27500 click 366 300",
-   "30500 move 366 300",
-   "31000 click 366 300",
-   "34000 move 300 395",
-   "34500 click 300 395",
-   "37500 move 300 395",
-   "38000 click 300 395",
-   "41000 key F2",
-   "43500 move 305 212",
-   "44000 click 305 212",
-   "46000 move 300 119",
-   "46500 click 300 119",
-   "48500 move 263 228",
-   "49000 click 263 228",
-   "51500 type Healed",
-   "53000 key RETURN"
+   "20000 move 440 400",
+   "20500 click 440 400",
+   "26000 move 366 300",
+   "26500 click 366 300",
+   "29000 move 300 395",
+   "29500 click 300 395",
+   "33000 move 366 300",
+   "33500 click 366 300",
+   "36000 move 300 395",
+   "36500 click 300 395",
+   "40000 move 366 300",
+   "40500 click 366 300",
+   "43000 move 300 395",
+   "43500 click 300 395",
+   "47000 move 470 160",
+   "47500 click 470 160",
+   "51000 key F2",
+   "53500 move 305 212",
+   "54000 click 305 212",
+   "56000 move 300 119",
+   "56500 click 300 119",
+   "58500 move 263 228",
+   "59000 click 263 228",
+   "61500 type Healed",
+   "63000 key RETURN"
   ],
-  "seconds": 58,
+  "seconds": 68,
   "patch": {
    "0x4556a8": 9,
    "0x4556ac": 0,
@@ -371,6 +377,232 @@
    "0x455c35": 1,
    "0x455bed": 3,
    "account": 1448429
+  }
+ },
+ "movie_mixing": {
+  "from": "movie_cutdone",
+  "note": "movie_cutdone after the game bought sound equipment and started the sound track (script movie_mixing.txt): Sound studio -> Buy equipment -> '3 Mix 3000' (1200 $) -> Buy; Add sound track to film (DDF 60, 0x42de52; it lists only shot movies with cutting state 3 and sound state 0) -> 'Hot Sauna' -> DDF 70 (0x42e0c4) -> 'Tango' (track 0x19) -> thumb -> 'Adding sound track will take about 1 day(s).'; saved on the WET plot as 'Mixing' in slot 4 (300,119) on Saturday 13-1-1997. Clock patched back to 10:00.",
+  "script": "movie_mixing.txt",
+  "seconds": 80,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Mixing",
+   "day": 13,
+   "account": 1447229,
+   "0x455c39": 1,
+   "0x455c3d": 25,
+   "0x455c41": 13,
+   "0x455c45": 1,
+   "0x455c49": 1997,
+   "0x455c4d": 1,
+   "0x458379": 45,
+   "0x458419": 1,
+   "0x455c25": 3
+  }
+ },
+ "movie_mix_clock": {
+  "from": "movie_mixing",
+  "note": "Patch-only parent of movie_done: movie_mixing with the date moved on to Monday 15-1-1997 9:59 (day 0x45569c = 15, weekday 0x4556b8 = 0) and the normal speed (0x4556bc = 3).",
+  "patch": {
+   "0x45569c": 15,
+   "0x4556b8": 0,
+   "0x4556a8": 9,
+   "0x4556ac": 59,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Mixing",
+   "day": 15,
+   "hour": 9,
+   "minute": 59,
+   "0x455c39": 1
+  }
+ },
+ "movie_done": {
+  "from": "movie_mix_clock",
+  "note": "movie_mix_clock loaded and run past 10:00, saved as 'Done' on the WET plot (300,119). At 10:00 0x42ddff finds 15 - 13 = 2 days since the sound track was started (+0x1a0) > the sound days +0x1ac = 1 and sets the sound state +0x198 = 3. The movie is now shot, cut and dubbed, and the copier, warehouse and their staff are ready, so it can be sold. Then patched to the slow clock (0x4556bc = 30) and 10:00 on Monday 15-1-1997.",
+  "script": [
+   "11500 move 505 40",
+   "12000 click 505 40",
+   "15000 move 300 119",
+   "15500 click 300 119",
+   "17500 move 263 228",
+   "18000 click 263 228",
+   "28000 key F2",
+   "30500 move 305 212",
+   "31000 click 305 212",
+   "33000 move 300 119",
+   "33500 click 300 119",
+   "35500 move 263 228",
+   "36000 click 263 228",
+   "38500 type Done",
+   "40000 key RETURN"
+  ],
+  "seconds": 46,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556bc": 30,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Done",
+   "day": 15,
+   "hour": 10,
+   "0x4556b8": 0,
+   "account": 1447229,
+   "0x455bed": 3,
+   "0x455c25": 3,
+   "0x455c39": 3,
+   "0x457b49": 1,
+   "0x459329": 1,
+   "0x458419": 1,
+   "0x4584bd": 1
+  }
+ },
+ "movie_onsale": {
+  "from": "movie_done",
+  "note": "movie_done after the game put the movie on sale at the office laptop (script movie_onsale.txt): Laptop -> 'Put movies on sale' (0x40dfd8: warehouse 0x40e3bf, copier 0x40e3ed, cutting 0x40e424 and sound 0x40e467 all pass) -> STANDARD_LIST_BOX_DLG (0x40e19b) -> OK -> 'Hot Sauna is going to the sale' -> 0x411a4c values the movie at 49000 (see the movie_sale_rights notes), 0x411bff(EDX = -(100 + (49000 / 1000 >> 2)) = -112, EBX = 49000) appends the FILMB.TMP record and 0x411e13 removes movie record 0; saved on the WET plot as 'OnSale' in slot 4 (300,119), which also writes DATA/DATABASE/FILMB.  4. The sale costs nothing.",
+  "script": "movie_onsale.txt",
+  "seconds": 65,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "OnSale",
+   "day": 15,
+   "account": 1447229,
+   "0x457b49": 0,
+   "0x455bed": 0,
+   "0x455ba5": 100
+  }
+ },
+ "movie_done_evening": {
+  "from": "movie_done",
+  "note": "Patch-only: movie_done (finished movie 'Hot Sauna' ready for sale, Monday 15-1-1997) at 16:30 with the normal speed (0x4556bc = 3, 14.4 s per game hour), so that a scenario can sell the movie at the distributor and then reach the 19:59 day end on the WET plot within a few minutes.",
+  "patch": {
+   "0x4556a8": 16,
+   "0x4556ac": 30,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Done",
+   "day": 15,
+   "hour": 16,
+   "minute": 30,
+   "0x457b49": 1,
+   "0x455bed": 3
+  }
+ },
+ "movie_onsale_eve": {
+  "from": "movie_onsale",
+  "note": "Patch-only: movie_onsale (the FILMB.TMP record of 'Hot Sauna' written on Monday 15-1-1997) at 19:00 with a fast clock (0x4556bc = 2: three timer calls per game minute, about 11 s per game hour), so that a scenario can walk into the casting office before the 19:59 day end, after which 0x42a1ef builds the warehouse list from the record; the next day end follows about two minutes later.",
+  "patch": {
+   "0x4556a8": 19,
+   "0x4556ac": 0,
+   "0x4556bc": 2,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "OnSale",
+   "day": 15,
+   "hour": 19,
+   "minute": 0,
+   "0x457b49": 0,
+   "0x4556bc": 2
+  }
+ },
+ "movie_licensed": {
+  "from": "movie_done",
+  "note": "movie_done after the game granted the movie licenses to the stage-2 distributor (script movie_licensed.txt): office -> To the overview -> Distributor -> Grant movie licenses (0x4113b9 hotspot 2: 0x45e2ac = 0) -> STANDARD_LIST_BOX_DLG (0x4116a3) -> OK -> 0x4118d8 values the movie (0x411a4c: 49000) and draws rand() % 4 = 3: 'The distributor offers you $3 per unit, to be paid weekly. Accept the offer?' -> yes -> 0x411bff(EDX = -3, EBX = 49000) writes the FILMB.TMP record and 0x411e13 removes movie record 0; back on the WET plot and saved as 'Licensed' in slot 4 (300,119) on Monday 15-1-1997, which writes DATA/DATABASE/FILMB.  4. The licence costs and pays nothing at once. Clock patched back to 10:00.",
+  "script": "movie_licensed.txt",
+  "seconds": 75,
+  "patch": {
+   "0x4556a8": 10,
+   "0x4556ac": 0,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Licensed",
+   "day": 15,
+   "account": 1447229,
+   "0x457b49": 0,
+   "0x455bed": 0
+  }
+ },
+ "movie_license_sunday": {
+  "from": "movie_licensed",
+  "note": "Patch-only: movie_licensed with the date moved on to Sunday 21-1-1997 19:30 (day 0x45569c = 21, weekday 0x4556b8 = 6) and the normal speed (0x4556bc = 3), so that the day end into Monday 22-1-1997 comes about 7 s after loading, after the player has walked into the casting office. Weekly licence royalties are paid only in the Daily costs of a Monday (0x411ed9: [0x4556b8] == 0) and only for records younger than 91 days.",
+  "patch": {
+   "0x45569c": 21,
+   "0x4556b8": 6,
+   "0x4556a8": 19,
+   "0x4556ac": 30,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Licensed",
+   "day": 21,
+   "hour": 19,
+   "minute": 30,
+   "0x4556b8": 6
+  }
+ },
+ "movie_heal_eve": {
+  "from": "movie_beauty",
+  "note": "Patch-only: movie_beauty (both actors sick after their operation of 1-1-1997, 8 days) with the date moved on to Monday 8-1-1997 18:00 (day 0x45569c = 8, weekday 0x4556b8 = 0) and the normal speed (0x4556bc = 3), so that a scenario can look at the cards at the beauty clinic before the 19:59 day end and again after it.",
+  "patch": {
+   "0x45569c": 8,
+   "0x4556b8": 0,
+   "0x4556a8": 18,
+   "0x4556ac": 0,
+   "0x4556bc": 3,
+   "0x4556c0": 0
+  },
+  "check": {
+   "slot": 4,
+   "stage": 2,
+   "room": 20,
+   "name": "Beauty",
+   "day": 8,
+   "hour": 18,
+   "minute": 0,
+   "0x462409": 5,
+   "0x45d459": 5,
+   "0x462429": 8
   }
  }
 }

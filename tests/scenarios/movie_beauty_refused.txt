@@ -1,0 +1,46 @@
+# seconds: 66
+# expects: "Cast" (movie_cast: 'Hot Sauna' planned and cast with Thommy Session 527 and Cassandra Casablanca 17, both in status 2 after 'Cast actors') on the WET plot -> office -> To the overview -> Beauty clinic -> "Give actors beauty treatment" -> actors -> card of Thommy Session "Has a part in a movie!" (968, card text for status 2 in 0x432d30) -> OK -> "No dice, as long as he's cast in a movie!" (1903; the card closes) -> thumb -> actresses -> card of Cassandra Casablanca "Has a part in a movie!" -> OK -> "No dice, as long as she's cast in a movie!" (1904) -> thumb -> close -> To the town. No operation sheet and no price box. No lula[warn]/trap.
+# save: movie_cast
+# note: "Cast" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20) on Tuesday 9-1-1997 at 9:00 with the slow clock
+# note: 0x432d30 handles the card's OK through the jump table 0x432d08 on status - 1: 1 closes the card with 1 (go on to the operation), 2 shows 1903 + (job - 20), 3 shows 1905/1906 (in training), 5 shows 1907/1908 (still sick); the card then closes with 2
+# check: (?s)ms: click 78 190.*CreateFileA\(DATA\\ANI\\HAND_ANI\.TAF, read
+# check: (?s)ms: click 187 253.*DrawTextA\("Thommy Session".*DrawTextA\("Has a part in a movie!"
+# check: (?s)ms: click 505 382.*DrawTextA\("No dice, as long as he's cast in a movie!"
+# check: (?s)ms: click 470 250.*DrawTextA\("Cassandra Casablanca".*DrawTextA\("Has a part in a movie!".*ms: click 505 382.*DrawTextA\("No dice, as long as she's cast in a movie!"
+# reject: Do beauty operation
+# reject: The operation you want costs
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building -> office -> To the overview -> Beauty clinic -> Give actors beauty treatment
+22000 move 290 340
+22500 click 290 340
+26000 move 150 40
+26500 click 150 40
+30000 move 78 190
+30500 click 78 190
+34000 move 120 200
+34500 click 120 200
+# actors -> card -> OK -> refusal -> thumb
+37500 move 187 253
+38000 click 187 253
+40500 move 505 382
+41000 click 505 382
+43500 move 340 305
+44000 click 340 305
+# actresses -> card -> OK -> refusal -> thumb
+47000 move 470 250
+47500 click 470 250
+50000 move 505 382
+50500 click 505 382
+53000 move 340 305
+53500 click 340 305
+# close the sheet -> To the town
+56500 move 327 375
+57000 click 327 375
+60000 move 320 40
+60500 click 320 40
+63000 move 320 240

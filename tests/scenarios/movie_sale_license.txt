@@ -1,0 +1,48 @@
+# seconds: 75
+# expects: "Licensed" (movie_license_sunday: the movie licences of 'Hot Sauna' granted to the distributor on Monday 15-1-1997 at $3 per unit, FILMB.TMP record with +0x10c = -3 and value +0x11c = 49000; date moved on to Sunday 21-1-1997 19:30, normal speed) on the WET plot -> casting office -> 19:59 day end -> "And another busy day comes to an end." -> Daily costs of Monday 1/22/1997: "Distributor royalties" 37851 $, receipts 37851 $, rental -1430 $, staff -7837 $, total 28584 $ -> F2 save 'Royalty'. No lula[warn]/trap.
+# save: movie_license_sunday
+# note: "Licensed" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20) at 19:30 (normal speed), the player walks into the casting office at once and the day end comes there about 7 s after loading; Lula's flat is rented in this chain, so its plot rectangle (216..416 x 258..387) covers 366,300, while in the casting office 366,300 and 300,395 hit no hotspot
+# note: 0x411ed9 (called by the Daily costs callback 0x40538f for control 0x13) pays licence records (+0x10c = -n, n < 100) only when the new day is a Monday ([0x4556b8] == 0): for a sale up to 30 days old it moves +0x11c by 3 % (up when rand() % 100 > 70, else down), then pays (+0x11c >> 2) * n and adds that to +0x110; days 31-60 and 61-90 use +0x120 and +0x124. Here 49000 + 1470 = 50470, 50470 >> 2 = 12617 units, 12617 * 3 = 37851
+# note: checked with --keep: the saved FILMB.  4 record has +0x11c = 50470 and +0x110 = 37851, and the account is 1447229 + 28584 = 1475813
+# check: (?s)DrawTextA\("And another busy day comes to an end\.".*DrawTextA\("Daily costs"
+# check: (?s)DrawTextA\(" 37851 \$", rect 424,338.*DrawTextA\(" 28584 \$", rect 424,383
+# check: (?s)DrawTextA\("Distributor royalties".*DrawTextA\(" 37851 \$", rect 265,290.*DrawTextA\("Monday".*DrawTextA\("1/22/1997"
+# check: (?s)DrawTextA\("1/22/1997".*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# check: (?s)ms: click 440 400(?:(?!SEKR_ANI).)*\Z
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# casting office (the waiting room)
+20000 move 440 400
+20500 click 440 400
+# day end: trash box if any, 'And another busy day', Daily costs
+26000 move 366 300
+26500 click 366 300
+29000 move 300 395
+29500 click 300 395
+33000 move 366 300
+33500 click 366 300
+36000 move 300 395
+36500 click 300 395
+40000 move 366 300
+40500 click 366 300
+43000 move 300 395
+43500 click 300 395
+47000 move 366 300
+47500 click 366 300
+50000 move 300 395
+50500 click 300 395
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+54000 key F2
+56500 move 305 212
+57000 click 305 212
+59000 move 300 119
+59500 click 300 119
+61500 move 263 228
+62000 click 263 228
+64500 type Royalty
+66000 key RETURN
+69000 move 320 240

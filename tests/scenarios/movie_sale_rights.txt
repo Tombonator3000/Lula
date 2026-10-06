@@ -1,0 +1,99 @@
+# seconds: 150
+# expects: "Done" (movie_done_evening: movie 'Hot Sauna' planned, cast, shot, cut and dubbed by the game; Monday 15-1-1997 16:30, normal speed) on the WET plot -> office -> To the overview -> Distributor (Verl_ani.TAF) -> Sell movie rights (0x4113b9 hotspot 3, 0x45e2ac = 1) -> STANDARD_LIST_BOX_DLG (0x4116a3) -> OK -> 0x4118d8: "The distributor offers you a fixed price of $76562. Sell?" -> no -> Sell movie rights again -> OK -> "... $115780. Sell?" (higher: every valuation by 0x411a4c adds (sound quality + cutter quality) / 2 to +0x2fc again) -> yes -> "The money will be transferred by tomorrow!" (0x411bff writes the FILMB.TMP record with +0x10c = 115780, 0x411e13 removes the movie) -> Sell movie rights -> "Unfortunately you have no movies to sell!" -> To the town -> Beauty clinic (the waiting room) -> 19:59 day end -> Daily costs of Tuesday 1/16/1997: "Distributor royalties" 115780 $ (0x411ed9 pays +0x10c of a rights record whose sale is 1 day old), receipts 115780 $, total 106513 $ -> F2 save 'Rights'. No lula[warn]/trap.
+# save: movie_done_evening
+# note: the day end is awaited in the beauty clinic, where 366,300 and 300,395 hit no hotspot (0x4328bd: 0..640 x 0..80 and 20..228 x 48..305); on the WET plot of this chain 366,300 would open the office (Lula's flat, building 8, is rented)
+# note: "Done" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20) at 16:30, 14.4 s per game hour
+# note: value (0x411a4c, first call): cast quality +0x2f8 = 90, crew +0x2fc = 62 + (sound 0x42dcee = (0 + 10 * 6 + 10 * 6) / 3 = 40 + cutter 0x428b83 = 10 * 6 = 60) / 2 = 112, equipment +0x300 = 35, sound equipment +0x304 = 0x42ddab = 30, cutting equipment +0x308 = 0x428bc9 = 20, Lula +0x30c = 0; +0x310 = 90 * 30 / 100 + 112 * 15 / 100 + 35 * 15 / 100 + 30 * 10 / 100 + 20 * 15 / 100 + 0 = 27 + 16 + 5 + 3 + 3 = 54, minus 5 because (40 / 10) * 3 = 12 > cast count - 1 = 1, so 49 and the value 49000
+# note: offer (0x4118d8): 49000 + 49000 / 2 + 49000 / 16 = 76562, + 30 % when rand() % 3 * 50 equals the category +0x104 (100), times rand() % 3 (0 counts as 1). First offer: no bonus, factor 1. Second call: +0x2fc = 162, +0x310 = 27 + 24 + 5 + 3 + 3 - 5 = 57, 57000 + 28500 + 3562 = 89062, + 30 % (26718) = 115780, factor 1
+# note: bookkeeping (checked with --keep): the save after the day end has the account 1447229 + 115780 - 9267 = 1553742 (Daily costs net, 0x405612)
+# check: (?s)ms: click 554 190.*CreateFileA\(DATA\\ANI\\Verl_ani\.TAF, read.*DialogBoxParamA\(STANDARD_LIST_BOX_DLG\) -> 1.*DrawTextA\("The distributor offers you a fixed price of \$76562\. Sell\?".*ms: click 400 305.*DrawTextA\("The distributor offers you a fixed price of \$115780\. Sell\?".*ms: click 318 305.*DrawTextA\("The money will be transferred by tomorrow!"
+# check: (?s)DrawTextA\("The money will be transferred by tomorrow!".*DrawTextA\("Unfortunately you have no movies to sell!"
+# check: (?s)DrawTextA\("Distributor royalties".*DrawTextA\(" 115780 \$", rect 265,290.*DrawTextA\("Tuesday".*DrawTextA\("1/16/1997"
+# check: (?s)DrawTextA\(" 115780 \$", rect 424,338.*DrawTextA\(" 106513 \$", rect 424,383.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: The distributor isn't interested right now
+# reject: wanna hold my prick
+# check: (?s)ms: click 78 190.*CreateFileA\(DATA\\ANI\\HAND_ANI\.TAF(?:(?!SEKR_ANI).)*\Z
+# main menu -> Load Game -> Done (slot 4) -> Load (WET plot, 16:30)
+11500 move 505 40
+12000 click 505 40
+15000 move 300 119
+15500 click 300 119
+17500 move 263 228
+18000 click 263 228
+# office building -> office -> To the overview -> Distributor
+22000 move 290 340
+22500 click 290 340
+26000 move 150 40
+26500 click 150 40
+30000 move 554 190
+30500 click 554 190
+# Sell movie rights -> list -> OK -> offer -> no (400,305)
+34000 move 152 335
+34500 click 152 335
+37500 move 115 243
+38000 click 115 243
+41000 move 400 305
+41500 click 400 305
+# Sell movie rights again -> list -> OK -> higher offer -> yes -> 'transferred by tomorrow' -> thumb
+44500 move 152 335
+45000 click 152 335
+48000 move 115 243
+48500 click 115 243
+51500 move 318 305
+52000 click 318 305
+54500 move 344 312
+55000 click 344 312
+# Sell movie rights once more -> 'no movies to sell' -> thumb
+58000 move 152 335
+58500 click 152 335
+61000 move 344 312
+61500 click 344 312
+# To the town -> Beauty clinic (the waiting room for the 19:59 day end)
+64500 move 90 45
+65000 click 90 45
+68500 move 78 190
+69000 click 78 190
+# 19:59 day end: 'And another busy day', Daily costs (spare clicks hit nothing in the clinic)
+73000 move 366 300
+73500 click 366 300
+76000 move 300 395
+76500 click 300 395
+80000 move 366 300
+80500 click 366 300
+83000 move 300 395
+83500 click 300 395
+87000 move 366 300
+87500 click 366 300
+90000 move 300 395
+90500 click 300 395
+94000 move 366 300
+94500 click 366 300
+97000 move 300 395
+97500 click 300 395
+101000 move 366 300
+101500 click 366 300
+104000 move 300 395
+104500 click 300 395
+108000 move 366 300
+108500 click 366 300
+111000 move 300 395
+111500 click 300 395
+115000 move 366 300
+115500 click 366 300
+118000 move 300 395
+118500 click 300 395
+122000 move 366 300
+122500 click 366 300
+125000 move 300 395
+125500 click 300 395
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+129000 key F2
+131500 move 305 212
+132000 click 305 212
+134000 move 300 119
+134500 click 300 119
+136500 move 263 228
+137000 click 263 228
+139500 type Rights
+141000 key RETURN
+144000 move 320 240

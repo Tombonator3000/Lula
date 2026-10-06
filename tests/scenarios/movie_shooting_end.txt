@@ -1,7 +1,17 @@
-# seconds: 150
-# expects: draft
+# seconds: 126
+# expects: "Shooting" (movie_shot_clock: 'Hot Sauna' planned, cast with Thommy Session, Cassandra Casablanca and Lula, shooting started in studio 1 for 1 day = 10 hours; clock moved on to 15:40 on Tuesday 9-1-1997, fastest speed 0x4556bc = 0) on the WET plot -> Studio 1 (STUD_ANI.TAF, 'STUDIO 1', the strip shows 'Hot Sauna'; while the shooting runs only hotspot 0 is registered) -> the 16:00 roll of 0x4242f2 gives the actor problem "Thommy Session doesn't dare to drop his pants!" (DREH_MSG_STUDIO_DLG) -> thumb -> DREH_EVENT_ACTION_DLG -> money: "You pay a $500 bonus" -> "Shooting is continuing!" -> 0x425703 counts the hours at every full hour -> 19:59 day end (Daily costs of Wednesday 1/10/1997, -9267 $) -> on the 10th the last hour runs out and 0x4242f2 ends the shooting (0x425775, movie state 3; 0x423e61 removes the strip, so 'Hot Sauna' is no longer drawn) -> 19:59 day end (Daily costs of Thursday 1/11/1997) -> F2 save 'Shot' in the studio. No lula[warn]/trap.
 # save: movie_shot_clock
-# check: STUD_ANI
+# note: "Shooting" is the Load-dialog entry at 300,119 (slot 4); with 0x4556bc = 0 a game hour takes about 3.9 s; this is the script of the recipe movie_shot (tests/scenarios/saves/movie_shot.txt) with checks
+# note: the clicks alternate between 350,300 (thumb of DDF 29 and of the info boxes), 340,260 ('money' of DDF 33, toilet of DDF 34) and 300,395 (thumb of Daily costs); in the studio they hit no hotspot while the shooting runs, and after it ends the hotspots stay off until the room is entered again (original code)
+# note: checked with --keep: the saved slot has movie state 3, end date +0x168 = 10-1-1997, quality values 90/62/35/0 (+0x2f8/+0x2fc/+0x300/+0x30c), Lula's movie counter 0x458371 = 1, both actors back in status 1, studio +0x34 = -1 and the account 1478463 - 500 - 2 x 9267 = 1459429
+# random: the actor problem at 16:00 comes from the 6 % roll per timer call and the problem kind from rand(); both repeat with the runner's fixed LULA_CLOCK (same in the recipe build and in every run)
+# check: (?s)ms: click 230 250.*CreateFileA\(DATA\\ANI\\STUD_ANI\.TAF, read.*DrawTextA\("STUDIO 1".*DrawTextA\("Hot Sauna", rect 140,430
+# check: (?s)DrawTextA\("Thommy Session doesn't dare to drop his pants!".*DrawTextA\("You pay a \$500 bonus".*DrawTextA\("Shooting is continuing!"
+# check: (?s)DrawTextA\("Shooting is continuing!".*DrawTextA\("Wednesday".*DrawTextA\("1/10/1997".*DrawTextA\("Hot Sauna", rect 140,430
+# check: (?s)DrawTextA\("1/11/1997"(?:(?!"Hot Sauna").)*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write(?:(?!"Hot Sauna").)*\Z
+# reject: There aren't enough (actors|staff) to carry on shooting
+# reject: has given notice
+# main menu -> Load Game -> Shooting (slot 4) -> Load (WET plot) -> Studio 1
 11500 move 505 40
 12000 click 505 40
 15000 move 300 119
@@ -10,6 +20,10 @@
 18000 click 263 228
 21000 move 230 250
 21500 click 230 250
+# While the shooting runs the studio registers only hotspot 0 (0,0,640,80), so clicks below y 80 do nothing unless a box is open.
+# 350,300 hits the thumb of DREH_MSG_STUDIO_DLG (DDF 29, 325..405 x 269..341) and of the info boxes (318..372 x 277..327);
+# 340,260 hits 'money' in DREH_EVENT_ACTION_DLG (DDF 33, 251..349 x 202..276) and the toilet of DREH_TOY1_DLG (DDF 34, 324..419 x 205..277);
+# 300,395 hits the thumb of Daily costs (287..342 x 347..405).
 24000 move 350 300
 24250 click 350 300
 24600 move 340 260
@@ -278,90 +292,13 @@
 103450 click 350 300
 103800 move 340 260
 104050 click 340 260
-104400 move 300 395
-104650 click 300 395
-105000 move 350 300
-105250 click 350 300
-105600 move 340 260
-105850 click 340 260
-106200 move 300 395
-106450 click 300 395
-106800 move 350 300
-107050 click 350 300
-107400 move 340 260
-107650 click 340 260
-108000 move 300 395
-108250 click 300 395
-108600 move 350 300
-108850 click 350 300
-109200 move 340 260
-109450 click 340 260
-109800 move 300 395
-110050 click 300 395
-110400 move 350 300
-110650 click 350 300
-111000 move 340 260
-111250 click 340 260
-111600 move 300 395
-111850 click 300 395
-112200 move 350 300
-112450 click 350 300
-112800 move 340 260
-113050 click 340 260
-113400 move 300 395
-113650 click 300 395
-114000 move 350 300
-114250 click 350 300
-114600 move 340 260
-114850 click 340 260
-115200 move 300 395
-115450 click 300 395
-115800 move 350 300
-116050 click 350 300
-116400 move 340 260
-116650 click 340 260
-117000 move 300 395
-117250 click 300 395
-117600 move 350 300
-117850 click 350 300
-118200 move 340 260
-118450 click 340 260
-118800 move 300 395
-119050 click 300 395
-119400 move 350 300
-119650 click 350 300
-120000 move 340 260
-120250 click 340 260
-120600 move 300 395
-120850 click 300 395
-121200 move 350 300
-121450 click 350 300
-121800 move 340 260
-122050 click 340 260
-122400 move 300 395
-122650 click 300 395
-123000 move 350 300
-123250 click 350 300
-123600 move 340 260
-123850 click 340 260
-124200 move 300 395
-124450 click 300 395
-124800 move 350 300
-125050 click 350 300
-125400 move 340 260
-125650 click 340 260
-126000 move 300 395
-126250 click 300 395
-126600 move 350 300
-126850 click 350 300
-127200 move 340 260
-127450 click 340 260
-127800 move 300 395
-128050 click 300 395
-128400 move 350 300
-128650 click 350 300
-129000 move 340 260
-129250 click 340 260
-129600 move 300 395
-129850 click 300 395
-131200 move 320 240
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN (saved in the studio, room 24)
+108000 key F2
+110500 move 305 212
+111000 click 305 212
+113000 move 300 119
+113500 click 300 119
+115500 move 263 228
+116000 click 263 228
+118500 type Shot
+120000 key RETURN

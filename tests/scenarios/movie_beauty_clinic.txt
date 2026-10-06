@@ -1,7 +1,16 @@
-# seconds: 130
-# expects: draft
+# seconds: 140
+# expects: "Planned" (movie_planned: movie 'Hot Sauna' planned, actor Thommy Session 527 and actress Cassandra Casablanca 17 hired and idle, account 1496000, slow clock) on the WET plot -> office -> To the overview -> stage-2 town -> Beauty clinic (room 8, setup 0x43273f loads HAND_ANI.TAF, hotspots 0x4328bd) -> "Give actors beauty treatment" (hotspot 1, click 0x432842 -> DDF 0x10 with 0x4329e0) -> actors -> card DDF 0x11 (0x432d30) "Thommy Session" / "Is glad there's nothing to do." -> OK (status 1) -> operation sheet DDF 0x37 (0x4331c4) "Do beauty operation" -> "Lift thighs" -> OK -> "The operation you want costs $8000. Do it?" -> no (nothing happens) -> actors again -> OK -> "Lift thighs" -> OK -> yes: status 5, 8 days -> actors again: the card says "Is still sick for 8 day(s)!" and OK answers "He's still sick because of the last operation!" (1907; the card closes) -> actresses -> "Cassandra Casablanca" -> OK -> the operation sheet comes up with the first radio ("Enlarge breast", 12000) checked, but OK at once asks "The operation you want costs $8000. Do it?": the WM_INITDIALOG branch of 0x4331c4 only checks control 6 (0x4165ae) and leaves the choice 0x485c10 at the actor's 'Lift thighs' (seen in a frame) -> no -> actresses again -> OK -> "Tighten buttocks" -> OK -> "The operation you want costs $10000. Do it?" -> yes -> close -> To the town -> Office -> F2 save in slot 4 'BeautyT'. No lula[warn]/trap.
 # save: movie_planned
-# check: CreateFileA\(DATA\\ANI\\HAND_ANI\.TAF
+# note: "Planned" is the Load-dialog entry at 300,119 (slot 4); the save loads on the WET plot (room 20) on Monday 1-1-1997 at 8:00
+# note: positions: DDF 0x10 and 0x11 are centred 480x360 sheets at 80,60 (actors 187,253, actresses 470,250, close 327,375; card OK 505,382); DDF 0x37 radios at 147,163 / 147,196 / 147,230 / 148,264 / 148,300 (Enlarge breast 12000, Lift face 18000, Lift thighs 8000, Tighten buttocks 10000, Liposuction 15000; price table 0x485c14 set at 0x43268f), OK 222,376, Cancel 424,370; yes/no box yes 318,305, no 400,305; info box thumb 340,305
+# note: bookkeeping (checked with --keep: SAVEGAME.  4 of this run): account 1496000 - 10000 = 1486000, because the actor branch of 0x4329e0 (0x432af5..0x432b62) sets status 5, the date and the days but never subtracts the price, while the actress branch does (0x432cd1 'sub [0x45568c], eax'). Actor 527: status 5, +0x24 = 8; actress 17: status 5, +0x24 = 10, date 1-1-1997 for both.
+# check: (?s)ms: click 78 190.*CreateFileA\(DATA\\ANI\\HAND_ANI\.TAF, read
+# check: (?s)ms: click 187 253.*DrawTextA\("Thommy Session".*DrawTextA\("Is glad there's nothing to do\.".*ms: click 505 382.*DrawTextA\("Do beauty operation\s*:".*DrawTextA\("Lift thighs\s*"
+# check: (?s)ms: click 222 376.*DrawTextA\("The operation you want costs \$8000\. Do it\?".*ms: click 318 305.*ms: click 187 253.*DrawTextA\("Is still sick for 8 day\(s\)!".*ms: click 505 382.*DrawTextA\("He's still sick because of the last operation!"
+# check: (?s)ms: click 470 250.*DrawTextA\("Cassandra Casablanca".*ms: click 505 382.*DrawTextA\("Do beauty operation\s*:".*ms: click 222 376(?:(?!ms: click).)*DrawTextA\("The operation you want costs \$8000\. Do it\?"
+# check: (?s)ms: click 148 264.*ms: click 222 376(?:(?!ms: click).)*DrawTextA\("The operation you want costs \$10000\. Do it\?".*ms: click 318 305.*CreateFileA\(DATA\\SAVE\\SAVEGAME\.  4, write
+# reject: Unfortunately you haven't got enough money
+# reject: No dice, as long as
 11500 move 505 40
 12000 click 505 40
 15000 move 300 119
@@ -15,7 +24,7 @@
 26500 click 150 40
 30000 move 78 190
 30500 click 78 190
-# Give actors beauty treatment (20..228 x 48..305; y > 80 so that 'To the town' does not win)
+# Give actors beauty treatment (20..228 x 48..305; below y 80 so that 'To the town' 0..640 x 0..80 does not win)
 34000 move 120 200
 34500 click 120 200
 # actors -> card of Thommy Session -> OK -> operation sheet -> Lift thighs -> OK -> price box -> no
@@ -40,30 +49,48 @@
 60000 click 222 376
 62500 move 318 305
 63000 click 318 305
-# actors again: the card shows the sick days -> OK -> 'still sick' refusal -> thumb -> close the card
+# actors again: the card shows the sick days -> OK -> 'still sick' refusal (the card closes) -> thumb
 65500 move 187 253
 66000 click 187 253
 68500 move 505 382
 69000 click 505 382
 71500 move 340 305
 72000 click 340 305
-74000 dump
-# actresses -> card of Cassandra Casablanca -> OK -> Tighten buttocks -> OK -> yes
-76000 move 470 250
-76500 click 470 250
-79000 move 505 382
-79500 click 505 382
-82000 move 148 264
-82500 click 148 264
-84000 move 222 376
-84500 click 222 376
-87000 move 318 305
-87500 click 318 305
-# close the actors sheet -> To the town -> Office -> office
-90500 move 327 375
-91000 click 327 375
-94000 move 320 40
-94500 click 320 40
-98000 move 320 450
-98500 click 320 450
-102000 move 320 240
+# actresses -> card of Cassandra Casablanca -> OK -> operation sheet (the first radio, 'Enlarge breast', is drawn checked) -> OK at once -> the price of the last pick ($8000) -> no
+75500 move 470 250
+76000 click 470 250
+78500 move 505 382
+79000 click 505 382
+81500 move 222 376
+82000 click 222 376
+84500 move 400 305
+85000 click 400 305
+# actresses again -> OK -> Tighten buttocks -> OK -> yes
+88000 move 470 250
+88500 click 470 250
+91000 move 505 382
+91500 click 505 382
+94000 move 148 264
+94500 click 148 264
+96000 move 222 376
+96500 click 222 376
+99000 move 318 305
+99500 click 318 305
+# close the sheet -> To the town -> Office -> office
+102500 move 327 375
+103000 click 327 375
+106000 move 320 40
+106500 click 320 40
+110000 move 320 450
+110500 click 320 450
+# F2 -> Save game -> slot 4 -> Save -> name -> RETURN
+114500 key F2
+117000 move 305 212
+117500 click 305 212
+119500 move 300 119
+120000 click 300 119
+122000 move 263 228
+122500 click 263 228
+125000 type BeautyT
+126500 key RETURN
+130500 move 320 240
