@@ -17,7 +17,9 @@ Detaljer og gjentakbare kommandoer:
 `docs/reconstruction/resource-readers.md`. Nye kontrollverktøy ligger under
 `tools/reconstruction/` og endrer ikke Claudes testimplementasjoner.
 
-TAF-redigering arbeides med separat. Windows-bygg av selve spillruntimen er
+TAF-redigering er levert separat i [PR #4](https://github.com/Tombonator3000/Lula/pull/4).
+Claude flettet denne ressursleser-PR-en inn ved `68f392e`.
+Windows-bygg av selve spillruntimen er
 valgfritt i pakken og inngår ikke i denne delen.
 
 Claudes oppdatering `d13e0c7` (80-bit x87) er nå også flettet inn. Alle

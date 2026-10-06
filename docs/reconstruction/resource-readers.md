@@ -75,3 +75,14 @@ lagringsmappe. Originaldata og genererte grafikkfiler legges aldri i rapporten.
 Kontrollene sammenligner med den genererte C-versjonen og eksisterende
 Wine-referansehash. Nye tester mot selve prosessorkoden i Unicorn eller
 langvarig manuell gjennomspilling inngår ikke i denne leveransen.
+
+## Samlet kontroll med TAF-redigering
+
+Claude flettet PR #3 inn ved `68f392e`; dette er tatt inn i TAF-grenen i
+PR #4. Ved kodecommit `6bc9dbe` bestod ny CMake-bygging, alle sju
+registrerte erstatninger med 2 000 tilstander hver (14 000 totalt), alle
+6 395 filtilfeller og alle sju ende-til-ende-tester (174,892 s). De fem
+ressursfunksjonene bidrar fortsatt med 10 000 av tilstandene; øvrige
+er memcpy og Claudes get-PC-stub. Endret TAF-markør ble også kontrollert
+gjennom `--mods`, med nøyaktig 2 964 nye presenterte piksler. Alle 144
+originalfiler var uendret etterpå.

@@ -44,6 +44,16 @@ sources=("$root/reconstruction/resources/lula_resources.c" "$root/reconstruction
 "$host_compiler" "${host_options[@]}" -std=c11 -Wall -Wextra -Werror \
     "${sources[@]}" -o "$host_output"
 file "$host_output"
+if $sanitize; then
+    taf_output="$output_root/lula-taf-check-sanitize"
+else
+    taf_output="$output_root/lula-taf-check"
+fi
+"$host_compiler" "${host_options[@]}" -std=c11 -Wall -Wextra -Werror \
+    -I"$root/reconstruction/resources" \
+    "$root/reconstruction/resources/lula_resources.c" \
+    "$root/tools/reconstruction/taf_check.c" -o "$taf_output"
+file "$taf_output"
 if ! $sanitize; then
     windows_compiler=${LULA_CC:-}
     if [[ -z "$windows_compiler" ]]; then
