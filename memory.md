@@ -24,10 +24,11 @@ Hele WET.EXE (Lula - The Sexy Empire, 1997) skal rekompileres og kjøre native p
 
 ## Status (2026-10-06)
 
-- Den rekompilerte versjonen kjører hele spillet på Linux. Skriptede gjennomspillinger har vært gjennom alle tre trinnene uten feilfeller; 955 av 1261 levende funksjoner har kjørt (`docs/recomp/exploration.md`).
+- Den rekompilerte versjonen kjører hele spillet på Linux. To runder skriptet utforskning, også hele filmproduksjonen: 1123 av 1262 levende funksjoner har kjørt, og alle i rom, dialoger, simulering og felles spilltjenester. Ingen runtime-feil i runde 2. Resten er feilhåndtering, feilsøkingskode og bibliotekskode spillet ikke bruker, pluss video og MIDI (`docs/recomp/exploration.md`).
+- `docs/recomp/exploration.md` har en tabell over 40 særheter i originalkoden som rekompileringen gjengir trofast. De skal ikke rettes.
 - Hovedmenyen: alle piksler utenfor bokstavene i menyknappene er identiske med originalen under Wine (RGB565).
 - Teksten tegnes med Liberation Sans Bold (fontnavnet spillet ber om er "System Small", høyde -14, vekt 700), med hele piksler per tegn og uten kerning som i GDI. Menyteksten har da nøyaktig samme kanter som under Wine. 37 av 219 enlinjes DDF-etiketter blir for brede for rektangelet, også under Wine.
-- Spilltilstand for produksjonen (bygg, ansatte, filmer) er kartlagt av basisagenten i runde 2: 15 byggposter à 40 bytes fra 0x455849 (+0x10 leid/eid), ansattabell via [0x45555c] med 553 poster à 40 bytes. Detaljer kommer i dokumentasjonen etter runden.
+- Spilltilstanden er dokumentert i `docs/recomp/game-state.md` (faktasjekket): lagringsformat, klokke, regnskap, trinnskifter, bygg (15 poster à 40 bytes fra 0x455849), ansatte (553 poster à 40 bytes etter gjesteblokken i lagringsfilen), filmposter (0x344 bytes fra 0x455aa1), utstyr og mer. Lasting kaller alltid INIT_STUFE, som skriver over kredittgrensen og rentene, så de kan ikke lappes i et lagret spill.
 - Rekonstruert som lesbar C: memcpy og get-PC-stubben (Claude), fem ressursfunksjoner (Codex, PR #3, `docs/reconstruction/resource-readers.md`). Codex har også en portabel ressursmodul i `reconstruction/resources/` med TAF-redigering (PR #1 og #4, `docs/reconstruction/taf-editing.md`).
 - PR #2 ble slått inn i `main` på `7234f07`; alt senere ligger bare på grenen og trenger en ny PR. Codex' grener bygger på denne grenen, så historikken skal ikke skrives om (flett, ikke rebase).
 - Spillet treffer klikk der siste WM_MOUSEMOVE var (ingen GetCursorPos). Runtimen poster derfor en musebevegelse når en dialog, meldingsboks eller meny lukkes, slik Windows gjør.

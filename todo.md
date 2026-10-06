@@ -1,14 +1,12 @@
 # Gjøremål
 
-## Pågår
-
-- [ ] Runde 2 av utforskningen: filmproduksjonen i trinn 2 (rom 21-34) og de andre ukjørte funksjonene. Workflow med uavhengig kontroll per område.
-- [ ] Etter runde 2: bygge `build/game` på nytt med fontendringen og `TextOutA`-loggingen, og kjøre alle tester og scenarier.
-
 ## Neste
 
+- [ ] Ny PR mot `main` med alt etter `7234f07` (venter på brukeren).
+- [ ] Katalog over alle bilder (fil, post, størrelse, rom) og en plan for HD-teksturer i runtimen (spurt brukeren).
+
 - [ ] Video (CUT-filer, ActiveMovie via CoCreateInstance) og MCI. Venter på svar fra brukeren. Med "Play videos" slått på avslutter F1 i dag spillet ("End Program ??").
-- [ ] Nå de delene av spillet utforskningen ikke kom til: salg av ferdige filmer (WORK_ORDER_DLG, 0x40e19b), bemannet markedsavdeling, sabotasjens ettervirkninger, 145 funksjoner i rom/dialoger/simulering.
+- [ ] `0x40a15c` (WM_DESTROY-håndtereren) nås bare via feilruten for video; tas med når video er avklart.
 - [ ] Fonten: tegnplasseringen stemmer nå med Wine. Om ekte Windows 9x ga en smalere font for "System Small" -14 fet, krever et skjermbilde fra ekte Windows.
 - [ ] Rekonstruksjon i større skala, kontrollert med `lula-fncheck`. Blitterne er gitt til Codex (oppgave 4 i `docs/samarbeid-codex.md`); deretter 2D-grafikkmotoren og resten av Watcom-runtimen.
 - [ ] Logg direkte importkall i `--trace` (i dag logges bare indirekte kall og COM-metoder).
@@ -46,3 +44,6 @@
 - [x] TAF-redigering (Codex, PR #4) gjennomgått, rettet og flettet inn.
 - [x] GDI-tekst med hele piksler per tegn og uten kerning; menyteksten har samme kanter som under Wine.
 - [x] `TextOutA` logges på nivå 3 (tooltips, hjelpesider).
+- [x] Runde 2 av utforskningen: hele filmproduksjonen og resten av spillet, 1123 av 1262 levende funksjoner, ingen runtime-feil, 157 scenarier.
+- [x] `docs/recomp/game-state.md`: spilltilstand i minne og lagrede spill, faktasjekket.
+- [x] Dekningstellere for håndskrevne funksjoner, dra med musen i skript, `# covers:`, `# exit:` og filer i oppskrifter.
